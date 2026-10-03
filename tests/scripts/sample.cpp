@@ -1,4 +1,4 @@
-#include <sample_identity_naming.h>
+#include <sample.h>
 
 int main() {
   test::tab_foo tab_foo;

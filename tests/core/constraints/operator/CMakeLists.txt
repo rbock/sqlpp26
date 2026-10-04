@@ -28,5 +28,6 @@ create_tests_group(
     assign_expression
     case
     cast
+    comparison_expression
     exists
 )

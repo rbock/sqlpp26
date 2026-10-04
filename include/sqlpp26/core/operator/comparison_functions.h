@@ -75,6 +75,13 @@ constexpr auto is_distinct_from(L l, R r)
   return {std::move(l), std::move(r)};
 }
 
+template <typename L>
+  requires(has_data_type_v<L>)
+constexpr auto is_distinct_from(L l, std::nullopt_t)
+    -> comparison_expression<L, op_is_distinct_from, std::nullopt_t> {
+  return {std::move(l), std::nullopt};
+}
+
 struct op_is_not_distinct_from {
   static constexpr auto symbol = " IS NOT DISTINCT FROM ";  // sql standard
   // mysql has NULL-safe equal `<=>`
@@ -86,6 +93,13 @@ template <typename L, typename R>
 constexpr auto is_not_distinct_from(L l, R r)
     -> comparison_expression<L, op_is_not_distinct_from, R> {
   return {std::move(l), std::move(r)};
+}
+
+template <typename L>
+  requires(has_data_type_v<L>)
+constexpr auto is_not_distinct_from(L l, std::nullopt_t)
+    -> comparison_expression<L, op_is_not_distinct_from, std::nullopt_t> {
+  return {std::move(l), std::nullopt};
 }
 
 struct op_like {

@@ -42,13 +42,13 @@ int Function(int, char*[]) {
     using TF = decltype(f.float_n.in(1.0, 2.0, 3.0));
     using TT = decltype(t.text_n.in("a", "b", "c"));
     static_assert(sqlpp::is_boolean<TI>::value, "type requirement");
-    static_assert(sqlpp::is_numeric<TI>::value, "type requirement");
+    static_assert(sqlpp::is_arithmetic<TI>::value, "type requirement");
     static_assert(not sqlpp::is_text<TI>::value, "type requirement");
     static_assert(sqlpp::is_boolean<TF>::value, "type requirement");
-    static_assert(sqlpp::is_numeric<TF>::value, "type requirement");
+    static_assert(sqlpp::is_arithmetic<TF>::value, "type requirement");
     static_assert(not sqlpp::is_text<TF>::value, "type requirement");
     static_assert(sqlpp::is_boolean<TT>::value, "type requirement");
-    static_assert(sqlpp::is_numeric<TT>::value, "type requirement");
+    static_assert(sqlpp::is_arithmetic<TT>::value, "type requirement");
     static_assert(not sqlpp::is_text<TT>::value, "type requirement");
   }
 
@@ -58,13 +58,13 @@ int Function(int, char*[]) {
     using TF = decltype(f.float_n.in(std::vector<float>({1.0, 2.0, 3.0})));
     using TT = decltype(t.text_n.in(std::vector<std::string>({"a", "b", "c"})));
     static_assert(sqlpp::is_boolean<TI>::value, "type requirement");
-    static_assert(sqlpp::is_numeric<TI>::value, "type requirement");
+    static_assert(sqlpp::is_arithmetic<TI>::value, "type requirement");
     static_assert(not sqlpp::is_text<TI>::value, "type requirement");
     static_assert(sqlpp::is_boolean<TF>::value, "type requirement");
-    static_assert(sqlpp::is_numeric<TF>::value, "type requirement");
+    static_assert(sqlpp::is_arithmetic<TF>::value, "type requirement");
     static_assert(not sqlpp::is_text<TF>::value, "type requirement");
     static_assert(sqlpp::is_boolean<TT>::value, "type requirement");
-    static_assert(sqlpp::is_numeric<TT>::value, "type requirement");
+    static_assert(sqlpp::is_arithmetic<TT>::value, "type requirement");
     static_assert(not sqlpp::is_text<TT>::value, "type requirement");
   }
 
@@ -74,13 +74,13 @@ int Function(int, char*[]) {
     using TF = decltype(f.float_n.not_in(1.0, 2.0, 3.0));
     using TT = decltype(t.text_n.not_in("a", "b", "c"));
     static_assert(sqlpp::is_boolean<TI>::value, "type requirement");
-    static_assert(sqlpp::is_numeric<TI>::value, "type requirement");
+    static_assert(sqlpp::is_arithmetic<TI>::value, "type requirement");
     static_assert(not sqlpp::is_text<TI>::value, "type requirement");
     static_assert(sqlpp::is_boolean<TF>::value, "type requirement");
-    static_assert(sqlpp::is_numeric<TF>::value, "type requirement");
+    static_assert(sqlpp::is_arithmetic<TF>::value, "type requirement");
     static_assert(not sqlpp::is_text<TF>::value, "type requirement");
     static_assert(sqlpp::is_boolean<TT>::value, "type requirement");
-    static_assert(sqlpp::is_numeric<TT>::value, "type requirement");
+    static_assert(sqlpp::is_arithmetic<TT>::value, "type requirement");
     static_assert(not sqlpp::is_text<TT>::value, "type requirement");
   }
 
@@ -91,13 +91,13 @@ int Function(int, char*[]) {
     using TT =
         decltype(t.text_n.not_in(std::vector<std::string>({"a", "b", "c"})));
     static_assert(sqlpp::is_boolean<TI>::value, "type requirement");
-    static_assert(sqlpp::is_numeric<TI>::value, "type requirement");
+    static_assert(sqlpp::is_arithmetic<TI>::value, "type requirement");
     static_assert(not sqlpp::is_text<TI>::value, "type requirement");
     static_assert(sqlpp::is_boolean<TF>::value, "type requirement");
-    static_assert(sqlpp::is_numeric<TF>::value, "type requirement");
+    static_assert(sqlpp::is_arithmetic<TF>::value, "type requirement");
     static_assert(not sqlpp::is_text<TF>::value, "type requirement");
     static_assert(sqlpp::is_boolean<TT>::value, "type requirement");
-    static_assert(sqlpp::is_numeric<TT>::value, "type requirement");
+    static_assert(sqlpp::is_arithmetic<TT>::value, "type requirement");
     static_assert(not sqlpp::is_text<TT>::value, "type requirement");
   }
 
@@ -105,7 +105,7 @@ int Function(int, char*[]) {
   {
     using TT = decltype(t.text_n.like("%c%"));
     static_assert(sqlpp::is_boolean<TT>::value, "type requirement");
-    static_assert(sqlpp::is_numeric<TT>::value, "type requirement");
+    static_assert(sqlpp::is_arithmetic<TT>::value, "type requirement");
     static_assert(not sqlpp::is_text<TT>::value, "type requirement");
   }
 
@@ -121,13 +121,13 @@ int Function(int, char*[]) {
     static_assert(std::is_same<TF, TTF>::value, "type requirement");
     static_assert(std::is_same<TT, TTT>::value, "type requirement");
     static_assert(sqlpp::is_boolean<TI>::value, "type requirement");
-    static_assert(sqlpp::is_numeric<TI>::value, "type requirement");
+    static_assert(sqlpp::is_arithmetic<TI>::value, "type requirement");
     static_assert(not sqlpp::is_text<TI>::value, "type requirement");
     static_assert(sqlpp::is_boolean<TF>::value, "type requirement");
-    static_assert(sqlpp::is_numeric<TF>::value, "type requirement");
+    static_assert(sqlpp::is_arithmetic<TF>::value, "type requirement");
     static_assert(not sqlpp::is_text<TF>::value, "type requirement");
     static_assert(sqlpp::is_boolean<TT>::value, "type requirement");
-    static_assert(sqlpp::is_numeric<TT>::value, "type requirement");
+    static_assert(sqlpp::is_arithmetic<TT>::value, "type requirement");
     static_assert(not sqlpp::is_text<TT>::value, "type requirement");
   }
 
@@ -143,13 +143,13 @@ int Function(int, char*[]) {
     static_assert(std::is_same<TF, TTF>::value, "type requirement");
     static_assert(std::is_same<TT, TTT>::value, "type requirement");
     static_assert(sqlpp::is_boolean<TI>::value, "type requirement");
-    static_assert(sqlpp::is_numeric<TI>::value, "type requirement");
+    static_assert(sqlpp::is_arithmetic<TI>::value, "type requirement");
     static_assert(not sqlpp::is_text<TI>::value, "type requirement");
     static_assert(sqlpp::is_boolean<TF>::value, "type requirement");
-    static_assert(sqlpp::is_numeric<TF>::value, "type requirement");
+    static_assert(sqlpp::is_arithmetic<TF>::value, "type requirement");
     static_assert(not sqlpp::is_text<TF>::value, "type requirement");
     static_assert(sqlpp::is_boolean<TT>::value, "type requirement");
-    static_assert(sqlpp::is_numeric<TT>::value, "type requirement");
+    static_assert(sqlpp::is_arithmetic<TT>::value, "type requirement");
     static_assert(not sqlpp::is_text<TT>::value, "type requirement");
   }
 
@@ -161,10 +161,10 @@ int Function(int, char*[]) {
     using TI = decltype(exists(select(t.id).from(t)));
     using TT = decltype(exists(select(t.text_n).from(t)));
     static_assert(sqlpp::is_boolean<TI>::value, "type requirement");
-    static_assert(sqlpp::is_numeric<TI>::value, "type requirement");
+    static_assert(sqlpp::is_arithmetic<TI>::value, "type requirement");
     static_assert(not sqlpp::is_text<TI>::value, "type requirement");
     static_assert(sqlpp::is_boolean<TT>::value, "type requirement");
-    static_assert(sqlpp::is_numeric<TT>::value, "type requirement");
+    static_assert(sqlpp::is_arithmetic<TT>::value, "type requirement");
     static_assert(not sqlpp::is_text<TT>::value, "type requirement");
 
     if (false and db(select(exists(select(t.id).from(t)).as<"something">()))
@@ -176,18 +176,18 @@ int Function(int, char*[]) {
   // Test any
   {
     using S = decltype(select(t.id).from(t));
-    static_assert(sqlpp::is_numeric<sqlpp::value_t<S>>::value, "type requirement");
+    static_assert(sqlpp::is_arithmetic<sqlpp::value_t<S>>::value, "type requirement");
 
     using TI = decltype(any(select(t.id).from(t)));
     using TT = decltype(any(select(t.text_n).from(t)));
     using TF = decltype(any(select(f.float_n).from(f)));
-    static_assert(not sqlpp::is_numeric<TI>::value, "type requirement");
+    static_assert(not sqlpp::is_arithmetic<TI>::value, "type requirement");
     static_assert(not sqlpp::is_integral<TI>::value, "type requirement");
     static_assert(not sqlpp::is_text<TI>::value, "type requirement");
-    static_assert(not sqlpp::is_numeric<TF>::value, "tFpe requirement");
+    static_assert(not sqlpp::is_arithmetic<TF>::value, "tFpe requirement");
     static_assert(not sqlpp::is_floating_point<TF>::value, "type requirement");
     static_assert(not sqlpp::is_text<TF>::value, "type requirement");
-    static_assert(not sqlpp::is_numeric<TT>::value, "type requirement");
+    static_assert(not sqlpp::is_arithmetic<TT>::value, "type requirement");
     static_assert(not sqlpp::is_integral<TT>::value, "type requirement");
     static_assert(not sqlpp::is_floating_point<TT>::value, "type requirement");
     static_assert(not sqlpp::is_text<TT>::value, "type requirement");
@@ -200,10 +200,10 @@ int Function(int, char*[]) {
   {
     using TI = decltype(avg(t.id));
     using TF = decltype(avg(f.float_n));
-    static_assert(sqlpp::is_numeric<TI>::value, "type requirement");
+    static_assert(sqlpp::is_arithmetic<TI>::value, "type requirement");
     static_assert(not sqlpp::is_integral<TI>::value, "type requirement");
     static_assert(sqlpp::is_floating_point<TI>::value, "type requirement");
-    static_assert(sqlpp::is_numeric<TF>::value, "type requirement");
+    static_assert(sqlpp::is_arithmetic<TF>::value, "type requirement");
     static_assert(not sqlpp::is_integral<TF>::value, "type requirement");
     static_assert(sqlpp::is_floating_point<TF>::value, "type requirement");
   }
@@ -213,13 +213,13 @@ int Function(int, char*[]) {
     using TI = decltype(count(t.id));
     using TT = decltype(count(t.text_n));
     using TF = decltype(count(f.float_n));
-    static_assert(sqlpp::is_numeric<TI>::value, "type requirement");
+    static_assert(sqlpp::is_arithmetic<TI>::value, "type requirement");
     static_assert(sqlpp::is_integral<TI>::value, "type requirement");
     static_assert(not sqlpp::is_floating_point<TI>::value, "type requirement");
-    static_assert(sqlpp::is_numeric<TF>::value, "type requirement");
+    static_assert(sqlpp::is_arithmetic<TF>::value, "type requirement");
     static_assert(sqlpp::is_integral<TF>::value, "type requirement");
     static_assert(not sqlpp::is_floating_point<TF>::value, "type requirement");
-    static_assert(sqlpp::is_numeric<TT>::value, "type requirement");
+    static_assert(sqlpp::is_arithmetic<TT>::value, "type requirement");
     static_assert(sqlpp::is_integral<TT>::value, "type requirement");
     static_assert(not sqlpp::is_floating_point<TT>::value, "type requirement");
 
@@ -234,13 +234,13 @@ int Function(int, char*[]) {
     using TI = decltype(max(t.id));
     using TF = decltype(max(f.float_n));
     using TT = decltype(max(t.text_n));
-    static_assert(sqlpp::is_numeric<TI>::value, "type requirement");
+    static_assert(sqlpp::is_arithmetic<TI>::value, "type requirement");
     static_assert(sqlpp::is_integral<TI>::value, "type requirement");
     static_assert(not sqlpp::is_floating_point<TI>::value, "type requirement");
-    static_assert(sqlpp::is_numeric<TF>::value, "type requirement");
+    static_assert(sqlpp::is_arithmetic<TF>::value, "type requirement");
     static_assert(not sqlpp::is_integral<TF>::value, "type requirement");
     static_assert(sqlpp::is_floating_point<TF>::value, "type requirement");
-    static_assert(not sqlpp::is_numeric<TT>::value, "type requirement");
+    static_assert(not sqlpp::is_arithmetic<TT>::value, "type requirement");
     static_assert(sqlpp::is_text<TT>::value, "type requirement");
   }
 
@@ -249,13 +249,13 @@ int Function(int, char*[]) {
     using TI = decltype(min(t.id));
     using TF = decltype(min(f.float_n));
     using TT = decltype(min(t.text_n));
-    static_assert(sqlpp::is_numeric<TI>::value, "type requirement");
+    static_assert(sqlpp::is_arithmetic<TI>::value, "type requirement");
     static_assert(sqlpp::is_integral<TI>::value, "type requirement");
     static_assert(not sqlpp::is_floating_point<TI>::value, "type requirement");
-    static_assert(sqlpp::is_numeric<TF>::value, "type requirement");
+    static_assert(sqlpp::is_arithmetic<TF>::value, "type requirement");
     static_assert(not sqlpp::is_integral<TF>::value, "type requirement");
     static_assert(sqlpp::is_floating_point<TF>::value, "type requirement");
-    static_assert(not sqlpp::is_numeric<TT>::value, "type requirement");
+    static_assert(not sqlpp::is_arithmetic<TT>::value, "type requirement");
     static_assert(sqlpp::is_text<TT>::value, "type requirement");
   }
 
@@ -263,10 +263,10 @@ int Function(int, char*[]) {
   {
     using TI = decltype(sum(t.id));
     using TF = decltype(sum(f.float_n));
-    static_assert(sqlpp::is_numeric<TI>::value, "type requirement");
+    static_assert(sqlpp::is_arithmetic<TI>::value, "type requirement");
     static_assert(sqlpp::is_integral<TI>::value, "type requirement");
     static_assert(not sqlpp::is_floating_point<TI>::value, "type requirement");
-    static_assert(sqlpp::is_numeric<TF>::value, "type requirement");
+    static_assert(sqlpp::is_arithmetic<TF>::value, "type requirement");
     static_assert(not sqlpp::is_integral<TF>::value, "type requirement");
     static_assert(sqlpp::is_floating_point<TF>::value, "type requirement");
   }

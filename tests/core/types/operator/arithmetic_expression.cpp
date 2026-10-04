@@ -44,11 +44,11 @@ void test_plus(Left raw_l, Right raw_r, DataType) {
   auto opt_r = sqlpp::value(std::optional{raw_r});
 
   static_assert(
-      is_same_type<sqlpp::data_type_of_t<decltype(l + r)>, DataType>());
+      std::is_same_v<sqlpp::data_type_of_t<decltype(l + r)>, DataType>);
   static_assert(
-      is_same_type<sqlpp::data_type_of_t<decltype(l + opt_r)>, OptDataType>());
+      std::is_same_v<sqlpp::data_type_of_t<decltype(l + opt_r)>, OptDataType>);
   static_assert(
-      is_same_type<sqlpp::data_type_of_t<decltype(opt_l + r)>, OptDataType>());
+      std::is_same_v<sqlpp::data_type_of_t<decltype(opt_l + r)>, OptDataType>);
   static_assert(is_same_type<sqlpp::data_type_of_t<decltype(opt_l + opt_r)>,
                              OptDataType>());
 
@@ -76,13 +76,12 @@ void test_minus(Left raw_l, Right raw_r, DataType) {
   auto opt_r = sqlpp::value(std::optional{raw_r});
 
   static_assert(
-      is_same_type<sqlpp::data_type_of_t<decltype(l - r)>, DataType>());
+      std::is_same_v<sqlpp::data_type_of_t<decltype(l - r)>, DataType>);
   static_assert(
-      is_same_type<sqlpp::data_type_of_t<decltype(l - opt_r)>, OptDataType>());
+      std::is_same_v<sqlpp::data_type_of_t<decltype(l - opt_r)>, OptDataType>);
   static_assert(
-      is_same_type<sqlpp::data_type_of_t<decltype(opt_l - r)>, OptDataType>());
-  static_assert(is_same_type<sqlpp::data_type_of_t<decltype(opt_l - opt_r)>,
-                             OptDataType>());
+      std::is_same_v<sqlpp::data_type_of_t<decltype(opt_l - r)>, OptDataType>);
+  static_assert(std::is_same_v<sqlpp::data_type_of_t<decltype(opt_l - opt_r)>, OptDataType>);
 
   // Arithmetic expressions enable the `as` member function.
   static_assert(sqlpp::has_enabled_as<decltype(l - opt_r)>::value);
@@ -93,8 +92,7 @@ void test_minus(Left raw_l, Right raw_r, DataType) {
   // Arithmetic expressions have their arguments as nodes
   using L = typename std::decay<decltype(l)>::type;
   using R = typename std::decay<decltype(opt_r)>::type;
-  static_assert(std::is_same<sqlpp::nodes_of_t<decltype(l - opt_r)>,
-                             sqlpp::detail::type_vector<L, R>>::value);
+  static_assert(std::is_same<sqlpp::nodes_of_t<decltype(l - opt_r)>, sqlpp::detail::type_vector<L, R>>::value);
 }
 
 template <typename Left, typename Right, typename DataType>
@@ -108,13 +106,12 @@ void test_multiplies(Left raw_l, Right raw_r, DataType) {
   auto opt_r = sqlpp::value(std::optional{raw_r});
 
   static_assert(
-      is_same_type<sqlpp::data_type_of_t<decltype(l * r)>, DataType>());
+      std::is_same_v<sqlpp::data_type_of_t<decltype(l * r)>, DataType>);
   static_assert(
-      is_same_type<sqlpp::data_type_of_t<decltype(l * opt_r)>, OptDataType>());
+      std::is_same_v<sqlpp::data_type_of_t<decltype(l * opt_r)>, OptDataType>);
   static_assert(
-      is_same_type<sqlpp::data_type_of_t<decltype(opt_l * r)>, OptDataType>());
-  static_assert(is_same_type<sqlpp::data_type_of_t<decltype(opt_l * opt_r)>,
-                             OptDataType>());
+      std::is_same_v<sqlpp::data_type_of_t<decltype(opt_l * r)>, OptDataType>);
+  static_assert(std::is_same_v<sqlpp::data_type_of_t<decltype(opt_l * opt_r)>, OptDataType>);
 
   // Arithmetic expressions enable the `as` member function.
   static_assert(sqlpp::has_enabled_as<decltype(l * opt_r)>::value);
@@ -137,9 +134,9 @@ void test_negate(Right raw_r, DataType) {
 
   auto opt_r = sqlpp::value(std::optional{raw_r});
 
-  static_assert(is_same_type<sqlpp::data_type_of_t<decltype(-r)>, DataType>());
+  static_assert(std::is_same_v<sqlpp::data_type_of_t<decltype(-r)>, DataType>);
   static_assert(
-      is_same_type<sqlpp::data_type_of_t<decltype(-opt_r)>, OptDataType>());
+      std::is_same_v<sqlpp::data_type_of_t<decltype(-opt_r)>, OptDataType>);
 
   // Arithmetic expressions enable the `as` member function.
   static_assert(sqlpp::has_enabled_as<decltype(-opt_r)>::value);
@@ -165,13 +162,12 @@ void test_divides(Left raw_l, Right raw_r, DataType) {
   auto opt_r = sqlpp::value(std::optional{raw_r});
 
   static_assert(
-      is_same_type<sqlpp::data_type_of_t<decltype(l / r)>, DataType>());
+      std::is_same_v<sqlpp::data_type_of_t<decltype(l / r)>, DataType>);
   static_assert(
-      is_same_type<sqlpp::data_type_of_t<decltype(l / opt_r)>, OptDataType>());
+      std::is_same_v<sqlpp::data_type_of_t<decltype(l / opt_r)>, OptDataType>);
   static_assert(
-      is_same_type<sqlpp::data_type_of_t<decltype(opt_l / r)>, OptDataType>());
-  static_assert(is_same_type<sqlpp::data_type_of_t<decltype(opt_l / opt_r)>,
-                             OptDataType>());
+      std::is_same_v<sqlpp::data_type_of_t<decltype(opt_l / r)>, OptDataType>);
+  static_assert(std::is_same_v<sqlpp::data_type_of_t<decltype(opt_l / opt_r)>, OptDataType>);
 
   // Arithmetic expressions enable the `as` member function.
   static_assert(sqlpp::has_enabled_as<decltype(l / opt_r)>::value);
@@ -182,8 +178,7 @@ void test_divides(Left raw_l, Right raw_r, DataType) {
   // Arithmetic expressions have their arguments as nodes
   using L = typename std::decay<decltype(l)>::type;
   using R = typename std::decay<decltype(opt_r)>::type;
-  static_assert(std::is_same<sqlpp::nodes_of_t<decltype(l / opt_r)>,
-                             sqlpp::detail::type_vector<L, R>>::value);
+  static_assert(std::is_same<sqlpp::nodes_of_t<decltype(l / opt_r)>, sqlpp::detail::type_vector<L, R>>::value);
 }
 
 template <typename Left, typename Right, typename DataType>
@@ -197,13 +192,12 @@ void test_modulus(Left raw_l, Right raw_r, DataType) {
   auto opt_r = sqlpp::value(std::optional{raw_r});
 
   static_assert(
-      is_same_type<sqlpp::data_type_of_t<decltype(l % r)>, DataType>());
+      std::is_same_v<sqlpp::data_type_of_t<decltype(l % r)>, DataType>);
   static_assert(
-      is_same_type<sqlpp::data_type_of_t<decltype(l % opt_r)>, OptDataType>());
+      std::is_same_v<sqlpp::data_type_of_t<decltype(l % opt_r)>, OptDataType>);
   static_assert(
-      is_same_type<sqlpp::data_type_of_t<decltype(opt_l % r)>, OptDataType>());
-  static_assert(is_same_type<sqlpp::data_type_of_t<decltype(opt_l % opt_r)>,
-                             OptDataType>());
+      std::is_same_v<sqlpp::data_type_of_t<decltype(opt_l % r)>, OptDataType>);
+  static_assert(std::is_same_v<sqlpp::data_type_of_t<decltype(opt_l % opt_r)>, OptDataType>);
 
   // Arithmetic expressions enable the `as` member function.
   static_assert(sqlpp::has_enabled_as<decltype(l % opt_r)>::value);
@@ -214,8 +208,7 @@ void test_modulus(Left raw_l, Right raw_r, DataType) {
   // Arithmetic expressions have their arguments as nodes
   using L = typename std::decay<decltype(l)>::type;
   using R = typename std::decay<decltype(opt_r)>::type;
-  static_assert(std::is_same<sqlpp::nodes_of_t<decltype(l % opt_r)>,
-                             sqlpp::detail::type_vector<L, R>>::value);
+  static_assert(std::is_same<sqlpp::nodes_of_t<decltype(l % opt_r)>, sqlpp::detail::type_vector<L, R>>::value);
 }
 
 template <typename Value>
@@ -228,20 +221,17 @@ void test_concatenation_expressions(Value v) {
 
   // Concatenating non-optional values
   static_assert(
-      is_same_type<sqlpp::data_type_of_t<decltype(value + value)>, DataType>());
+      std::is_same_v<sqlpp::data_type_of_t<decltype(value + value)>, DataType>);
 
   // Concatenating non-optional with optional values
-  static_assert(is_same_type<sqlpp::data_type_of_t<decltype(value + opt_value)>,
-                             OptDataType>());
+  static_assert(std::is_same_v<sqlpp::data_type_of_t<decltype(value + opt_value)>, OptDataType>);
 
   // Concatenating optional with non-optional values
-  static_assert(is_same_type<sqlpp::data_type_of_t<decltype(opt_value + value)>,
-                             OptDataType>());
+  static_assert(std::is_same_v<sqlpp::data_type_of_t<decltype(opt_value + value)>, OptDataType>);
 
   // Concatenating optional with optional values
   static_assert(
-      is_same_type<sqlpp::data_type_of_t<decltype(opt_value + opt_value)>,
-                   OptDataType>());
+      std::is_same_v<sqlpp::data_type_of_t<decltype(opt_value + opt_value)>, OptDataType>);
 
   // Modulus expressions enable the `as` member function.
   static_assert(sqlpp::has_enabled_as<decltype(value + opt_value)>::value);
@@ -253,8 +243,7 @@ void test_concatenation_expressions(Value v) {
   // Modulus expressions have their arguments as nodes
   using L = typename std::decay<decltype(value)>::type;
   using R = typename std::decay<decltype(opt_value)>::type;
-  static_assert(std::is_same<sqlpp::nodes_of_t<decltype(value + opt_value)>,
-                             sqlpp::detail::type_vector<L, R>>::value);
+  static_assert(std::is_same<sqlpp::nodes_of_t<decltype(value + opt_value)>, sqlpp::detail::type_vector<L, R>>::value);
 }
 
 int main() {
@@ -264,104 +253,108 @@ int main() {
   auto bo = bool{1};
 
   // plus
-  test_plus(fp, fp, double{});
-  test_plus(fp, in, sqlpp::floating_point{});
-  test_plus(fp, ui, sqlpp::floating_point{});
-  test_plus(fp, bo, sqlpp::floating_point{});
+  test_plus(fp, fp, float{});
+  test_plus(fp, in, float{});
+  test_plus(fp, ui, float{});
+  test_plus(fp, bo, float{});
 
-  test_plus(in, fp, sqlpp::floating_point{});
-  test_plus(in, in, sqlpp::integral{});
-  test_plus(in, ui, sqlpp::integral{});
-  test_plus(in, bo, sqlpp::integral{});
+  test_plus(in, fp, float{});
+  test_plus(in, in, int{});
+  test_plus(in, ui, unsigned{});
+  test_plus(in, bo, int{});
 
-  test_plus(ui, fp, sqlpp::floating_point{});
-  test_plus(ui, in, sqlpp::integral{});
-  test_plus(ui, ui, sqlpp::unsigned_integral{});
-  test_plus(ui, bo, sqlpp::unsigned_integral{});
+  test_plus(ui, fp, float{});
+  test_plus(ui, in, unsigned{});
+  test_plus(ui, ui, unsigned{});
+  test_plus(ui, bo, unsigned{});
 
-  test_plus(bo, fp, sqlpp::floating_point{});
-  test_plus(bo, in, sqlpp::integral{});
-  test_plus(bo, ui, sqlpp::unsigned_integral{});
-  test_plus(bo, bo, sqlpp::unsigned_integral{});
+  test_plus(bo, fp, float{});
+  test_plus(bo, in, int{});
+  test_plus(bo, ui, unsigned{});
+  test_plus(bo, bo, int{});
 
   // minus
-  test_minus(fp, fp, sqlpp::floating_point{});
-  test_minus(fp, in, sqlpp::floating_point{});
-  test_minus(fp, ui, sqlpp::floating_point{});
-  test_minus(fp, bo, sqlpp::floating_point{});
+  test_minus(fp, fp, float{});
+  test_minus(fp, in, float{});
+  test_minus(fp, ui, float{});
+  test_minus(fp, bo, float{});
 
-  test_minus(in, fp, sqlpp::floating_point{});
-  test_minus(in, in, sqlpp::integral{});
-  test_minus(in, ui, sqlpp::integral{});
-  test_minus(in, bo, sqlpp::integral{});
+  test_minus(in, fp, float{});
+  test_minus(in, in, int{});
+  test_minus(in, ui, unsigned{});
+  test_minus(in, bo, int{});
 
-  test_minus(ui, fp, sqlpp::floating_point{});
-  test_minus(ui, in, sqlpp::integral{});
-  test_minus(ui, ui, sqlpp::integral{});
-  test_minus(ui, bo, sqlpp::integral{});
+  test_minus(ui, fp, float{});
+  test_minus(ui, in, unsigned{});
+  test_minus(ui, ui, unsigned{});
+  test_minus(ui, bo, unsigned{});
 
-  test_minus(bo, fp, sqlpp::floating_point{});
-  test_minus(bo, in, sqlpp::integral{});
-  test_minus(bo, ui, sqlpp::integral{});
-  test_minus(bo, bo, sqlpp::integral{});
+  test_minus(bo, fp, float{});
+  test_minus(bo, in, int{});
+  test_minus(bo, ui, unsigned{});
+  test_minus(bo, bo, int{});
 
   // multiplies
-  test_multiplies(fp, fp, sqlpp::floating_point{});
-  test_multiplies(fp, in, sqlpp::floating_point{});
-  test_multiplies(fp, ui, sqlpp::floating_point{});
-  test_multiplies(fp, bo, sqlpp::floating_point{});
+  test_multiplies(fp, fp, float{});
+  test_multiplies(fp, in, float{});
+  test_multiplies(fp, ui, float{});
+  test_multiplies(fp, bo, float{});
 
-  test_multiplies(in, fp, sqlpp::floating_point{});
-  test_multiplies(in, in, sqlpp::integral{});
-  test_multiplies(in, ui, sqlpp::integral{});
-  test_multiplies(in, bo, sqlpp::integral{});
+  test_multiplies(in, fp, float{});
+  test_multiplies(in, in, int{});
+  test_multiplies(in, ui, unsigned{});
+  test_multiplies(in, bo, int{});
 
-  test_multiplies(ui, fp, sqlpp::floating_point{});
-  test_multiplies(ui, in, sqlpp::integral{});
-  test_multiplies(ui, ui, sqlpp::unsigned_integral{});
-  test_multiplies(ui, bo, sqlpp::unsigned_integral{});
+  test_multiplies(ui, fp, float{});
+  test_multiplies(ui, in, unsigned{});
+  test_multiplies(ui, ui, unsigned{});
+  test_multiplies(ui, bo, unsigned{});
 
-  test_multiplies(bo, fp, sqlpp::floating_point{});
-  test_multiplies(bo, in, sqlpp::integral{});
-  test_multiplies(bo, ui, sqlpp::unsigned_integral{});
-  test_multiplies(bo, bo, sqlpp::boolean{});
+  test_multiplies(bo, fp, float{});
+  test_multiplies(bo, in, int{});
+  test_multiplies(bo, ui, unsigned{});
+  test_multiplies(bo, bo, int{});
 
   // divides
-  test_divides(fp, fp, sqlpp::floating_point{});
-  test_divides(fp, in, sqlpp::floating_point{});
-  test_divides(fp, ui, sqlpp::floating_point{});
-  test_divides(fp, bo, sqlpp::floating_point{});
+  test_divides(fp, double{}, double{});
+  test_divides(fp, fp, float{});
+  test_divides(fp, in, float{});
+  test_divides(fp, ui, float{});
+  test_divides(fp, bo, float{});
 
-  test_divides(in, fp, sqlpp::floating_point{});
-  test_divides(in, in, sqlpp::floating_point{});
-  test_divides(in, ui, sqlpp::floating_point{});
-  test_divides(in, bo, sqlpp::floating_point{});
+  test_divides(in, fp, float{});
+  test_divides(in, in, int{});
+  test_divides(in, ui, unsigned{});
+  test_divides(int64_t{}, ui, int64_t{});
+  test_divides(in, bo, int{});
 
-  test_divides(ui, fp, sqlpp::floating_point{});
-  test_divides(ui, in, sqlpp::floating_point{});
-  test_divides(ui, ui, sqlpp::floating_point{});
-  test_divides(ui, bo, sqlpp::floating_point{});
+  test_divides(ui, fp, float{});
+  test_divides(ui, in, unsigned{});
+  test_divides(ui, ui, unsigned{});
+  test_divides(ui, bo, unsigned{});
 
-  test_divides(bo, fp, sqlpp::floating_point{});
-  test_divides(bo, in, sqlpp::floating_point{});
-  test_divides(bo, ui, sqlpp::floating_point{});
-  test_divides(bo, bo, sqlpp::floating_point{});
+  test_divides(bo, fp, float{});
+  test_divides(bo, in, int{});
+  test_divides(bo, ui, unsigned{});
+  test_divides(bo, bo, int{});
+
+  // TODO: Need to test with NULL
 
   // negate
-  test_negate(fp, sqlpp::floating_point{});
-  test_negate(in, sqlpp::integral{});
-  test_negate(ui, sqlpp::integral{});
-  test_negate(bo, sqlpp::integral{});
+  test_negate(fp, float{});
+  test_negate(in, int{});
+  test_negate(ui, unsigned{});
+  test_negate(bo, int{});
 
   // modulus
-  test_modulus(in, in, sqlpp::unsigned_integral{});
-  test_modulus(in, ui, sqlpp::unsigned_integral{});
+  test_modulus(in, in, int{});
+  test_modulus(in, ui, unsigned{});
 
-  test_modulus(ui, in, sqlpp::unsigned_integral{});
-  test_modulus(ui, ui, sqlpp::unsigned_integral{});
+  test_modulus(ui, in, unsigned{});
+  test_modulus(ui, int64_t{}, int64_t{});
+  test_modulus(ui, ui, unsigned{});
 
   // concatenation
-  test_concatenation_expressions('7');
   test_concatenation_expressions("seven");
   test_concatenation_expressions(std::string("seven"));
   test_concatenation_expressions(std::string_view("seven"));

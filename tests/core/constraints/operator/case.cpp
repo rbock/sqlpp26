@@ -66,7 +66,9 @@ int main() {
   static_assert(can_call_case_when_with<decltype(bar.bool_nn)>);
   static_assert(can_call_case_when_with<decltype(bar.bool_nn == true)>);
   static_assert(can_call_case_when_with<decltype(count(foo.id) > 0)>);
-  static_assert(can_call_case_when_with<decltype(std::nullopt)>);
+
+  // Cannot call case_when(std::nullopt)
+  static_assert(not can_call_case_when_with<decltype(std::nullopt)>);
 
   // Fail: Cannot call case_when with renamed boolean
   static_assert(
@@ -324,10 +326,12 @@ int main() {
     static_assert(can_call_then_with<CW2, decltype(bar.int_n)>);
     static_assert(can_call_then_with<CW2, decltype(bar.id)>);
 
+    // OK because uint is also considered int.
+    static_assert(can_call_else_with<CW, decltype(foo.u_int_n)>);
+    static_assert(can_call_then_with<CW2, decltype(foo.u_int_n)>);
+
     // Not OK
-    static_assert(not can_call_else_with<CW, decltype(foo.u_int_n)>);
     static_assert(not can_call_else_with<CW, decltype(foo.float_n)>);
-    static_assert(not can_call_then_with<CW2, decltype(foo.u_int_n)>);
     static_assert(not can_call_then_with<CW2, decltype(foo.float_n)>);
   }
   {

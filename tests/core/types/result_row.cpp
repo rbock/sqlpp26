@@ -66,14 +66,13 @@ void test_result_row(Value v) {
 
   for (const auto& row :
        db(select(v_not_null, v_maybe_null, v_opt_not_null, v_opt_maybe_null))) {
-    static_assert(std::is_same<decltype(row.r_not_null), ResultType>::value,
-                  "");
+    static_assert(std::is_same<decltype(row.r_not_null), ResultType>::value);
     static_assert(
-        std::is_same<decltype(row.r_maybe_null), OptResultType>::value, "");
+        std::is_same<decltype(row.r_maybe_null), OptResultType>::value);
     static_assert(
-        std::is_same<decltype(row.r_opt_not_null), OptResultType>::value, "");
+        std::is_same<decltype(row.r_opt_not_null), OptResultType>::value);
     static_assert(
-        std::is_same<decltype(row.r_opt_maybe_null), OptResultType>::value, "");
+        std::is_same<decltype(row.r_opt_maybe_null), OptResultType>::value);
   }
 }
 
@@ -81,14 +80,14 @@ void test_outer_join() {
   // cross join
   for (const auto& row : db(select(foo.id.as<"left">(), bar.id.as<"right">())
                                 .from(foo.cross_join(bar)))) {
-    static_assert(not sqlpp::is_optional<decltype(row.left)>::value, "");
-    static_assert(not sqlpp::is_optional<decltype(row.right)>::value, "");
+    static_assert(not sqlpp::is_optional<decltype(row.left)>::value);
+    static_assert(not sqlpp::is_optional<decltype(row.right)>::value);
   }
 
   // left outer join
   for (const auto& row : db(select(foo.id.as<"left">(), bar.id.as<"right">())
                                 .from(foo.left_outer_join(bar).on(true)))) {
-    static_assert(not sqlpp::is_optional<decltype(row.left)>::value, "");
+    static_assert(not sqlpp::is_optional<decltype(row.left)>::value);
     static_assert(sqlpp::is_optional<decltype(row.right)>::value,
                   "in a left outer join, the right hand side can be null");
   }
@@ -98,7 +97,7 @@ void test_outer_join() {
                                 .from(foo.right_outer_join(bar).on(true)))) {
     static_assert(sqlpp::is_optional<decltype(row.left)>::value,
                   "in a right outer join, the left hand side can be null");
-    static_assert(not sqlpp::is_optional<decltype(row.right)>::value, "");
+    static_assert(not sqlpp::is_optional<decltype(row.right)>::value);
   }
 
   // full outer join
@@ -134,7 +133,6 @@ int main() {
   test_result_row<double>(double{7.7});
 
   // text
-  test_result_row<std::string_view>('7');
   test_result_row<std::string_view>("seven");
   test_result_row<std::string_view>(std::string("seven"));
   test_result_row<std::string_view>(std::string_view("seven"));

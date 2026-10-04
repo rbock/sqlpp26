@@ -183,8 +183,8 @@ int main() {
   // floating point
   test_case_expression(7.7f);
   test_case_expression(double{7.7});
+
   // text
-  test_case_expression('7');
   test_case_expression("seven");
   test_case_expression(std::string("seven"));
   test_case_expression(std::string_view("seven"));

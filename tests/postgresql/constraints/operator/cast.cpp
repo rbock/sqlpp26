@@ -44,9 +44,9 @@ int main() {
     auto cu = cast(true, sqlpp::as<sqlpp::unsigned_integral>());
     auto cf = cast(true, sqlpp::as<sqlpp::floating_point>());
 
-    expect_compatibility_fails<CTX, decltype(ci), "Postgresql: No support for casting bool to numeric">();
-    expect_compatibility_fails<CTX, decltype(cu), "Postgresql: No support for casting bool to numeric">();
-    expect_compatibility_fails<CTX, decltype(cf), "Postgresql: No support for casting bool to numeric">();
+    expect_compatibility_fails<CTX, decltype(ci), "Postgresql: No support for casting bool to arithmetic type">();
+    expect_compatibility_fails<CTX, decltype(cu), "Postgresql: No support for casting bool to arithmetic type">();
+    expect_compatibility_fails<CTX, decltype(cf), "Postgresql: No support for casting bool to arithmetic type">();
   }
 
   // Postgresql cannot cast to unsigned (generally no support for unsigned).

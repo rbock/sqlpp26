@@ -64,14 +64,14 @@ inline auto quoted_name_to_sql_string(mysql::context_t&,
 }
 
 template <typename T>
-  requires(is_integral_v<T>)
+  requires(is_integral_v<T> and not is_unsigned_integral_v<T>)
 auto data_type_to_sql_string(mysql::context_t&)
     -> std::string {
   return "SIGNED INTEGER";
 }
 
 template <typename T>
-  requires(is_unsigned_integral_v<T>)
+  requires(is_unsigned_integral_v<T> and not is_boolean_v<T>)
 auto data_type_to_sql_string(mysql::context_t&)
     -> std::string {
   return "UNSIGNED INTEGER";

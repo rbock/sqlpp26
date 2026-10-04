@@ -52,11 +52,11 @@ void test_get_last_if() {
       std::is_same<
           sqlpp::detail::get_last_if_t<sqlpp::is_integral, sqlpp::noop, int,
                                        float, int64_t, short, size_t>,
-          short>::value,
+          size_t>::value,
       "");
   static_assert(
       std::is_same<
-          sqlpp::detail::get_last_if_t<sqlpp::is_numeric, sqlpp::noop, int,
+          sqlpp::detail::get_last_if_t<sqlpp::is_arithmetic, sqlpp::noop, int,
                                        float, int64_t, short, size_t>,
           size_t>::value,
       "");

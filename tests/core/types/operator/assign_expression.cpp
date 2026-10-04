@@ -103,7 +103,6 @@ int main() {
   test_assign_expression(foo.float_n, 7.7f);
 
   // text
-  test_assign_expression(bar.text_n, '7');
   test_assign_expression(bar.text_n, "seven");
   test_assign_expression(bar.text_n, std::string("seven"));
   test_assign_expression(bar.text_n, std::string_view("seven"));

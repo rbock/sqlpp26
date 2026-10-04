@@ -96,8 +96,8 @@ template <typename L, typename R>
 struct values_are_comparable
     : public std::integral_constant<bool,
                                     values_are_optionally_same<L, R>::value or
-                                        (is_numeric<L>::value and
-                                         is_numeric<R>::value) or
+                                        (is_arithmetic_v<L> and
+                                         is_arithmetic_v<R>) or
                                         (is_date_or_timestamp<L>::value and
                                          is_date_or_timestamp<R>::value)> {};
 
@@ -107,11 +107,12 @@ struct values_are_assignable
           bool,
           (is_blob<L>::value and is_blob<R>::value) or
               (is_boolean<L>::value and is_boolean<R>::value) or
-              (is_numeric<L>::value and is_numeric<R>::value) or
+              (is_arithmetic_v<L> and is_arithmetic_v<R>) or
               (is_text<L>::value and is_text<R>::value) or
               (is_date<L>::value and is_date<R>::value) or
               (is_timestamp<L>::value and is_timestamp<R>::value) or
-              (is_time_of_day<L>::value and is_time_of_day<R>::value)> {};
+              (is_time_of_day<L>::value and is_time_of_day<R>::value) or
+      (is_optional_v<data_type_of_t<L>> and std::is_same_v<R, std::nullopt_t>)> {};
 
 // TODO Move into type_traits/data_type
 template <typename T>
@@ -138,13 +139,13 @@ struct result_data_type_of<T> {
 };
 
 template <typename T>
-  requires(is_integral_v<T>)
+  requires(is_integral_v<T> and not is_unsigned_integral_v<T> and not is_boolean_v<T>)
 struct result_data_type_of<T> {
   using type = int64_t;
 };
 
 template <typename T>
-  requires(is_unsigned_integral_v<T>)
+  requires(is_unsigned_integral_v<T> and not is_boolean_v<T>)
 struct result_data_type_of<T> {
   using type = uint64_t;
 };
@@ -191,39 +192,57 @@ struct parameter_data_type<std::optional<T>> {
 
 template <typename T>using parameter_data_type_t = typename parameter_data_type<T>::type;
 
-template <typename T>requires(is_blob_v<T>)struct parameter_data_type<T> {
+template <typename T>
+  requires(is_blob_v<T>)
+struct parameter_data_type<T> {
   using type = std::vector<uint8_t>;
 };
 
-template <typename T>requires(is_boolean_v<T>)struct parameter_data_type<T> {
+template <typename T>
+  requires(is_boolean_v<T>)
+struct parameter_data_type<T> {
   using type = bool;
 };
 
-template <typename T>requires(is_integral_v<T>)struct parameter_data_type<T> {
+template <typename T>
+  requires(is_integral_v<T> and not is_unsigned_integral_v<T> and not is_boolean_v<T>)
+struct parameter_data_type<T> {
   using type = int64_t;
 };
 
-template <typename T>requires(is_unsigned_integral_v<T>)struct parameter_data_type<T> {
+template <typename T>
+  requires(is_unsigned_integral_v<T> and not is_boolean_v<T>)
+struct parameter_data_type<T> {
   using type = uint64_t;
 };
 
-template <typename T>requires(is_floating_point_v<T>)struct parameter_data_type<T> {
+template <typename T>
+  requires(is_floating_point_v<T>)
+struct parameter_data_type<T> {
   using type = double;
 };
 
-template <typename T>requires(is_text_v<T>)struct parameter_data_type<T> {
+template <typename T>
+  requires(is_text_v<T>)
+struct parameter_data_type<T> {
   using type = std::string;
 };
 
-template <typename T>requires(is_date_v<T>)struct parameter_data_type<T> {
+template <typename T>
+  requires(is_date_v<T>)
+struct parameter_data_type<T> {
   using type =
       std::chrono::time_point<std::chrono::system_clock, std::chrono::days>;
 };
-template <typename T>requires(is_time_of_day_v<T>)struct parameter_data_type<T> {
+template <typename T>
+  requires(is_time_of_day_v<T>)
+struct parameter_data_type<T> {
   using type = std::chrono::microseconds;
 };
 
-template <typename T>requires(is_timestamp_v<T>)struct parameter_data_type<T> {
+template <typename T>
+  requires(is_timestamp_v<T>)
+struct parameter_data_type<T> {
   using type = std::chrono::time_point<std::chrono::system_clock,
                                        std::chrono::microseconds>;
 };

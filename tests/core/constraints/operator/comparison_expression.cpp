@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024, Roland Bock
+ * Copyright (c) 2026, Roland Bock
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -26,23 +26,32 @@
 
 #include <sqlpp26/tests/core/all.h>
 
-template <typename T>
-void test_boolean() {
-  static_assert(std::is_same<sqlpp::data_type_of_t<T>, sqlpp::boolean>::value,
-                "");
-  static_assert(sqlpp::is_boolean<T>::value);
-  static_assert(sqlpp::is_arithmetic<T>::value);
-  static_assert(sqlpp::is_integral<T>::value);
-  static_assert(sqlpp::is_unsigned_integral<T>::value);
-
-  static_assert(not sqlpp::is_floating_point<T>::value);
-  static_assert(not sqlpp::is_text<T>::value);
-  static_assert(not sqlpp::is_blob<T>::value);
-  static_assert(not sqlpp::is_timestamp<T>::value);
-  static_assert(not sqlpp::is_date<T>::value);
-  static_assert(not sqlpp::is_time_of_day<T>::value);
-}
+namespace {
+// Returns true if `declval<Lhs> == declval<Rhs>()` is a valid function
+// call.
+template <typename Lhs, typename Rhs>
+concept can_call_equal_with = requires(Lhs lhs, Rhs rhs) {
+  lhs == rhs;
+};
+}  // namespace
 
 int main() {
-  test_boolean<bool>();
+  const auto bar = test::tab_bar{};
+
+  // OK
+  bar.int_n == 7;
+  bar.int_n.is_distinct_from(7);
+  bar.int_n.is_distinct_from(std::nullopt);
+  bar.bool_nn.is_distinct_from(std::nullopt);
+  static_assert(can_call_equal_with<decltype(bar.int_n), decltype(7)>);
+  static_assert(can_call_equal_with<decltype(bar.int_n), decltype(std::optional<int>{7})>);
+
+  // Cannot compare directly with std::nullopt.
+  static_assert(not can_call_equal_with<decltype(bar.int_n), std::nullopt_t>);
+
+  // If you really want to do this (you should use .is_null() instead), you can:
+  static_assert(can_call_equal_with<decltype(bar.int_n), decltype(std::optional<int>{})>);
+
+  // Cannot compare with default value.
+  static_assert(not can_call_equal_with<decltype(bar.int_n), decltype(sqlpp::default_value)>);
 }

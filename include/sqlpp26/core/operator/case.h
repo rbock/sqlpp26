@@ -202,8 +202,8 @@ class case_builder_t {
   template <typename Else>
     requires(
         has_data_type<Else>::value and
-        (std::is_same_v<remove_optional_t<RepresentativeExpression>,
-                        no_value_t> or
+        (std::is_same_v<RepresentativeExpression, no_value_t> or
+         std::is_same_v<RepresentativeExpression, std::nullopt_t> or
          values_are_optionally_same<RepresentativeExpression, Else>::value))
   auto else_(Else else_expr) -> case_t<
       detail::representative_expression_t<RepresentativeExpression, Else>,
@@ -246,6 +246,7 @@ class case_pending_then_t {
     requires(
         has_data_type<Then>::value and
         (std::is_same_v<RepresentativeExpression, no_value_t> or
+         std::is_same_v<RepresentativeExpression, std::nullopt_t> or
          values_are_optionally_same<RepresentativeExpression, Then>::value))
   auto then(Then result) {
     auto new_pair = when_then_pair_t<When, Then>{_condition, std::move(result)};

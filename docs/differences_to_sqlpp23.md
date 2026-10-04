@@ -15,6 +15,11 @@ Reflection:
   - type_vector
   - result_set definition
 
+expressions closer to c++, e.g. int + uint -> uint
+char is considered arithmetic, not text
+
+nullopt is not compatible with all data types. e.g. concat(std::nullopt) is illegal now. foo.id == std::nullopt is not OK.
+
 constexpr:
   - flat_set -> type_set
   - exception (instead of wrapped static assert)

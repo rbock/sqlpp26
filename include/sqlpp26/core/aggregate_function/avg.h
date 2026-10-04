@@ -71,14 +71,14 @@ auto to_sql_string(Context& context, const avg_t<Flag, Expr>& t)
 }
 
 template <typename T>
-  requires((is_numeric<T>::value or is_boolean<T>::value) and
+  requires(is_arithmetic_v<T> and
            not contains_aggregate_function<T>::value)
 auto avg(T t) -> avg_t<no_flag_t, T> {
   return {std::move(t)};
 }
 
 template <typename T>
-  requires((is_numeric<T>::value or is_boolean<T>::value) and
+  requires(is_arithmetic_v<T> and
            not contains_aggregate_function<T>::value)
 auto avg(const distinct_t& /*unused*/, T t) -> avg_t<distinct_t, T> {
   return {std::move(t)};

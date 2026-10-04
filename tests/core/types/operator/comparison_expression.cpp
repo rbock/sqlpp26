@@ -176,7 +176,6 @@ int main() {
   test_comparison_expression(double{7.7});
 
   // text
-  test_comparison_expression('7');
   test_comparison_expression("seven");
   test_comparison_expression(std::string("seven"));
   test_comparison_expression(std::string_view("seven"));
@@ -197,7 +196,6 @@ int main() {
   test_comparison_expression(std::chrono::microseconds{});
 
   // text
-  test_like('7');
   test_like("seven");
   test_like(std::string("seven"));
   test_like(std::string_view("seven"));

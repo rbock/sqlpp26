@@ -71,12 +71,13 @@ int main() {
   static_assert(not can_call_concat_with<decltype(all_of(bar)),
                                          decltype(bar.bool_nn)>::value,
                 "Not a text argument");
+  static_assert(not can_call_concat_with<decltype(std::nullopt)>::value,
+                "Not a text argument");
 
   // concat(<one or more text arguments>) is OK
-  static_assert(can_call_concat_with<decltype("a")>::value, "");
-  static_assert(can_call_concat_with<decltype("a"), decltype("b")>::value, "");
-  static_assert(can_call_concat_with<decltype(std::nullopt)>::value, "");
-  static_assert(can_call_concat_with<decltype(foo.text_nn_d)>::value, "");
+  static_assert(can_call_concat_with<decltype("a")>::value);
+  static_assert(can_call_concat_with<decltype("a"), decltype("b")>::value);
+  static_assert(can_call_concat_with<decltype(foo.text_nn_d)>::value);
   static_assert(
-      can_call_concat_with<decltype(dynamic(maybe, foo.text_nn_d))>::value, "");
+      can_call_concat_with<decltype(dynamic(maybe, foo.text_nn_d))>::value);
 }

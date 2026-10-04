@@ -271,13 +271,13 @@ auto data_type_to_sql_string(Context&) -> std::string {
 }
 
 template <typename T, typename Context>
-  requires(is_integral_v<T>)
+  requires(is_integral_v<T> and not is_unsigned_integral_v<T>)
 auto data_type_to_sql_string(Context&) -> std::string {
   return "BIGINT";
 }
 
 template <typename T, typename Context>
-  requires(is_unsigned_integral_v<T>)
+  requires(is_unsigned_integral_v<T> and not is_boolean_v<T>)
 auto data_type_to_sql_string(Context&) -> std::string {
   return "BIGINT UNSIGNED";
 }

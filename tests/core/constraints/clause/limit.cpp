@@ -53,6 +53,7 @@ int main() {
   // OK
   static_assert(can_call_limit_with<decltype(7u)>, "");
   static_assert(can_call_limit_with<decltype(7)>, "");
+  static_assert(can_call_limit_with<decltype('c')>, "");
   static_assert(can_call_limit_with<decltype(sqlpp::dynamic(maybe, 7u))>, "");
   static_assert(can_call_limit_with<decltype(sqlpp::dynamic(maybe, 7))>, "");
 
@@ -70,7 +71,6 @@ int main() {
 
   // Try some other types as expressions
   static_assert(cannot_call_limit_with<decltype("true")>, "");
-  static_assert(cannot_call_limit_with<decltype('c')>, "");
   static_assert(cannot_call_limit_with<decltype(nullptr)>, "");
 
   // `limit` isn't required

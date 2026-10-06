@@ -27,6 +27,9 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include <tuple>
+#include <expected>
+
 #include <sqlpp26/core/basic/column_fwd.h>
 #include <sqlpp26/core/clause/cte.h>
 #include <sqlpp26/core/logic.h>
@@ -68,9 +71,10 @@ struct is_clause<with_t<Ctes...>> : public std::true_type {};
 
 template <typename Statement, typename... Ctes>
 struct basic_consistency_check<Statement, with_t<Ctes...>> {
-  static constexpr void verify() {
+  [[nodiscard]] static constexpr auto verify() -> std::expected<void, std::string_view> {
   // TODO: Need real checks here
   // e.g. would it be allowed for any CTE to depend on an external table?
+    return {};
   }
 };
 
@@ -166,8 +170,7 @@ auto to_sql_string(Context&, const no_with_t&) -> std::string {
 
 template <typename Statement>
 struct basic_consistency_check<Statement, no_with_t> {
-  static constexpr void verify() {
-  }
+  [[nodiscard]] static constexpr auto verify() -> std::expected<void, std::string_view> { return {}; }
 };
 
 

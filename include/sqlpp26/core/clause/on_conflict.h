@@ -27,6 +27,9 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include <tuple>
+#include <expected>
+
 #include <sqlpp26/core/concepts.h>
 #include <sqlpp26/core/query/statement.h>
 #include <sqlpp26/core/clause/on_conflict_do_nothing.h>
@@ -91,11 +94,11 @@ struct nodes_of<on_conflict_t<Columns...>> {
 
 template <typename Statement, typename... Columns>
 struct basic_consistency_check<Statement, on_conflict_t<Columns...>> {
-  static constexpr void verify() {
+  [[nodiscard]] static constexpr auto verify() -> std::expected<void, std::string_view> {
     using Clause = on_conflict_t<Columns...>;
     check_static_table_consistency<Clause, "on_conflict">(type_v<Statement>{});
     check_table_consistency<Clause, "on_conflict">(type_v<Statement>{});
-    throw std::domain_error("either do_nothing() or do_update(...) is required with on_conflict");
+    return std::unexpected{std::string_view{"either do_nothing() or do_update(...) is required with on_conflict"}};
   }
 };
 
@@ -115,7 +118,7 @@ auto to_sql_string(Context&, const no_on_conflict_t&) -> std::string {
 
 template <typename Statement>
 struct basic_consistency_check<Statement, no_on_conflict_t> {
-  static constexpr void verify() {}
+  [[nodiscard]] static constexpr auto verify() -> std::expected<void, std::string_view> { return {}; }
 };
 
 template <typename Expression>

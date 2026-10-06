@@ -27,6 +27,9 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include <tuple>
+#include <expected>
+
 #include <sqlpp26/core/clause/where.h>
 #include <sqlpp26/core/concepts.h>
 #include <sqlpp26/core/detail/type_set.h>
@@ -81,10 +84,13 @@ template <typename Statement, typename OnConflictUpdate, typename Expression>
 struct basic_consistency_check<
     Statement,
     on_conflict_do_update_where_t<OnConflictUpdate, Expression>> {
-  static consteval void verify() {
+  [[nodiscard]] static constexpr auto verify() -> std::expected<void, std::string_view> {
     using Clause = on_conflict_do_update_where_t<OnConflictUpdate, Expression>;
-    check_static_table_consistency<Clause, "on_conflict.do_update.where">(type_v<Statement>{});
-    check_table_consistency<Clause, "on_conflict.do_update.where">(type_v<Statement>{});
+    auto check = check_static_table_consistency<Clause, "on_conflict.do_update.where">(type_v<Statement>{});
+    if (check) {
+      check = check_table_consistency<Clause, "on_conflict.do_update.where">(type_v<Statement>{});
+    }
+    return check;
   }
 };
 
@@ -141,10 +147,13 @@ template <typename Statement, typename OnConflict, typename... Assignments>
 struct basic_consistency_check<
     Statement,
     on_conflict_do_update_t<OnConflict, Assignments...>> {
-  static consteval void verify() {
+  [[nodiscard]] static constexpr auto verify() -> std::expected<void, std::string_view> {
     using Clause = on_conflict_do_update_t<OnConflict, Assignments...>;
-    check_static_table_consistency<Clause, "on_conflict.do_update">(type_v<Statement>{});
-    check_table_consistency<Clause, "on_conflict.do_update">(type_v<Statement>{});
+    auto check = check_static_table_consistency<Clause, "on_conflict.do_update">(type_v<Statement>{});
+    if (check) {
+      check = check_table_consistency<Clause, "on_conflict.do_update">(type_v<Statement>{});
+    }
+    return check;
   }
 };
 

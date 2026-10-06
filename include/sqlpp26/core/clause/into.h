@@ -27,6 +27,8 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include <expected>
+
 #include <sqlpp26/core/concepts.h>
 //#include <sqlpp26/core/database/prepared_insert.h>
 #include <sqlpp26/core/detail/type_set.h>
@@ -61,7 +63,7 @@ struct is_clause<into_t<Table>> : public std::true_type {};
 
 template <typename Statement, typename Table>
 struct basic_consistency_check<Statement, into_t<Table>> {
-  static constexpr void verify() {}
+  [[nodiscard]] static constexpr auto verify() -> std::expected<void, std::string_view> { return {}; }
 };
 
 template <typename Table>
@@ -95,8 +97,8 @@ auto to_sql_string(Context&, const no_into_t&) -> std::string {
 
 template <typename Statement>
 struct basic_consistency_check<Statement, no_into_t> {
-  static constexpr void verify() {
-    throw std::domain_error("into required for insert");
+  [[nodiscard]] static constexpr auto verify() -> std::expected<void, std::string_view> {
+    return std::unexpected{std::string_view{"into required for insert"}};
   }
 };
 

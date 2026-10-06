@@ -32,129 +32,51 @@ import sqlpp26.core;
 #include <sqlpp26/sqlpp26.h>
 #endif
 
-namespace detail {
-template <typename S, sqlpp::fixed_string Expected>
-consteval auto check_basic_consistency_message() -> std::string_view {
-  std::string_view expected = Expected;
-  try {
-    sqlpp::check_basic_consistency(sqlpp::type_v<std::decay_t<S>>{});
-    return std::define_static_string("missing expected exception");
-  } catch (const std::domain_error& e) {
-    if (e.what() != expected) {
-      return std::define_static_string(std::format(
-          "wrong exception message: '{}' != '{}'", expected, e.what()));
-    }
-    return {};
-  }
-}
-
-template <typename S>
-consteval auto check_no_basic_consistency_message() -> std::string_view {
-  try {
-    sqlpp::check_basic_consistency(sqlpp::type_v<std::decay_t<S>>{});
-    return {};
-  } catch (const std::domain_error& e) {
-      return std::define_static_string(std::format(
-          "unexpected exception: '{}'", e.what()));
-  }
-}
-}
-
 template <typename S, sqlpp::fixed_string Expected>
 consteval bool expect_basic_consistency_fails() {
-  constexpr auto message = detail::check_basic_consistency_message<S, Expected>();
-  static_assert(message.empty(), message);
+  std::string_view expected = Expected;
+  constexpr auto check = sqlpp::check_basic_consistency(sqlpp::type_v<std::decay_t<S>>{});
+  static_assert(not check, std::format("missing error: '{}'", expected));
+  static_assert(check.error() == expected, std::format("wrong error: '{}' != '{}'", expected, check.error()));
   return true;
 }
 
 template <typename S>
 consteval bool expect_basic_consistency_succeeds() {
-  constexpr auto message = detail::check_no_basic_consistency_message<S>();
-  static_assert(message.empty(), message);
+  constexpr auto check = sqlpp::check_basic_consistency(sqlpp::type_v<std::decay_t<S>>{});
+  static_assert(check, std::format("unexpected error: '{}'", check.error()));
   return true;
-}
-
-namespace detail {
-template <typename S, sqlpp::fixed_string Expected>
-consteval auto check_prepare_consistency_message() -> std::string_view {
-  std::string_view expected = Expected;
-  try {
-    sqlpp::check_prepare_consistency(sqlpp::type_v<std::decay_t<S>>{});
-    return std::define_static_string("missing expected exception");
-  } catch (const std::domain_error& e) {
-    if (e.what() != expected) {
-      return std::define_static_string(std::format(
-          "wrong exception message: '{}' != '{}'", expected, e.what()));
-    }
-    return {};
-  }
-}
-
-template <typename S>
-consteval auto check_no_prepare_consistency_message() -> std::string_view {
-  try {
-    sqlpp::check_prepare_consistency(sqlpp::type_v<std::decay_t<S>>{});
-    return {};
-  } catch (const std::domain_error& e) {
-      return std::define_static_string(std::format(
-          "unexpected exception: '{}'", e.what()));
-  }
-}
 }
 
 template <typename S, sqlpp::fixed_string Expected>
 consteval bool expect_prepare_consistency_fails() {
-  constexpr auto message = detail::check_prepare_consistency_message<S, Expected>();
-  static_assert(message.empty(), message);
+  std::string_view expected = Expected;
+  constexpr auto check = sqlpp::check_prepare_consistency(sqlpp::type_v<std::decay_t<S>>{});
+  static_assert(not check, std::format("missing error: '{}'", expected));
+  static_assert(check.error() == expected, std::format("wrong error: '{}' != '{}'", expected, check.error()));
   return true;
 }
 
 template <typename S>
 consteval bool expect_prepare_consistency_succeeds() {
-  constexpr auto message = detail::check_no_prepare_consistency_message<S>();
-  static_assert(message.empty(), message);
+  constexpr auto check = sqlpp::check_prepare_consistency(sqlpp::type_v<std::decay_t<S>>{});
+  static_assert(check, std::format("unexpected error: '{}'", check.error()));
   return true;
-}
-
-namespace detail {
-template <typename S, sqlpp::fixed_string Expected>
-consteval auto check_run_consistency_message() -> std::string_view {
-  std::string_view expected = Expected;
-  try {
-    sqlpp::check_run_consistency(sqlpp::type_v<std::decay_t<S>>{});
-    return std::define_static_string("missing expected exception");
-  } catch (const std::domain_error& e) {
-    if (e.what() != expected) {
-      return std::define_static_string(std::format(
-          "wrong exception message: '{}' != '{}'", expected, e.what()));
-    }
-    return {};
-  }
-}
-
-template <typename S>
-consteval auto check_no_run_consistency_message() -> std::string_view {
-  try {
-    sqlpp::check_run_consistency(sqlpp::type_v<std::decay_t<S>>{});
-    return {};
-  } catch (const std::domain_error& e) {
-      return std::define_static_string(std::format(
-          "unexpected exception: '{}'", e.what()));
-  }
-}
 }
 
 template <typename S, sqlpp::fixed_string Expected>
 consteval bool expect_run_consistency_fails() {
-  constexpr auto message = detail::check_run_consistency_message<S, Expected>();
-  static_assert(message.empty(), message);
+  std::string_view expected = Expected;
+  constexpr auto check = sqlpp::check_run_consistency(sqlpp::type_v<std::decay_t<S>>{});
+  static_assert(not check, std::format("missing error: '{}'", expected));
+  static_assert(check.error() == expected, std::format("wrong error: '{}' != '{}'", expected, check.error()));
   return true;
 }
 
 template <typename S>
 consteval bool expect_run_consistency_succeeds() {
-  constexpr auto message = detail::check_no_run_consistency_message<S>();
-  static_assert(message.empty(), message);
+  constexpr auto check = sqlpp::check_run_consistency(sqlpp::type_v<std::decay_t<S>>{});
+  static_assert(check, std::format("unexpected error: '{}'", check.error()));
   return true;
 }
 

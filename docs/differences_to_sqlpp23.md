@@ -18,7 +18,7 @@ Reflection:
 expressions closer to c++, e.g. int + uint -> uint
 char is considered arithmetic, not text
 
-nullopt is not compatible with all data types. e.g. concat(std::nullopt) is illegal now. foo.id == std::nullopt is not OK.
+nullopt is not compatible with all data types. e.g. concat(std::nullopt) is incorrect now. foo.id == std::nullopt is also not OK.
 
 constexpr:
   - flat_set -> type_set

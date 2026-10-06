@@ -27,6 +27,8 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include <expected>
+
 #include <sqlpp26/core/clause/single_table.h>
 #include <sqlpp26/core/clause/update_set_list.h>
 #include <sqlpp26/core/clause/where.h>
@@ -74,8 +76,7 @@ struct result_methods_of<update_t> {
 
 template <typename Statement>
 struct basic_consistency_check<Statement, update_t> {
-  static constexpr void verify() {
-  }
+  [[nodiscard]] static constexpr auto verify() -> std::expected<void, std::string_view> { return {}; }
 };
 
 template <>

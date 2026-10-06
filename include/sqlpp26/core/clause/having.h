@@ -27,6 +27,8 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include <expected>
+
 #include <sqlpp26/core/basic/value.h>
 #include <sqlpp26/core/concepts.h>
 #include <sqlpp26/core/logic.h>
@@ -67,26 +69,28 @@ struct nodes_of<having_t<Expression>> {
 
 template <typename Statement, typename Expression>
 struct basic_consistency_check<Statement, having_t<Expression>> {
-  static constexpr void verify() {
+  [[nodiscard]] static constexpr auto verify() -> std::expected<void, std::string_view> {
     using Clause = having_t<Expression>;
     check_static_table_consistency<Clause, "having">(type_v<Statement>{});
     if constexpr (not is_aggregate_expression<Statement, Expression>()) {
-      throw std::domain_error(
-          "having expression not built out of aggregate expressions");
+      return std::unexpected{std::string_view{
+          "having expression not built out of aggregate expressions"}};
     }
     if constexpr (not static_part_is_aggregate_expression<Statement,
                                                           Expression>()) {
-      throw std::domain_error("at least one static having expression is provided "
-                          "dynamically only in group_by");
+      return std::unexpected{std::string_view{
+          "at least one static having expression is provided dynamically only "
+          "in group_by"}};
     }
+    return {};
   }
 };
 
 template <typename Statement, typename Expression>
 struct prepare_check<Statement, having_t<Expression>> {
-  static constexpr void verify() {
+  [[nodiscard]] static constexpr auto verify() -> std::expected<void, std::string_view> {
     using Clause = having_t<Expression>;
-    check_table_consistency<Clause, "having">(type_v<Statement>{});
+    return check_table_consistency<Clause, "having">(type_v<Statement>{});
   }
 };
 
@@ -106,7 +110,7 @@ auto to_sql_string(Context&, const no_having_t&) -> std::string {
 
 template <typename Statement>
 struct basic_consistency_check<Statement, no_having_t> {
-  static constexpr void verify() {}
+  [[nodiscard]] static constexpr auto verify() -> std::expected<void, std::string_view> { return {}; }
 };
 
 template <typename T>

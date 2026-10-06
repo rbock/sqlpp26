@@ -29,6 +29,8 @@
 
 #include <stdexcept>
 #include <tuple>
+#include <expected>
+
 
 #include <sqlpp26/core/basic/table.h>
 #include <sqlpp26/core/field_spec.h>
@@ -129,10 +131,9 @@ struct select_result_methods_t {
   constexpr auto as(this Statement&& self) -> select_as<std::decay_t<Statement>, Name> {
     // This ensures that the sub select is free of table/CTE dependencies and
     // consistent.
-    consteval {
-      // TODO Require compile fail test
-      check_prepare_consistency(type_v<std::decay_t<Statement>>{});
-    }
+    // TODO Require compile fail test
+    constexpr auto check = check_prepare_consistency(type_v<std::decay_t<Statement>>{});
+    static_assert(check, check.error());
 
     using table =
         select_as<std::decay_t<Statement>, Name>;
@@ -176,9 +177,10 @@ template <typename Statement, typename... Flags, typename... Columns>
 struct basic_consistency_check<
     Statement,
     select_column_list_t<std::tuple<Flags...>, std::tuple<Columns...>>> {
-  static constexpr void verify() {
+  [[nodiscard]] static constexpr auto verify() -> std::expected<void, std::string_view> {
     using Clause = select_column_list_t<std::tuple<Flags...>, std::tuple<Columns...>>;
-    check_static_table_consistency<Clause, "select-columns">(type_v<Statement>{});
+    auto check = check_static_table_consistency<Clause, "select-columns">(type_v<Statement>{});
+    if (not check) { return check; }
 
     // In case of no known aggregate columns either
     // - all columns are aggregates
@@ -189,23 +191,24 @@ struct basic_consistency_check<
               is_non_aggregate_expression<Statement, Columns>()...>::value and 
           not logic::all<is_aggregate_expression<Statement, Columns>()...>::value) {
         // TODO: Make error messages more useful
-        throw std::domain_error(
+        return std::unexpected{std::string_view{
             "without group_by, selected columns must not be a mix of aggregate "
-            "and non-aggregate expressions");
+            "and non-aggregate expressions"}};
       }
-      return;
+      return {};
     }
     // In case of known aggregates all selected columns have to be aggregates.
     if (not logic::all<is_aggregate_expression<Statement, Columns>()...>::value) {
-      throw std::domain_error(
-          "select (with group by) must select aggregates only");
+      return std::unexpected{std::string_view{
+          "select (with group by) must select aggregates only"}};
     }
     if (not logic::all<
             static_part_is_aggregate_expression<Statement, Columns>()...>::value) {
-      throw std::domain_error(
+      return std::unexpected{std::string_view{
           "select statically contains aggregates that are only dynamically "
-          "defined in group_by");
+          "defined in group_by"}};
     }
+    return {};
   }
 };
 
@@ -213,9 +216,9 @@ template <typename Statement, typename... Flags, typename... Columns>
 struct prepare_check<
     Statement,
     select_column_list_t<std::tuple<Flags...>, std::tuple<Columns...>>> {
-  static constexpr void verify() {
+  [[nodiscard]] static constexpr auto verify() -> std::expected<void, std::string_view> {
     using Clause = select_column_list_t<std::tuple<Flags...>, std::tuple<Columns...>>;
-    check_table_consistency<Clause, "select-columns">(type_v<Statement>{});
+    return check_table_consistency<Clause, "select-columns">(type_v<Statement>{});
   }
 };
 
@@ -266,8 +269,8 @@ auto to_sql_string(Context&, const no_select_column_list_t&) -> std::string {
 
 template <typename Statement>
 struct basic_consistency_check<Statement, no_select_column_list_t> {
-  static constexpr void verify() {
-    throw std::domain_error("selecting columns required");
+  [[nodiscard]] static constexpr auto verify() -> std::expected<void, std::string_view> {
+    return std::unexpected{std::string_view{"selecting columns required"}};
   }
 };
 

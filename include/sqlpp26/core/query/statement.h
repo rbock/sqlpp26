@@ -97,7 +97,7 @@ consteval auto get_known_static_aggregate_columns_of_statement(
 }
 
 template <typename Clause, fixed_string Name, typename... Clauses>
-consteval void check_cte_consistency(type_v<statement_t<Clauses...>>) {
+[[nodiscard]] constexpr auto check_cte_consistency(type_v<statement_t<Clauses...>>) -> std::expected<void, std::string_view> {
   using Statement = statement_t<Clauses...>;
   static constexpr auto required_ctes =
       std::define_static_array(get_required_ctes_of(type_v<Clause>{}));
@@ -106,16 +106,17 @@ consteval void check_cte_consistency(type_v<statement_t<Clauses...>>) {
     if (not std::ranges::contains(
             get_provided_ctes_of_statement(type_v<Statement>{}), info)) {
       using cte = typename[:info:];
-      throw std::domain_error(std::format(
+      return std::unexpected{std::define_static_string(std::format(
           "The {}-clause requires cte {} which is not known "
           "in the statement",
-          std::string_view{Name}, std::string_view{name_of_v<cte>}));
+          std::string_view{Name}, std::string_view{name_of_v<cte>}))};
     }
   }
+  return {};
 }
 
 template <typename Clause, fixed_string Name, typename... Clauses>
-consteval void check_static_cte_consistency(type_v<statement_t<Clauses...>>) {
+[[nodiscard]] constexpr auto check_static_cte_consistency(type_v<statement_t<Clauses...>>) -> std::expected<void, std::string_view> {
   using Statement = statement_t<Clauses...>;
   static constexpr auto required_static_ctes =
       std::define_static_array(get_required_static_ctes_of(type_v<Clause>{}));
@@ -126,16 +127,17 @@ consteval void check_static_cte_consistency(type_v<statement_t<Clauses...>>) {
         not std::ranges::contains(
             get_provided_static_ctes_of_statement(type_v<Statement>{}), info)) {
       using cte = typename[:info:];
-      throw std::domain_error(std::format(
+      return std::unexpected{std::define_static_string(std::format(
           "The {}-clause statically requires cte {} which is "
           "only known dynamically in the statement",
-          std::string_view{Name}, std::string_view{name_of_v<cte>}));
+          std::string_view{Name}, std::string_view{name_of_v<cte>}))};
     }
   }
+  return {};
 }
 
 template <typename Clause, fixed_string Name, typename... Clauses>
-consteval void check_table_consistency(type_v<statement_t<Clauses...>>) {
+[[nodiscard]] constexpr auto check_table_consistency(type_v<statement_t<Clauses...>>) -> std::expected<void, std::string_view> {
   using Statement = statement_t<Clauses...>;
   static constexpr auto required_tables =
       std::define_static_array(get_required_tables_of(type_v<Clause>{}));
@@ -144,16 +146,17 @@ consteval void check_table_consistency(type_v<statement_t<Clauses...>>) {
     if (not std::ranges::contains(
             get_provided_tables_of_statement(type_v<Statement>{}), info)) {
       using table = typename[:info:];
-      throw std::domain_error(std::format(
+      return std::unexpected{std::define_static_string(std::format(
           "The {}-clause requires table {} which is not known "
           "in the statement",
-          std::string_view{Name}, std::string_view{name_of_v<table>}));
+          std::string_view{Name}, std::string_view{name_of_v<table>}))};
     }
   }
+  return {};
 }
 
 template <typename Clause, fixed_string Name, typename... Clauses>
-consteval void check_static_table_consistency(type_v<statement_t<Clauses...>>) {
+[[nodiscard]] constexpr auto check_static_table_consistency(type_v<statement_t<Clauses...>>) -> std::expected<void, std::string_view> {
   using Statement = statement_t<Clauses...>;
   static constexpr auto required_static_tables =
       std::define_static_array(get_required_static_tables_of(type_v<Clause>{}));
@@ -165,18 +168,23 @@ consteval void check_static_table_consistency(type_v<statement_t<Clauses...>>) {
             get_provided_static_tables_of_statement(type_v<Statement>{}),
             info)) {
       using table = typename[:info:];
-      throw std::domain_error(std::format(
+      return std::unexpected{std::define_static_string(std::format(
           "The {}-clause statically requires table {} which is "
           "only known dynamically in the statement",
-          std::string_view{Name}, std::string_view{name_of_v<table>}));
+          std::string_view{Name}, std::string_view{name_of_v<table>}))};
     }
   }
+  return {};
 }
 
 template <typename... Clauses>
-consteval void check_basic_consistency(type_v<statement_t<Clauses...>>) {
+[[nodiscard]] constexpr auto check_basic_consistency(type_v<statement_t<Clauses...>>) -> std::expected<void, std::string_view> {
   using Statement = statement_t<Clauses...>;
-  (basic_consistency_check<Statement, Clauses>::verify(), ...);
+  auto check = std::expected<void, std::string_view>{};
+  ((check = basic_consistency_check<Statement, Clauses>::verify()) && ...);
+  if (not check) {
+    return check;
+  }
   std::flat_set<std::string_view> all_provided_tables;
   template for (constexpr auto index :
                 std::views::iota(size_t{}, sizeof...(Clauses))) {
@@ -186,31 +194,34 @@ consteval void check_basic_consistency(type_v<statement_t<Clauses...>>) {
       using Table = typename[:info:];
       const auto [_, unique] = all_provided_tables.insert(std::string_view{name_of_v<Table>});
       if (not unique) {
-        throw std::domain_error(
+        return std::unexpected{std::define_static_string(
             std::format("Table(s) of name {} provided twice in the statement",
-                        std::string_view{name_of_v<Table>}));
+                        std::string_view{name_of_v<Table>}))};
       }
     }
   }
+  return {};
 }
 
 template <typename... Clauses>
-consteval void check_prepare_consistency(type_v<statement_t<Clauses...>>) {
+[[nodiscard]] constexpr auto check_prepare_consistency(type_v<statement_t<Clauses...>>) -> std::expected<void, std::string_view> {
   using Statement = statement_t<Clauses...>;
-  check_basic_consistency(type_v<Statement>{});
-  (prepare_check<Statement, Clauses>::verify(), ...);
+  auto check = check_basic_consistency(type_v<Statement>{});
+  (check && ... && (check = prepare_check<Statement, Clauses>::verify()));
+  return check;
 }
 
 template <typename... Clauses>
-static consteval void check_run_consistency(type_v<statement_t<Clauses...>>) {
+[[nodiscard]] constexpr auto check_run_consistency(type_v<statement_t<Clauses...>>) -> std::expected<void, std::string_view> {
   using Statement = statement_t<Clauses...>;
   check_prepare_consistency(type_v<Statement>{});
   (run_check<Statement, Clauses>::verify(), ...);
   using _parameters = detail::type_vector_cat_t<parameters_of_t<Clauses>...>;
   if constexpr (not _parameters::empty()) {
-    throw std::domain_error("cannot execute statements with parameters "
-                            "directly, use prepare instead");
+    return std::unexpected{std::string_view{"cannot execute statements with parameters "
+                            "directly, use prepare instead"}};
   }
+  return {};
 }
 
 template <typename... Clauses>

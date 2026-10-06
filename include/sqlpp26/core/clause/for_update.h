@@ -27,6 +27,8 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include <expected>
+
 #include <sqlpp26/core/detail/type_set.h>
 #include <sqlpp26/core/query/statement.h>
 #include <sqlpp26/core/type_traits.h>
@@ -47,7 +49,7 @@ struct contains_for_update<for_update_t> : public std::true_type {};
 
 template <typename Statement>
 struct basic_consistency_check<Statement, for_update_t> {
-  static constexpr void verify() {}
+  [[nodiscard]] static constexpr auto verify() -> std::expected<void, std::string_view> { return {}; }
 };
 
 struct no_for_update_t {
@@ -65,7 +67,7 @@ auto to_sql_string(Context&, const no_for_update_t&) -> std::string {
 
 template <typename Statement>
 struct basic_consistency_check<Statement, no_for_update_t> {
-  static constexpr void verify() {}
+  [[nodiscard]] static constexpr auto verify() -> std::expected<void, std::string_view> { return {}; }
 };
 
 constexpr inline auto for_update() {

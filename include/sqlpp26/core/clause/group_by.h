@@ -27,13 +27,15 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include <tuple>
+#include <expected>
+
 #include <sqlpp26/core/concepts.h>
 #include <sqlpp26/core/logic.h>
 #include <sqlpp26/core/query/statement.h>
 #include <sqlpp26/core/reader.h>
 #include <sqlpp26/core/tuple_to_sql_string.h>
 #include <sqlpp26/core/type_traits.h>
-#include <tuple>
 
 namespace sqlpp {
 template <typename... Expressions>
@@ -64,17 +66,17 @@ struct is_clause<group_by_t<Expressions...>> : public std::true_type {};
 
 template <typename Statement, typename... Expressions>
 struct basic_consistency_check<Statement, group_by_t<Expressions...>> {
-  static consteval void verify() {
+  [[nodiscard]] static constexpr auto verify() -> std::expected<void, std::string_view> {
     using Clause = group_by_t<Expressions...>;
-    check_static_table_consistency<Clause, "group_by">(type_v<Statement>{});
+    return check_static_table_consistency<Clause, "group_by">(type_v<Statement>{});
   }
 };
 
 template <typename Statement, typename... Expressions>
 struct prepare_check<Statement, group_by_t<Expressions...>> {
-  static constexpr void verify() {
+  [[nodiscard]] static constexpr auto verify() -> std::expected<void, std::string_view> {
     using Clause = group_by_t<Expressions...>;
-    check_table_consistency<Clause, "group_by">(type_v<Statement>{});
+    return check_table_consistency<Clause, "group_by">(type_v<Statement>{});
   }
 };
 
@@ -126,8 +128,7 @@ auto to_sql_string(Context&, const no_group_by_t&) -> std::string {
 
 template <typename Statement>
 struct basic_consistency_check<Statement, no_group_by_t> {
-  static consteval void verify() {
-  }
+  [[nodiscard]] static constexpr auto verify() -> std::expected<void, std::string_view> { return {}; }
 };
 
 template <DynamicValue... Expressions>

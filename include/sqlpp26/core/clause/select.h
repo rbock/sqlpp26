@@ -27,6 +27,8 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include <expected>
+
 #include <sqlpp26/core/query/statement.h>
 
 #include <sqlpp26/core/clause/for_update.h>
@@ -53,7 +55,7 @@ struct is_clause<select_t> : public std::true_type {};
 
 template <typename Statement>
 struct basic_consistency_check<Statement, select_t> {
-  static consteval void verify() {}
+  [[nodiscard]] static constexpr auto verify() -> std::expected<void, std::string_view> { return {}; }
 };
 
 using blank_select_t = statement_t<select_t,

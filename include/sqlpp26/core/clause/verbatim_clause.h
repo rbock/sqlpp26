@@ -27,6 +27,8 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include <expected>
+
 #include <utility>
 
 #include <sqlpp26/core/reader.h>
@@ -52,7 +54,7 @@ struct is_clause<verbatim_clause_t> : public std::true_type {};
 
 template <typename Statement>
 struct basic_consistency_check<Statement, verbatim_clause_t> {
-  static consteval void verify() {}
+  [[nodiscard]] static constexpr auto verify() -> std::expected<void, std::string_view> { return {}; }
 };
 
 template <typename Context>

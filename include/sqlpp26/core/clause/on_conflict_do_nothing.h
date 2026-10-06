@@ -27,6 +27,8 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include <expected>
+
 #include <sqlpp26/core/to_sql_string.h>
 #include <sqlpp26/core/type_traits.h>
 #include <sqlpp26/core/reader.h>
@@ -67,7 +69,7 @@ struct nodes_of<on_conflict_do_nothing_t<ConflictTarget>> {
 template <typename Statement, typename ConflictTarget>
 struct basic_consistency_check<Statement,
                          on_conflict_do_nothing_t<ConflictTarget>> {
-  static consteval void verify() {}
+  [[nodiscard]] static constexpr auto verify() -> std::expected<void, std::string_view> { return {}; }
 };
 
 }  // namespace sqlpp

@@ -28,6 +28,7 @@
  */
 
 #include <tuple>
+#include <expected>
 
 #include <sqlpp26/core/concepts.h>
 #include <sqlpp26/core/detail/type_set.h>
@@ -77,9 +78,12 @@ constexpr void check_order_by_aggregates() {
 
 template <typename Statement, typename... Expressions>
 struct basic_consistency_check<Statement, order_by_t<Expressions...>> {
-  static constexpr void verify() {
+  [[nodiscard]] static constexpr auto verify() -> std::expected<void, std::string_view> {
     using Clause = order_by_t<Expressions...>;
-    check_static_table_consistency<Clause, "order_by">(type_v<Statement>{});
+    auto check = check_static_table_consistency<Clause, "order_by">(type_v<Statement>{});
+    if (not check) {
+      return check;
+    }
 
     // In case of no known aggregate columns all of the order by expressions
     // have to be non-aggregates.
@@ -87,31 +91,32 @@ struct basic_consistency_check<Statement, order_by_t<Expressions...>> {
       if (not logic::all<
               is_non_aggregate_expression<Statement, Expressions>()...>::value) {
         // TODO: Make error messages more useful
-        throw std::domain_error(
-            "order_by (without group by) must not contain any aggregates");
+        return std::unexpected{std::string_view{
+            "order_by (without group by) must not contain any aggregates"}};
       }
-      return;
+      return {};
     }
     // In case of provided aggregates all of the order by expressions have to be
     // aggregates.
     if (not logic::all<is_aggregate_expression<Statement, Expressions>()...>::value) {
-      throw std::domain_error(
-          "order_by (with group by) must contain aggregates only");
+      return std::unexpected{std::string_view{
+          "order_by (with group by) must contain aggregates only"}};
     }
     if (not logic::all<
             static_part_is_aggregate_expression<Statement, Expressions>()...>::value) {
-      throw std::domain_error(
+      return std::unexpected{std::string_view{
           "order_by statically contains aggregates that are only dynamically "
-          "defined in group_by");
+          "defined in group_by"}};
     }
+    return {};
   }
 };
 
 template <typename Statement, typename... Expressions>
 struct prepare_check<Statement, order_by_t<Expressions...>> {
-  static constexpr void verify() {
+  [[nodiscard]] static constexpr auto verify() -> std::expected<void, std::string_view> {
     using Clause = order_by_t<Expressions...>;
-    check_table_consistency<Clause, "order_by">(type_v<Statement>{});
+    return check_table_consistency<Clause, "order_by">(type_v<Statement>{});
   }
 };
 
@@ -138,7 +143,7 @@ auto to_sql_string(Context&, const no_order_by_t&) -> std::string {
 
 template <typename Statement>
 struct basic_consistency_check<Statement, no_order_by_t> {
-  static constexpr void verify() {}
+  [[nodiscard]] static constexpr auto verify() -> std::expected<void, std::string_view> { return {}; }
 };
 
 template <DynamicSortOrder... Expressions>

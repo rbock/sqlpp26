@@ -27,6 +27,8 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include <expected>
+
 #include <sqlpp26/core/basic/table_ref.h>
 #include <sqlpp26/core/concepts.h>
 #include <sqlpp26/core/detail/type_set.h>
@@ -72,10 +74,13 @@ struct nodes_of<using_t<_Table>> {
 
 template <typename Statement, typename _Table>
 struct basic_consistency_check<Statement, using_t<_Table>> {
-  static consteval void verify() {
+  [[nodiscard]] static constexpr auto verify() -> std::expected<void, std::string_view> {
     using Clause = using_t<_Table>;
-    check_static_cte_consistency<Clause, "using">(type_v<Statement>{});
-    check_cte_consistency<Clause, "using">(type_v<Statement>{});
+    auto check = check_static_cte_consistency<Clause, "using">(type_v<Statement>{});
+    if (check) {
+      check = check_cte_consistency<Clause, "using">(type_v<Statement>{});
+    }
+    return check;
   }
 };
 
@@ -111,8 +116,7 @@ auto to_sql_string(Context&, const no_using_t&) -> std::string {
 
 template <typename Statement>
 struct basic_consistency_check<Statement, no_using_t> {
-  static consteval void verify() {
-  }
+  [[nodiscard]] static constexpr auto verify() -> std::expected<void, std::string_view> { return {}; }
 };
 
 template <DynamicTable T>

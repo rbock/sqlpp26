@@ -28,6 +28,9 @@
  */
 
 #include <algorithm>
+#include <tuple>
+#include <expected>
+
 #include <sqlpp26/core/basic/column_fwd.h>
 #include <sqlpp26/core/basic/table.h>
 #include <sqlpp26/core/clause/insert_value.h>
@@ -40,29 +43,30 @@
 #include <sqlpp26/core/reader.h>
 #include <sqlpp26/core/tuple_to_sql_string.h>
 #include <sqlpp26/core/type_traits.h>
-#include <stdexcept>
 
 namespace sqlpp {
 namespace detail {
 
 template <typename Statement, typename... Columns>
-consteval void have_all_required_columns() {
+consteval auto have_all_required_columns()
+    -> std::expected<void, std::string_view> {
   static constexpr auto required_columns =
       std::define_static_array(get_required_insert_columns_of(type_v<Statement>{}));
   template for (constexpr auto& info : required_columns) {
     if (not std::ranges::contains(detail::make_type_info_set<Columns...>(),
                                   info)) {
       using Column = typename[:info:];
-      throw std::domain_error(
+      return std::unexpected{std::define_static_string(
           std::format("insert: required column '{}' is missing",
-                      std::string_view(name_of_v<Column>)));
+                      std::string_view(name_of_v<Column>)))};
     }
   }
+  return {};
 }
 
 template <typename Statement, typename... Assignments>
-consteval void have_all_required_assignments() {
-  have_all_required_columns<Statement, lhs_t<Assignments>...>();
+consteval auto have_all_required_assignments() -> std::expected<void, std::string_view> {
+  return have_all_required_columns<Statement, lhs_t<Assignments>...>();
 };
 
 // Used to serialize left hand side of assignment tuple that should ignore
@@ -132,15 +136,16 @@ struct is_clause<insert_default_values_t> : public std::true_type {};
 
 template <typename Statement>
 struct basic_consistency_check<Statement, insert_default_values_t> {
-  static constexpr auto verify() {
+  [[nodiscard]] static constexpr auto verify() {
     static constexpr auto required_columns =
         std::define_static_array(get_required_insert_columns_of(type_v<Statement>{}));
     template for (constexpr auto& info : required_columns) {
       using Column = typename[:info:];
-      throw std::domain_error(
-          std::format("insert: required column '{}' does not have a default value",
-                      std::string_view(name_of_v<Column>)));
+      return std::unexpected{std::define_static_string(std::format(
+          "insert: required column '{}' does not have a default value",
+          std::string_view(name_of_v<Column>)))};
     }
+    return {};
   }
 };
 
@@ -180,12 +185,12 @@ struct is_clause<insert_set_t<Assignments...>> : public std::true_type {};
 
 template <typename Statement, typename... Assignments>
 struct basic_consistency_check<Statement, insert_set_t<Assignments...>> {
-  static constexpr void verify() {
+  [[nodiscard]] static constexpr auto verify() -> std::expected<void, std::string_view> {
     using Clause = insert_set_t<Assignments...>;
     check_static_table_consistency<Clause, "insert-set">(type_v<Statement>{});
     check_table_consistency<Clause, "insert-set">(type_v<Statement>{});
 
-    detail::have_all_required_assignments<Statement, Assignments...>();
+    return detail::have_all_required_assignments<Statement, Assignments...>();
   }
 };
 
@@ -256,12 +261,12 @@ struct is_clause<column_list_t<Columns...>> : public std::true_type {};
 
 template <typename Statement, typename... Columns>
 struct basic_consistency_check<Statement, column_list_t<Columns...>> {
-  static constexpr void verify() {
+  [[nodiscard]] static constexpr auto verify() -> std::expected<void, std::string_view> {
     using Clause = column_list_t<Columns...>;
     check_static_table_consistency<Clause, "insert-columns">(type_v<Statement>{});
     check_table_consistency<Clause, "insert-columns">(type_v<Statement>{});
 
-    detail::have_all_required_columns<Statement, Columns...>();
+    return detail::have_all_required_columns<Statement, Columns...>();
   }
 };
 
@@ -310,8 +315,8 @@ auto to_sql_string(Context&, const no_insert_value_list_t&) -> std::string {
 
 template <typename Statement>
 struct basic_consistency_check<Statement, no_insert_value_list_t> {
-  static constexpr void verify() {
-    throw std::domain_error("insert values required, e.g. set(...) or default_values()");
+  [[nodiscard]] static constexpr auto verify() -> std::expected<void, std::string_view> {
+    return std::unexpected{std::string_view{"insert values required, e.g. set(...) or default_values()"}};
   }
 };
 

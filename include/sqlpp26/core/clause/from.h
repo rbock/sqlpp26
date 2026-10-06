@@ -27,6 +27,8 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include <expected>
+
 #include <sqlpp26/core/basic/table_ref.h>
 #include <sqlpp26/core/concepts.h>
 #include <sqlpp26/core/logic.h>
@@ -62,17 +64,17 @@ struct is_clause<from_t<_Table>> : public std::true_type {};
 
 template <typename Statement, typename _Table>
 struct basic_consistency_check<Statement, from_t<_Table>> {
-  static consteval auto verify() {
+  [[nodiscard]] static constexpr auto verify() -> std::expected<void, std::string_view> {
     using Clause = from_t<_Table>;
-    check_static_cte_consistency<Clause, "from">(type_v<Statement>{});
+    return check_static_cte_consistency<Clause, "from">(type_v<Statement>{});
   }
 };
 
 template <typename Statement, typename _Table>
 struct prepare_check<Statement, from_t<_Table>> {
-  static consteval auto verify() {
+  [[nodiscard]] static constexpr auto verify() -> std::expected<void, std::string_view> {
     using Clause = from_t<_Table>;
-    check_cte_consistency<Clause, "from">(type_v<Statement>{});
+    return check_cte_consistency<Clause, "from">(type_v<Statement>{});
   }
 };
 
@@ -112,8 +114,7 @@ auto to_sql_string(Context&, const no_from_t&) -> std::string {
 
 template <typename Statement>
 struct basic_consistency_check<Statement, no_from_t> {
-  static consteval auto verify() {
-  }
+  [[nodiscard]] static constexpr auto verify() -> std::expected<void, std::string_view> { return {}; }
 };
 
 template <DynamicTable T>

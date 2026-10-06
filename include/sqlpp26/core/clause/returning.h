@@ -27,6 +27,9 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include <tuple>
+#include <expected>
+
 #include <sqlpp26/core/basic/table.h>
 #include <sqlpp26/core/clause/select_as.h>
 #include <sqlpp26/core/clause/select_column_traits.h>
@@ -38,7 +41,6 @@
 #include <sqlpp26/core/query/statement_handler.h>
 #include <sqlpp26/core/reader.h>
 #include <sqlpp26/core/tuple_to_sql_string.h>
-#include <tuple>
 
 namespace sqlpp {
 // RETURNING is used in DELETE, INSERT, and UPDATE statements in
@@ -136,21 +138,25 @@ struct is_clause<returning_t<Columns...>> : public std::true_type {};
 
 template <typename Statement, typename... Columns>
 struct basic_consistency_check<Statement, returning_t<Columns...>> {
-  static constexpr void verify() {
+  [[nodiscard]] static constexpr auto verify() -> std::expected<void, std::string_view> {
     using Clause = returning_t<Columns...>;
-    check_static_table_consistency<Clause, "returning">(type_v<Statement>{});
+    auto check = check_static_table_consistency<Clause, "returning">(type_v<Statement>{});
+    if (not check) {
+      return check;
+    }
 
     if constexpr (contains_aggregate_function<Clause>::value) {
-      throw std::domain_error("returning columns must not contain aggregate functions");
+      return std::unexpected{std::string_view{"returning columns must not contain aggregate functions"}};
     }
+    return {};
   }
 };
 
 template <typename Statement, typename... Columns>
 struct prepare_check<Statement, returning_t<Columns...>> {
-  static constexpr void verify() {
+  [[nodiscard]] static constexpr auto verify() -> std::expected<void, std::string_view> {
     using Clause = returning_t<Columns...>;
-    check_table_consistency<Clause, "returning">(type_v<Statement>{});
+    return check_table_consistency<Clause, "returning">(type_v<Statement>{});
   }
 };
 
@@ -195,7 +201,7 @@ auto to_sql_string(Context&, const no_returning_t&) -> std::string {
 
 template <typename Statement>
 struct basic_consistency_check<Statement, no_returning_t> {
-  static constexpr void verify() {}
+  [[nodiscard]] static constexpr auto verify() -> std::expected<void, std::string_view> { return {}; }
 };
 
 template <typename... Columns>

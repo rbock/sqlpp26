@@ -307,10 +307,9 @@ struct cte_ref_t {
              not get_required_ctes_of(type_v<Statement>{}).contains(
                  ^^cte_ref_t<Name>))
   auto as(Statement statement) const -> cte_t<Name, Statement> {
-    consteval {
-      // TODO Require compile fail test
-      check_basic_consistency(type_v<Statement>{});
-    }
+    // TODO Require compile fail test
+    constexpr auto check = check_basic_consistency(type_v<Statement>{});
+    static_assert(check, check.error());
     return {std::move(statement)};
   }
 };

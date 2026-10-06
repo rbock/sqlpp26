@@ -27,6 +27,8 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include <expected>
+
 #include <sqlpp26/core/clause/union_flags.h>
 #include <sqlpp26/core/logic.h>
 #include <sqlpp26/core/query/result_row.h>
@@ -35,7 +37,6 @@
 #include <sqlpp26/core/clause/union_order_by.h>
 #include <sqlpp26/core/clause/limit.h>
 #include <sqlpp26/core/clause/offset.h>
-#include <sqlpp26/core/tuple_to_sql_string.h>
 #include <sqlpp26/core/type_traits.h>
 #include <sqlpp26/core/query/dynamic_fwd.h>
 
@@ -104,25 +105,34 @@ struct nodes_of<union_t<Flag, Lhs, Rhs>> {
 
 template <typename Statement, typename Flag, typename Lhs, typename Rhs>
 struct basic_consistency_check<Statement, union_t<Flag, Lhs, Rhs>> {
-  static constexpr void verify() {
-    check_basic_consistency(type_v<Lhs>{});
-    check_basic_consistency(type_v<remove_dynamic_t<Rhs>>{});
+  [[nodiscard]] static constexpr auto verify() -> std::expected<void, std::string_view> {
+    auto check = check_basic_consistency(type_v<Lhs>{});
+    if (check) {
+      check = check_basic_consistency(type_v<remove_dynamic_t<Rhs>>{});
+    }
+    return check;
   }
 };
 
 template <typename Statement, typename Flag, typename Lhs, typename Rhs>
 struct prepare_check<Statement, union_t<Flag, Lhs, Rhs>> {
-  static constexpr void verify() {
-    check_prepare_consistency(type_v<Lhs>{});
-    check_prepare_consistency(type_v<remove_dynamic_t<Rhs>>{});
+  [[nodiscard]] static constexpr auto verify() -> std::expected<void, std::string_view> {
+    auto check = check_prepare_consistency(type_v<Lhs>{});
+    if (check) {
+      check = check_prepare_consistency(type_v<remove_dynamic_t<Rhs>>{});
+    }
+    return check;
   }
 };
 
 template <typename Statement, typename Flag, typename Lhs, typename Rhs>
 struct run_check<Statement, union_t<Flag, Lhs, Rhs>> {
-  static constexpr void verify() {
-    check_run_consistency(type_v<Lhs>{});
-    check_run_consistency(type_v<remove_dynamic_t<Rhs>>{});
+  [[nodiscard]] static constexpr auto verify() -> std::expected<void, std::string_view> {
+    auto check = check_run_consistency(type_v<Lhs>{});
+    if (check) {
+      check = check_run_consistency(type_v<remove_dynamic_t<Rhs>>{});
+    }
+    return check;
   }
 };
 
@@ -176,7 +186,7 @@ auto to_sql_string(Context&, const no_union_t&) -> std::string {
 
 template <typename Statement>
 struct basic_consistency_check<Statement, no_union_t> {
-  static constexpr void verify() {}
+  [[nodiscard]] static constexpr auto verify() -> std::expected<void, std::string_view> { return {}; }
 };
 
 template <typename Lhs, typename Rhs>

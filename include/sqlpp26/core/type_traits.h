@@ -28,6 +28,7 @@
  */
 
 #include <chrono>
+#include <expected>
 #include <optional>
 #include <type_traits>
 
@@ -305,32 +306,6 @@ struct is_column : public std::false_type {};
 template <typename T>
 inline constexpr bool is_column_v = is_column<T>::value;
 
-// TODO
-#if 0
-template <typename Clauses>
-using derived_statement_t = typename Clauses::_statement_t;
-
-class assert_run_statement_or_prepared_t : public wrapped_static_assert {
- public:
-  template <typename... T>
-  static void verify(T&&...) {
-    static_assert(wrong<T...>,
-                        "connection cannot run something that is neither "
-                        "statement nor prepared statement");
-  }
-};
-
-class assert_prepare_statement_t : public wrapped_static_assert {
- public:
-  template <typename... T>
-  static void verify(T&&...) {
-    static_assert(
-        wrong<T...>,
-        "connection cannot prepare something that is not a statement");
-  }
-};
-
-#endif
 template <typename T>
 struct is_statement : public std::false_type {};
 
@@ -423,7 +398,7 @@ struct basic_consistency_check;
 // missing tables.
 template <typename Statement, typename Clause>
 struct prepare_check {
-  static consteval void verify() {}
+  static constexpr auto verify() -> std::expected<void, std::string_view> { return {}; }
 };
 
 // Check if a clause within a statement is ready to be run by the connection.
@@ -433,7 +408,7 @@ struct prepare_check {
 // missing tables.
 template <typename Statement, typename Clause>
 struct run_check {
-  static consteval void verify() {}
+  static constexpr auto verify() -> std::expected<void, std::string_view> { return {}; }
 };
 
 // Not implemented to ensure implementation for statement_t

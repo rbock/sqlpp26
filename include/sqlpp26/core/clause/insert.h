@@ -27,6 +27,8 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include <expected>
+
 #include <sqlpp26/core/clause/insert_value_list.h>
 #include <sqlpp26/core/clause/into.h>
 #include <sqlpp26/core/database/connection.h>
@@ -74,8 +76,7 @@ struct result_methods_of<insert_t> {
 
 template <typename Statement>
 struct basic_consistency_check<Statement, insert_t> {
-  static constexpr void verify() {
-  }
+  [[nodiscard]] static constexpr auto verify() -> std::expected<void, std::string_view> { return {}; }
 };
 
 template <>

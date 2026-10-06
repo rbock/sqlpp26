@@ -27,6 +27,8 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include <expected>
+
 #include <sqlpp26/core/detail/type_set.h>
 #include <sqlpp26/core/query/statement.h>
 #include <sqlpp26/core/reader.h>
@@ -61,7 +63,7 @@ struct contains_offset<offset_t<Expression>> : public std::true_type {};
 
 template <typename Statement, typename Expression>
 struct basic_consistency_check<Statement, offset_t<Expression>> {
-  static constexpr void verify() {}
+  [[nodiscard]] static constexpr auto verify() -> std::expected<void, std::string_view> { return {}; }
 };
 
 struct no_offset_t {
@@ -82,7 +84,7 @@ auto to_sql_string(Context&, const no_offset_t&) -> std::string {
 
 template <typename Statement>
 struct basic_consistency_check<Statement, no_offset_t> {
-  static constexpr void verify() {}
+  [[nodiscard]] static constexpr auto verify() -> std::expected<void, std::string_view> { return {}; }
 };
 
 template <typename Arg>

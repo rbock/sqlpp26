@@ -27,6 +27,9 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include <tuple>
+#include <expected>
+
 #include <sqlpp26/core/detail/type_set.h>
 #include <sqlpp26/core/query/dynamic.h>
 #include <sqlpp26/core/query/statement.h>
@@ -62,10 +65,13 @@ struct is_clause<update_set_list_t<Assignments...>> : public std::true_type {};
 
 template <typename Statement, typename... Assignments>
 struct basic_consistency_check<Statement, update_set_list_t<Assignments...>> {
-  static constexpr void verify() {
+  [[nodiscard]] static constexpr auto verify() -> std::expected<void, std::string_view> {
     using Clause = update_set_list_t<Assignments...>;
-    check_static_table_consistency<Clause, "update_set">(type_v<Statement>{});
-    check_table_consistency<Clause, "update_set">(type_v<Statement>{});
+    auto check = check_static_table_consistency<Clause, "update_set">(type_v<Statement>{});
+    if (check) {
+      check = check_table_consistency<Clause, "update_set">(type_v<Statement>{});
+    }
+    return check;
   }
 };
 
@@ -104,8 +110,8 @@ auto to_sql_string(Context&, const no_update_set_list_t&) -> std::string {
 
 template <typename Statement>
 struct basic_consistency_check<Statement, no_update_set_list_t> {
-  static constexpr void verify() {
-    throw std::domain_error("update assignments required, i.e. set(...)");
+  [[nodiscard]] static constexpr auto verify() -> std::expected<void, std::string_view> {
+    return std::unexpected{std::string_view{"update assignments required, i.e. set(...)"}};
   }
 };
 

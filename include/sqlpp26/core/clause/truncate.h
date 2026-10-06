@@ -27,6 +27,8 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include <expected>
+
 #include <sqlpp26/core/clause/single_table.h>
 #include <sqlpp26/core/clause/where.h>
 #include <sqlpp26/core/concepts.h>
@@ -47,7 +49,7 @@ struct is_clause<truncate_t> : public std::true_type {};
 
 template <typename Statement>
 struct basic_consistency_check<Statement, truncate_t> {
-  static consteval void verify() {}
+  [[nodiscard]] static constexpr auto verify() -> std::expected<void, std::string_view> { return {}; }
 };
 
 using blank_truncate_t = statement_t<truncate_t, no_single_table_t>;

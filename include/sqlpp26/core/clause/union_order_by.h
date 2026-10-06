@@ -27,8 +27,8 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <stdexcept>
 #include <tuple>
+#include <expected>
 
 #include <sqlpp26/core/clause/simple_column.h>
 #include <sqlpp26/core/concepts.h>
@@ -165,16 +165,17 @@ struct is_column_in_result<result_row_t<LFields...>, RField> {
 
 template <typename Statement, typename... Expressions>
 struct basic_consistency_check<Statement, union_order_by_t<Expressions...>> {
-  static constexpr void verify() {
+  [[nodiscard]] static constexpr auto verify() -> std::expected<void, std::string_view> {
     if constexpr (not logic::all<is_column_in_result<
                       get_result_row_t<Statement>,
                       make_field_spec_t<Statement,
                                         detail::simple_sort_order_base_t<
                                             Expressions>>>::value...>::value) {
-      throw std::domain_error(
+      return std::unexpected{std::string_view{
           "at least one column in union order_by() does not match any "
-          "of the selected columns of the union");
+          "of the selected columns of the union"}};
     }
+    return {};
   }
 };
 
@@ -203,7 +204,7 @@ auto to_sql_string(Context&, const no_union_order_by_t&) -> std::string {
 
 template <typename Statement>
 struct basic_consistency_check<Statement, no_union_order_by_t> {
-  static constexpr void verify() {}
+  [[nodiscard]] static constexpr auto verify() -> std::expected<void, std::string_view> { return {}; }
 };
 
 template <DynamicSortOrder... Expressions>

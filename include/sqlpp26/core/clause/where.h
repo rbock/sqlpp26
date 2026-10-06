@@ -27,12 +27,13 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include <expected>
+
 #include <sqlpp26/core/basic/value.h>
 #include <sqlpp26/core/logic.h>
 #include <sqlpp26/core/query/dynamic.h>
 #include <sqlpp26/core/query/statement.h>
 #include <sqlpp26/core/reader.h>
-#include <sqlpp26/core/tuple_to_sql_string.h>
 #include <sqlpp26/core/type_traits.h>
 
 namespace sqlpp {
@@ -61,17 +62,17 @@ struct is_clause<where_t<Expression>> : public std::true_type {};
 
 template <typename Statement, typename Expression>
 struct basic_consistency_check<Statement, where_t<Expression>> {
-  static constexpr void verify() {
+  [[nodiscard]] static constexpr auto verify() -> std::expected<void, std::string_view> {
     using Clause = where_t<Expression>;
-    check_static_table_consistency<Clause, "where">(type_v<Statement>{});
+    return check_static_table_consistency<Clause, "where">(type_v<Statement>{});
   }
 };
 
 template <typename Statement, typename Expression>
 struct prepare_check<Statement, where_t<Expression>> {
-  static constexpr void verify() {
+  [[nodiscard]] static constexpr auto verify() -> std::expected<void, std::string_view> {
     using Clause = where_t<Expression>;
-    check_table_consistency<Clause, "where">(type_v<Statement>{});
+    return check_table_consistency<Clause, "where">(type_v<Statement>{});
   }
 };
 
@@ -98,8 +99,7 @@ auto to_sql_string(Context&, const no_where_t&) -> std::string {
 
 template <typename Statement>
 struct basic_consistency_check<Statement, no_where_t> {
-  static constexpr void verify() {
-  }
+  [[nodiscard]] static constexpr auto verify() -> std::expected<void, std::string_view> { return {}; }
 };
 
 template <DynamicBoolean Expression>

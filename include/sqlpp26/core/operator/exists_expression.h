@@ -66,10 +66,9 @@ auto to_sql_string(Context& context, const exists_expression<Select>& t)
 template <typename Select>
   requires(is_statement<Select>::value and has_result_row<Select>::value)
 constexpr auto exists(Select expression) -> exists_expression<Select> {
-  consteval {
-    // TODO Require compile fail test
-    check_basic_consistency(type_v<Select>{});
-  }
+  // TODO Require compile fail test
+  constexpr auto check = check_basic_consistency(type_v<Select>{});
+  static_assert(check, check.error());
   return exists_expression<Select>{std::move(expression)};
 }
 

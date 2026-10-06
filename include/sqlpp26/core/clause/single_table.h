@@ -27,6 +27,8 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include <expected>
+
 #include <sqlpp26/core/basic/table.h>
 #include <sqlpp26/core/concepts.h>
 //#include <sqlpp26/core/database/prepared_insert.h>
@@ -63,8 +65,7 @@ struct is_clause<single_table_t<_Table>> : public std::true_type {};
 
 template <typename Statement, typename _Table>
 struct basic_consistency_check<Statement, single_table_t<_Table>> {
-  static constexpr void verify() {
-  }
+  [[nodiscard]] static constexpr auto verify() -> std::expected<void, std::string_view> { return {}; }
 };
 
 template <typename _Table>
@@ -94,8 +95,8 @@ auto to_sql_string(Context&, const no_single_table_t&) -> std::string {
 
 template <typename Statement>
 struct basic_consistency_check<Statement, no_single_table_t> {
-  static constexpr void verify() {
-    throw std::domain_error("this statement requires a table");
+  [[nodiscard]] static constexpr auto verify() -> std::expected<void, std::string_view> {
+    return std::unexpected{std::string_view{"this statement requires a table"}};
   }
 };
 

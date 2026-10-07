@@ -136,7 +136,7 @@ struct is_clause<insert_default_values_t> : public std::true_type {};
 
 template <typename Statement>
 struct basic_consistency_check<Statement, insert_default_values_t> {
-  [[nodiscard]] static constexpr auto verify() {
+  [[nodiscard]] static constexpr auto verify() -> std::expected<void, std::string_view> {
     static constexpr auto required_columns =
         std::define_static_array(get_required_insert_columns_of(type_v<Statement>{}));
     template for (constexpr auto& info : required_columns) {
@@ -187,10 +187,14 @@ template <typename Statement, typename... Assignments>
 struct basic_consistency_check<Statement, insert_set_t<Assignments...>> {
   [[nodiscard]] static constexpr auto verify() -> std::expected<void, std::string_view> {
     using Clause = insert_set_t<Assignments...>;
-    check_static_table_consistency<Clause, "insert-set">(type_v<Statement>{});
-    check_table_consistency<Clause, "insert-set">(type_v<Statement>{});
-
-    return detail::have_all_required_assignments<Statement, Assignments...>();
+    auto check = check_static_table_consistency<Clause, "insert-set">(type_v<Statement>{});
+    if (check) {
+      check = check_table_consistency<Clause, "insert-set">(type_v<Statement>{});
+    }
+    if (check) {
+      check = detail::have_all_required_assignments<Statement, Assignments...>();
+    }
+    return check;
   }
 };
 
@@ -263,10 +267,14 @@ template <typename Statement, typename... Columns>
 struct basic_consistency_check<Statement, column_list_t<Columns...>> {
   [[nodiscard]] static constexpr auto verify() -> std::expected<void, std::string_view> {
     using Clause = column_list_t<Columns...>;
-    check_static_table_consistency<Clause, "insert-columns">(type_v<Statement>{});
-    check_table_consistency<Clause, "insert-columns">(type_v<Statement>{});
-
-    return detail::have_all_required_columns<Statement, Columns...>();
+    auto check = check_static_table_consistency<Clause, "insert-columns">(type_v<Statement>{});
+    if (check) {
+      check = check_table_consistency<Clause, "insert-columns">(type_v<Statement>{});
+    }
+    if (check) {
+      check = detail::have_all_required_columns<Statement, Columns...>();
+    }
+    return check;
   }
 };
 

@@ -96,9 +96,14 @@ template <typename Statement, typename... Columns>
 struct basic_consistency_check<Statement, on_conflict_t<Columns...>> {
   [[nodiscard]] static constexpr auto verify() -> std::expected<void, std::string_view> {
     using Clause = on_conflict_t<Columns...>;
-    check_static_table_consistency<Clause, "on_conflict">(type_v<Statement>{});
-    check_table_consistency<Clause, "on_conflict">(type_v<Statement>{});
-    return std::unexpected{std::string_view{"either do_nothing() or do_update(...) is required with on_conflict"}};
+    auto check = check_static_table_consistency<Clause, "on_conflict">(type_v<Statement>{});
+    if (check) {
+      check = check_table_consistency<Clause, "on_conflict">(type_v<Statement>{});
+    }
+    if (check) {
+      check = std::unexpected{std::string_view{"either do_nothing() or do_update(...) is required with on_conflict"}};
+    }
+    return check;
   }
 };
 

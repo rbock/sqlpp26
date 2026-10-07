@@ -34,7 +34,7 @@ import sqlpp26.core;
 
 template <typename S, sqlpp::fixed_string Expected>
 consteval bool expect_basic_consistency_fails() {
-  std::string_view expected = Expected;
+  constexpr std::string_view expected = Expected;
   constexpr auto check = sqlpp::check_basic_consistency(sqlpp::type_v<std::decay_t<S>>{});
   static_assert(not check, std::format("missing error: '{}'", expected));
   static_assert(check.error() == expected, std::format("wrong error: '{}' != '{}'", expected, check.error()));
@@ -50,7 +50,7 @@ consteval bool expect_basic_consistency_succeeds() {
 
 template <typename S, sqlpp::fixed_string Expected>
 consteval bool expect_prepare_consistency_fails() {
-  std::string_view expected = Expected;
+  constexpr std::string_view expected = Expected;
   constexpr auto check = sqlpp::check_prepare_consistency(sqlpp::type_v<std::decay_t<S>>{});
   static_assert(not check, std::format("missing error: '{}'", expected));
   static_assert(check.error() == expected, std::format("wrong error: '{}' != '{}'", expected, check.error()));
@@ -66,7 +66,7 @@ consteval bool expect_prepare_consistency_succeeds() {
 
 template <typename S, sqlpp::fixed_string Expected>
 consteval bool expect_run_consistency_fails() {
-  std::string_view expected = Expected;
+  constexpr std::string_view expected = Expected;
   constexpr auto check = sqlpp::check_run_consistency(sqlpp::type_v<std::decay_t<S>>{});
   static_assert(not check, std::format("missing error: '{}'", expected));
   static_assert(check.error() == expected, std::format("wrong error: '{}' != '{}'", expected, check.error()));

@@ -60,7 +60,7 @@ struct is_clause<parameterized_verbatim_t<DataType, Expr>>
 
 template <typename Statement, typename DataType, typename Expr>
 struct basic_consistency_check<Statement, parameterized_verbatim_t<DataType, Expr>> {
-  static consteval void verify() {}
+  static constexpr auto verify() -> std::expected<void, std::string_view> { return {}; }
 };
 
 template <typename DataType, typename Expr>

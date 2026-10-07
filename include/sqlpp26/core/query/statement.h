@@ -214,8 +214,11 @@ template <typename... Clauses>
 template <typename... Clauses>
 [[nodiscard]] constexpr auto check_run_consistency(type_v<statement_t<Clauses...>>) -> std::expected<void, std::string_view> {
   using Statement = statement_t<Clauses...>;
-  check_prepare_consistency(type_v<Statement>{});
-  (run_check<Statement, Clauses>::verify(), ...);
+  auto check = check_prepare_consistency(type_v<Statement>{});
+  (check && ... && (check = run_check<Statement, Clauses>::verify()));
+  if (not check) {
+    return check;
+  }
   using _parameters = detail::type_vector_cat_t<parameters_of_t<Clauses>...>;
   if constexpr (not _parameters::empty()) {
     return std::unexpected{std::string_view{"cannot execute statements with parameters "

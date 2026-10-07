@@ -27,6 +27,9 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include <expected>
+#include <string_view>
+
 #include <sqlpp26/core/query/statement_fwd.h>
 #include <sqlpp26/core/result_type_provider.h>
 #include <sqlpp26/core/to_sql_string.h>
@@ -44,7 +47,7 @@ struct is_hidden_clause<hidden_t<Clause>> : public std::true_type {};
 
 template <typename Statement, typename Clause>
 struct basic_consistency_check<Statement, hidden_t<Clause>> {
-  static constexpr void verify() {}
+  static constexpr auto verify() -> std::expected<void, std::string_view> { return {}; }
 };
 
 template <typename Context, typename Clause>

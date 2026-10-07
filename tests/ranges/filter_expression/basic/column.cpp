@@ -66,9 +66,8 @@ struct Foo {
 
 template <typename Statement>
 constexpr void run(const Statement&) {
-  consteval {
-    check_basic_consistency(sqlpp::type_v<Statement>{});
-  }
+  constexpr auto check = check_basic_consistency(sqlpp::type_v<Statement>{});
+  static_assert(check, check.error());
 }
 
 

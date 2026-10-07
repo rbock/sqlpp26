@@ -71,7 +71,10 @@ template <typename Statement, typename Expression>
 struct basic_consistency_check<Statement, having_t<Expression>> {
   [[nodiscard]] static constexpr auto verify() -> std::expected<void, std::string_view> {
     using Clause = having_t<Expression>;
-    check_static_table_consistency<Clause, "having">(type_v<Statement>{});
+    auto check = check_static_table_consistency<Clause, "having">(type_v<Statement>{});
+    if (not check) {
+      return check;
+    }
     if constexpr (not is_aggregate_expression<Statement, Expression>()) {
       return std::unexpected{std::string_view{
           "having expression not built out of aggregate expressions"}};

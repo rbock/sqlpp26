@@ -275,8 +275,9 @@ class connection_base : public sqlpp::connection {
   template <typename T>
     requires(sqlpp::is_statement_v<T>)
   auto operator()(const T& t) {
+    constexpr auto run_check = check_run_consistency(type_v<T>{});
+    static_assert(run_check, run_check.error());
     consteval {
-      check_run_consistency(type_v<T>{});
       check_compatibility(type_v<context_t>{}, type_v<T>{});
     }
     return sqlpp::statement_handler_t{}.run(t, *this);
@@ -291,8 +292,9 @@ class connection_base : public sqlpp::connection {
   template <typename T>
     requires(sqlpp::is_statement_v<T>)
   auto prepare(const T& t) {
+    constexpr auto prepare_check = check_prepare_consistency(type_v<T>{});
+    static_assert(prepare_check, prepare_check.error());
     consteval {
-      check_prepare_consistency(type_v<T>{});
       check_compatibility(type_v<context_t>{}, type_v<T>{});
     }
     return sqlpp::statement_handler_t{}.prepare(t, *this);

@@ -184,10 +184,9 @@ template <typename L, typename Select>
   requires(values_are_comparable<L, statement_data_type_of_t<Select>>::value)
 constexpr auto not_in(L lhs, Select arg)
     -> in_expression<L, operator_not_in, Select> {
-  consteval {
-    // TODO Require compile fail test
-    check_basic_consistency(type_v<Select>{});
-  }
+  // TODO Require compile fail test
+  constexpr auto check = check_basic_consistency(type_v<Select>{});
+  static_assert(check, check.error());
   return {std::move(lhs), std::move(arg)};
 }
 

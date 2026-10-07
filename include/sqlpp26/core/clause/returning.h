@@ -76,10 +76,9 @@ struct returning_column_list_result_methods_t {
                      Name> {
     // This ensures that the sub select is free of table/CTE dependencies and
     // consistent.
-    consteval {
-      // TODO Require compile fail test
-      check_prepare_consistency(type_v<std::decay_t<Statement>>{});
-    }
+    // TODO Require compile fail test
+    constexpr auto check = check_prepare_consistency(type_v<std::decay_t<Statement>>{});
+    static_assert(check, check.error());
 
     using table =
         select_as<std::decay_t<Statement>, Name>;

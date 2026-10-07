@@ -27,6 +27,8 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include <expected>
+
 #include <sqlpp26/core/clause/insert_value_list.h>
 #include <sqlpp26/core/clause/into.h>
 #include <sqlpp26/core/database/prepared_insert.h>
@@ -65,8 +67,7 @@ struct insert_or_result_methods_t {
 
 template <typename Statement, typename InsertOrAlternative>
 struct basic_consistency_check<Statement, sqlite3::insert_or_t<InsertOrAlternative>> {
-  static constexpr void verify() {
-  }
+  static constexpr auto verify() -> std::expected<void, std::string_view> {return {}; }
 };
 
 template <typename InsertOrAlternative>

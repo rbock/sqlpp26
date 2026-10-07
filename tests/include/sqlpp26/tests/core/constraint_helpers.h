@@ -80,46 +80,19 @@ consteval bool expect_run_consistency_succeeds() {
   return true;
 }
 
-namespace detail {
-template <typename Context, typename S, sqlpp::fixed_string Expected>
-consteval auto check_compatibility_message() -> std::string_view {
-  std::string_view expected = Expected;
-  try {
-     check_compatibility(sqlpp::type_v<Context>{}, sqlpp::type_v<std::decay_t<S>>{});
-    return std::define_static_string("missing expected exception");
-  } catch (const std::domain_error& e) {
-    if (e.what() != expected) {
-      return std::define_static_string(std::format(
-          "wrong exception message: '{}' != '{}'", expected, e.what()));
-    }
-    return {};
-  }
-}
-
-
-template <typename Context, typename S>
-consteval auto check_no_compatibility_message() -> std::string_view {
-  try {
-    check_compatibility(sqlpp::type_v<Context>{}, sqlpp::type_v<std::decay_t<S>>{});
-    return {};
-  } catch (const std::domain_error& e) {
-      return std::define_static_string(std::format(
-          "unexpected exception: '{}'", e.what()));
-  }
-}
-}
-
 template <typename Context, typename S, sqlpp::fixed_string Expected>
 consteval bool expect_compatibility_fails() {
-  constexpr auto message = detail::check_compatibility_message<Context, S, Expected>();
-  static_assert(message.empty(), message);
+  constexpr std::string_view expected = Expected;
+  constexpr auto check = check_compatibility(sqlpp::type_v<Context>{}, sqlpp::type_v<std::decay_t<S>>{});
+  static_assert(not check, std::format("missing error: '{}'", expected));
+  static_assert(check.error() == expected, std::format("wrong error: '{}' != '{}'", expected, check.error()));
   return true;
 }
 
 template <typename Context, typename S>
 consteval bool expect_compatibility_succeeds() {
-  constexpr auto message = detail::check_no_compatibility_message<Context, S>();
-  static_assert(message.empty(), message);
+  constexpr auto check = check_compatibility(sqlpp::type_v<Context>{}, sqlpp::type_v<std::decay_t<S>>{});
+  static_assert(check, std::format("unexpected error: '{}'", check.error()));
   return true;
 }
 

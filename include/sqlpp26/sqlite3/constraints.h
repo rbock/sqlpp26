@@ -50,54 +50,51 @@
 namespace sqlpp {
 
 template <typename Select>
-constexpr void check_compatibility(type_v<sqlite3::context_t>, type_v<any_t<Select>>) {
-  throw std::domain_error("Sqlite3: No support for any()");
+[[nodiscard]] constexpr auto check_compatibility(type_v<sqlite3::context_t>, type_v<any_t<Select>>) -> std::expected<void, std::string_view> {
+  return std::unexpected("Sqlite3: No support for any()");
 };
 
 template <typename _Table>
-constexpr void check_compatibility(type_v<sqlite3::context_t>, type_v<using_t<_Table>>) {
-  throw std::domain_error("Sqlite3: No support for USING");
+[[nodiscard]] constexpr auto check_compatibility(type_v<sqlite3::context_t>, type_v<using_t<_Table>>) -> std::expected<void, std::string_view> {
+  return std::unexpected("Sqlite3: No support for USING");
 };
 
 #if SQLITE_VERSION_NUMBER < 3039000
 template <typename Lhs, typename Rhs, typename Condition>
-constexpr void check_compatibility(type_v<sqlite3::context_t>,
-                           type_v<join_t<Lhs, full_outer_join_t, Rhs, Condition>>) {
-  throw std::domain_error("Sqlite3: No support for full outer join before version 3.39.0");
+[[nodiscard]] constexpr auto check_compatibility(type_v<sqlite3::context_t>,type_v<join_t<Lhs, full_outer_join_t, Rhs, Condition>>) -> std::expected<void, std::string_view> {
+  return std::unexpected("Sqlite3: No support for full outer join before version 3.39.0");
 };
 
 template <typename Lhs, typename Rhs, typename Condition>
-constexpr void check_compatibility(type_v<sqlite3::context_t>,
-                           type_v<join_t<Lhs, right_outer_join_t, Rhs, Condition>>) {
-  throw std::domain_error("Sqlite3: No support for right outer join before version 3.39.0");
+[[nodiscard]] constexpr auto check_compatibility(type_v<sqlite3::context_t>, type_v<join_t<Lhs, right_outer_join_t, Rhs, Condition>>) -> std::expected<void, std::string_view> {
+  return std::unexpected("Sqlite3: No support for right outer join before version 3.39.0");
 };
 #endif
 
 #if SQLITE_VERSION_NUMBER < 3035000
 template <typename... Columns>
-constexpr void check_compatibility(type_v<sqlite3::context_t>, type_v<returning_t<Columns...>>) {
-  throw std::domain_error("Sqlite3: No support for RETURNING before version 3.35.0");
+[[nodiscard]] constexpr auto check_compatibility(type_v<sqlite3::context_t>, type_v<returning_t<Columns...>>) -> std::expected<void, std::string_view> {
+  return std::unexpected("Sqlite3: No support for RETURNING before version 3.35.0");
 };
 
 template <typename... Columns>
-constexpr void check_compatibility(type_v<sqlite3::context_t>, type_v<on_conflict_t<Columns...>>) {
-  throw std::domain_error("Sqlite3: No full support for ON CONFLICT before version 3.35.0");
+[[nodiscard]] constexpr auto check_compatibility(type_v<sqlite3::context_t>, type_v<on_conflict_t<Columns...>>) -> std::expected<void, std::string_view> {
+  return std::unexpected("Sqlite3: No full support for ON CONFLICT before version 3.35.0");
 };
 #endif
 
 #if SQLITE_VERSION_NUMBER < 3008003
 template <typename... Ctes>
-constexpr void check_compatibility(type_v<sqlite3::context_t>, type_v<with_t<Ctes...>>) {
-  throw std::domain_error("Sqlite3: No support for WITH before version 3.8.3");
+[[nodiscard]] constexpr auto check_compatibility(type_v<sqlite3::context_t>, type_v<with_t<Ctes...>>) -> std::expected<void, std::string_view> {
+  return std::unexpected("Sqlite3: No support for WITH before version 3.8.3");
 };
 #endif
 
 template <typename Expression, typename Type>
   requires(sqlpp::is_date_v<Type> or sqlpp::is_timestamp_v<Type> or
            sqlpp::is_time_of_day_v<Type>)
-constexpr void check_compatibility(type_v<sqlite3::context_t>,
-                                   type_v<cast_t<Expression, Type>>) {
-  throw std::domain_error("Sqlite3: No support for casting to date / time types");
+[[nodiscard]] constexpr auto check_compatibility(type_v<sqlite3::context_t>, type_v<cast_t<Expression, Type>>) -> std::expected<void, std::string_view> {
+  return std::unexpected("Sqlite3: No support for casting to date / time types");
 }
 
 }  // namespace sqlpp

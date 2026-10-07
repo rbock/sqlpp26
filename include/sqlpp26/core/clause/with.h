@@ -101,8 +101,8 @@ struct parameters_of<with_t<Ctes...>> {
 };
 
 template <typename Context, typename... Ctes>
-constexpr void check_compatibility(type_v<Context>, type_v<with_t<Ctes...>>) {
-  check_compatibility(type_v<Context>{}, detail::type_vector<Ctes...>{});
+[[nodiscard]] constexpr auto check_compatibility(type_v<Context>, type_v<with_t<Ctes...>>) -> std::expected<void, std::string_view> {
+  return check_compatibility(type_v<Context>{}, detail::type_vector<Ctes...>{});
 }
 
 // CTEs can depend on CTEs defined before (in the same query).

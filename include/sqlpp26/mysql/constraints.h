@@ -33,20 +33,19 @@
 namespace sqlpp {
 
 template <typename Lhs, typename Rhs, typename Condition>
-constexpr void check_compatibility(type_v<mysql::context_t>,
-                           type_v<join_t<Lhs, full_outer_join_t, Rhs, Condition>>) {
-  throw std::domain_error("MySQL: No support for full outer join");
+[[nodiscard]] constexpr auto check_compatibility(type_v<mysql::context_t>, type_v<join_t<Lhs, full_outer_join_t, Rhs, Condition>>) -> std::expected<void, std::string_view> {
+  return std::unexpected("MySQL: No support for full outer join");
 };
 
 template <typename Expression, typename Type>
   requires(is_boolean<Expression>::value or std::is_same_v<Type, boolean>)
-constexpr void check_compatibility(type_v<mysql::context_t>, type_v<cast_t<Expression, Type>>) {
-  throw std::domain_error("MySQL: No support for bool cast");
+[[nodiscard]] constexpr auto check_compatibility(type_v<mysql::context_t>, type_v<cast_t<Expression, Type>>) -> std::expected<void, std::string_view> {
+  return std::unexpected("MySQL: No support for bool cast");
 };
 
 template <typename L>
-constexpr void check_compatibility(type_v<mysql::context_t>, type_v<sort_order_expression<L, sort_order_null>>) {
-  throw std::domain_error("MySQL: No support for NULLS FIRST or NULLS LAST");
+[[nodiscard]] constexpr auto check_compatibility(type_v<mysql::context_t>, type_v<sort_order_expression<L, sort_order_null>>) -> std::expected<void, std::string_view> {
+  return std::unexpected("MySQL: No support for NULLS FIRST or NULLS LAST");
 };
 
 }  // namespace sqlpp

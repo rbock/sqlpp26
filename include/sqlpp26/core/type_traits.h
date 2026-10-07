@@ -489,16 +489,20 @@ template <typename Column>
 struct is_const : public std::false_type {};
 
 template <typename Context, typename...T>
-constexpr void check_compatibility(type_v<Context>, detail::type_vector<T...>);
+[[nodiscard]] constexpr auto check_compatibility(type_v<Context>, detail::type_vector<T...>) -> std::expected<void, std::string_view>;
 
 template <typename Context, typename T>
-constexpr void check_compatibility(type_v<Context>, type_v<T>) {
-  check_compatibility(type_v<Context>{}, nodes_of_t<T>{});
+[[nodiscard]] constexpr auto check_compatibility(type_v<Context>, type_v<T>) -> std::expected<void, std::string_view> {
+  return check_compatibility(type_v<Context>{}, nodes_of_t<T>{});
 }
 
 template <typename Context, typename...T>
-constexpr void check_compatibility(type_v<Context>, detail::type_vector<T...>) {
-  (check_compatibility(type_v<Context>{}, type_v<T>{}), ...);
+[[nodiscard]] constexpr auto check_compatibility(type_v<Context>, detail::type_vector<T...>) -> std::expected<void, std::string_view> {
+  auto check = std::expected<void, std::string_view>{};
+  if constexpr (sizeof...(T)) {
+    ((check = check_compatibility(type_v<Context>{}, type_v<T>{})) and ...);
+  }
+  return check;
 }
 
 template <typename T>

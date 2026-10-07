@@ -207,7 +207,9 @@ template <typename... Clauses>
 [[nodiscard]] constexpr auto check_prepare_consistency(type_v<statement_t<Clauses...>>) -> std::expected<void, std::string_view> {
   using Statement = statement_t<Clauses...>;
   auto check = check_basic_consistency(type_v<Statement>{});
-  (check && ... && (check = prepare_check<Statement, Clauses>::verify()));
+  if (sizeof...(Clauses)) {
+    (check && ... && (check = prepare_check<Statement, Clauses>::verify()));
+  }
   return check;
 }
 
@@ -215,7 +217,9 @@ template <typename... Clauses>
 [[nodiscard]] constexpr auto check_run_consistency(type_v<statement_t<Clauses...>>) -> std::expected<void, std::string_view> {
   using Statement = statement_t<Clauses...>;
   auto check = check_prepare_consistency(type_v<Statement>{});
-  (check && ... && (check = run_check<Statement, Clauses>::verify()));
+  if (sizeof...(Clauses)) {
+    (check && ... && (check = run_check<Statement, Clauses>::verify()));
+  }
   if (not check) {
     return check;
   }
@@ -293,14 +297,6 @@ struct get_result_row<statement_t<Clauses...>> {
                                result_type_provider_t<Clauses...>>;
 };
 
-/*
-template <typename... Clauses>
-struct is_result_clause<statement_t<Clauses...>> {
-  static constexpr bool value = not std::is_same<
-      noop,
-      typename statement_t<Clauses...>::_result_type_provider>::value;
-};
-*/
 // No data_type_of for statements. 
 // * sqlpp::any and sqlpp::exists operators can handle statements directly.
 // * wrap the statement in sqlpp::value() to use it as a value.
@@ -319,8 +315,8 @@ struct nodes_of<statement_t<Clauses...>> : public no_nodes {
 };
 
 template <typename Context, typename... Clauses>
-constexpr void check_compatibility(type_v<Context>, type_v<statement_t<Clauses...>>) {
-  (check_compatibility(type_v<Context>{}, detail::type_vector<Clauses...>{}));
+[[nodiscard]] constexpr auto check_compatibility(type_v<Context>, type_v<statement_t<Clauses...>>) -> std::expected<void, std::string_view> {
+  return check_compatibility(type_v<Context>{}, detail::type_vector<Clauses...>{});
 }
 
 template <typename... Clauses>
@@ -383,45 +379,6 @@ template <typename... Clauses>
   return typename S::_parameter_check{};
 }
 
-template <typename... Clauses>
-[[nodiscard]] constexpr auto check_prepare_consistency(const statement_t<Clauses...>&) {
-  (statement_t<Clauses...>::check_basic_consistency() /* TODO && ... &&
-          prepare_check_t<statement_t<Clauses...>, Clauses>{}*/)
-    //&& (typename statement_t<Clauses...>::_table_check{})
-    //&& (typename statement_t<Clauses...>::_cte_check{});
-    ;
-};
-
-template <typename... Clauses>
-[[nodiscard]] constexpr auto check_run_consistency(const statement_t<Clauses...>& t) {
-  /* TODO
-  return (check_prepare_consistency(t) && ... &&
-          run_check_t<statement_t<Clauses...>, Clauses>{})
-    && (typename statement_t<Clauses...>::_table_check{})
-    && (typename statement_t<Clauses...>::_parameter_check{});
-    */
-};
-
-/*
-template <typename... Clauses>
-struct statement_prepare_check<statement_t<Clauses...>> {
-  using type = static_combined_check_t<
-      statement_consistency_check_t<statement_t<Clauses...>>,
-      static_combined_check_t<
-          prepare_check_t<statement_t<Clauses...>, Clauses>...>,
-      typename statement_t<Clauses...>::_table_check,
-      typename statement_t<Clauses...>::_cte_check>;
-};
-
-template <typename... Clauses>
-struct statement_run_check<statement_t<Clauses...>> {
-  using type = static_combined_check_t<
-      statement_prepare_check_t<statement_t<Clauses...>>,
-      static_combined_check_t<run_check_t<statement_t<Clauses...>, Clauses>...>,
-      typename statement_t<Clauses...>::_parameter_check>;
-};
-
-*/
 template <typename OldClause, typename... Clauses, typename NewClause>
 constexpr auto new_statement(statement_t<Clauses...> oldStatement, NewClause newClause)
     -> statement_t<std::conditional_t<std::is_same<Clauses, OldClause>::value,

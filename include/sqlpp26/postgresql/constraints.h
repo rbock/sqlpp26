@@ -33,16 +33,14 @@
 namespace sqlpp {
 template <typename Expression>
   requires(is_unsigned_integral_v<data_type_of_t<Expression>> and not is_boolean_v<Expression>)
-constexpr void check_compatibility(type_v<postgresql::context_t>,
-                                   type_v<Expression>) {
-  throw std::domain_error("Postgresql: No support for unsigned integral");
+[[nodiscard]] constexpr auto check_compatibility(type_v<postgresql::context_t>, type_v<Expression>) -> std::expected<void, std::string_view> {
+  return std::unexpected("Postgresql: No support for unsigned integral");
 };
 
 template <typename Type>
   requires(is_arithmetic<Type>::value)
-constexpr void check_compatibility(type_v<postgresql::context_t>,
-                                   type_v<cast_t<bool, Type>>) {
-  throw std::domain_error("Postgresql: No support for casting bool to arithmetic type");
+[[nodiscard]] constexpr auto check_compatibility(type_v<postgresql::context_t>, type_v<cast_t<bool, Type>>) -> std::expected<void, std::string_view> {
+  return std::unexpected("Postgresql: No support for casting bool to arithmetic type");
 };
 
 }  // namespace sqlpp

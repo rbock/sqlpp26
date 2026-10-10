@@ -39,29 +39,29 @@ int Type(int, char*[]) {
     const auto tab = test::tab_bar{};
     db(insert_into(tab).default_values());
     for (const auto& row : db(select(all_of(tab)).from(tab))) {
-      require_equal(__LINE__, row.int_n.has_value(), false);
-      require_equal(__LINE__, row.text_n.has_value(), false);
-      require_equal(__LINE__, row.bool_nn, false);
+      require_equal(row.int_n.has_value(), false);
+      require_equal(row.text_n.has_value(), false);
+      require_equal(row.bool_nn, false);
     }
 
     db(update(tab).set(tab.int_n = 10, tab.text_n = "Cookies!",
                        tab.bool_nn = true));
 
     for (const auto& row : db(select(all_of(tab)).from(tab))) {
-      require_equal(__LINE__, row.int_n.has_value(), true);
-      require_equal(__LINE__, row.int_n.value(), 10);
-      require_equal(__LINE__, row.text_n.has_value(), true);
-      require_equal(__LINE__, row.text_n.value(), "Cookies!");
-      require_equal(__LINE__, row.bool_nn, true);
+      require_equal(row.int_n.has_value(), true);
+      require_equal(row.int_n.value(), 10);
+      require_equal(row.text_n.has_value(), true);
+      require_equal(row.text_n.value(), "Cookies!");
+      require_equal(row.bool_nn, true);
     }
 
     db(update(tab).set(tab.int_n = 20, tab.text_n = "Monster",
                        tab.bool_nn = false));
 
     for (const auto& row : db(select(all_of(tab)).from(tab))) {
-      require_equal(__LINE__, row.int_n.value(), 20);
-      require_equal(__LINE__, row.text_n.value(), "Monster");
-      require_equal(__LINE__, row.bool_nn, false);
+      require_equal(row.int_n.value(), 20);
+      require_equal(row.text_n.value(), "Monster");
+      require_equal(row.bool_nn, false);
     }
 
     auto prepared_update = db.prepare(update(tab).set(
@@ -75,9 +75,9 @@ int Type(int, char*[]) {
     std::cout << "---- finished prepared update ----" << std::endl;
 
     for (const auto& row : db(select(all_of(tab)).from(tab))) {
-      require_equal(__LINE__, row.int_n.value(), 30);
-      require_equal(__LINE__, row.text_n.value(), "IceCream");
-      require_equal(__LINE__, row.bool_nn, true);
+      require_equal(row.int_n.value(), 30);
+      require_equal(row.text_n.value(), "IceCream");
+      require_equal(row.bool_nn, true);
     }
   } catch (std::exception& e) {
     std::cerr << "Exception: " << e.what() << std::endl;

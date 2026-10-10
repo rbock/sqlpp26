@@ -61,7 +61,7 @@ int Sample(int, char*[]) {
   std::cout << "Last Insert ID: " << db.last_insert_id() << "\n";
 
   // update
-  db(update(tab).set(tab.bool_n = false).where(tab.int_n.in(1)));
+  db(update(tab).set(tab.bool_n = false).where(tab.int_n.in(std::make_tuple(1))));
   db(update(tab)
          .set(tab.bool_n = false)
          .where(tab.int_n.in(std::vector<int>{1, 2, 3, 4})));
@@ -173,11 +173,10 @@ int Sample(int, char*[]) {
     std::cerr << i << std::endl;
   }
 
-  assert(db(select(count(tab.id).as<"something">()).from(tab)).begin()->something);
-  assert(db(select(all_of(tab))
+  require_equal(db(select(all_of(tab))
                 .from(tab)
                 .where(tab.int_n.not_in(select(tab.int_n).from(tab))))
-             .empty());
+             .empty(), true);
 
   auto x = sqlpp::statement_t<>{}
            << sqlpp::verbatim_clause("PRAGMA user_version = 1");

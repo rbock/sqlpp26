@@ -73,24 +73,24 @@ int Integral(int, char*[]) {
 
   auto rows = db(q);
 
-  require_equal(__LINE__, rows.front().int_n.value(), int64_t_value_max);
-  require_equal(__LINE__, rows.front().u_int_n.value(),
+  require_equal(rows.front().int_n.value(), int64_t_value_max);
+  require_equal(rows.front().u_int_n.value(),
                 uint64_t_value_supported);
   rows.pop_front();
 
-  require_equal(__LINE__, rows.front().int_n.value(), int64_t_value_min);
-  require_equal(__LINE__, rows.front().u_int_n.value(),
+  require_equal(rows.front().int_n.value(), int64_t_value_min);
+  require_equal(rows.front().u_int_n.value(),
                 uint64_t_value_unsupported);
   rows.pop_front();
 
-  require_equal(__LINE__, rows.front().int_n.value(), int64_t{});
+  require_equal(rows.front().int_n.value(), int64_t{});
   // the uint64_t_value_max gets truncated to int64_t_value_max
-  require_equal(__LINE__, rows.front().u_int_n.value(),
+  require_equal(rows.front().u_int_n.value(),
                 static_cast<uint64_t>(int64_t_value_max));
   rows.pop_front();
 
-  require_equal(__LINE__, rows.front().int_n.value(), int32_t_value);
-  require_equal(__LINE__, rows.front().u_int_n.value(), uint32_t_value);
+  require_equal(rows.front().int_n.value(), int32_t_value);
+  require_equal(rows.front().u_int_n.value(), uint32_t_value);
   rows.pop_front();
 
   return 0;

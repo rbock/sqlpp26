@@ -62,27 +62,27 @@ int Date(int, char*[]) {
     const auto tab = test::tab_date_time{};
     db(insert_into(tab).default_values());
     for (const auto& row : db(select(all_of(tab)).from(tab))) {
-      require_equal(__LINE__, row.date_n.has_value(), false);
-      require_equal(__LINE__, row.timestamp_n.has_value(), false);
-      require_equal(__LINE__, row.timestamp_n_tz.has_value(), false);
+      require_equal(row.date_n.has_value(), false);
+      require_equal(row.timestamp_n.has_value(), false);
+      require_equal(row.timestamp_n_tz.has_value(), false);
     }
 
     db(update(tab).set(tab.date_n = today, tab.timestamp_n = now,
                        tab.timestamp_n_tz = now));
 
     for (const auto& row : db(select(all_of(tab)).from(tab))) {
-      require_equal(__LINE__, row.date_n.value(), today);
-      require_equal(__LINE__, row.timestamp_n.value(), now);
-      require_equal(__LINE__, row.timestamp_n_tz.value(), now);
+      require_equal(row.date_n.value(), today);
+      require_equal(row.timestamp_n.value(), now);
+      require_equal(row.timestamp_n_tz.value(), now);
     }
 
     db(update(tab).set(tab.date_n = yesterday, tab.timestamp_n = now,
                        tab.timestamp_n_tz = now));
 
     for (const auto& row : db(select(all_of(tab)).from(tab))) {
-      require_equal(__LINE__, row.date_n.value(), yesterday);
-      require_equal(__LINE__, row.timestamp_n.value(), now);
-      require_equal(__LINE__, row.timestamp_n_tz.value(), now);
+      require_equal(row.date_n.value(), yesterday);
+      require_equal(row.timestamp_n.value(), now);
+      require_equal(row.timestamp_n_tz.value(), now);
     }
 
     auto prepared_update = db.prepare(
@@ -97,9 +97,9 @@ int Date(int, char*[]) {
     std::cout << "---- finished prepared update ----" << std::endl;
 
     for (const auto& row : db(select(all_of(tab)).from(tab))) {
-      require_equal(__LINE__, row.date_n.value(), today);
-      require_equal(__LINE__, row.timestamp_n.value(), now);
-      require_equal(__LINE__, row.timestamp_n_tz.value(), now);
+      require_equal(row.date_n.value(), today);
+      require_equal(row.timestamp_n.value(), now);
+      require_equal(row.timestamp_n_tz.value(), now);
     }
   } catch (std::exception& e) {
     std::cerr << "Exception: " << e.what() << std::endl;

@@ -38,9 +38,9 @@ int Function(int, char*[]) {
 
   // Test in
   {
-    using TI = decltype(t.id.in(1, 2, 3));
-    using TF = decltype(f.float_n.in(1.0, 2.0, 3.0));
-    using TT = decltype(t.text_n.in("a", "b", "c"));
+    using TI = decltype(t.id.in(std::make_tuple(1, 2, 3)));
+    using TF = decltype(f.float_n.in(std::make_tuple(1.0, 2.0, 3.0)));
+    using TT = decltype(t.text_n.in(std::make_tuple("a", "b", "c")));
     static_assert(sqlpp::is_boolean<TI>::value, "type requirement");
     static_assert(sqlpp::is_arithmetic<TI>::value, "type requirement");
     static_assert(not sqlpp::is_text<TI>::value, "type requirement");
@@ -70,9 +70,9 @@ int Function(int, char*[]) {
 
   // Test not_in
   {
-    using TI = decltype(t.id.not_in(1, 2, 3));
-    using TF = decltype(f.float_n.not_in(1.0, 2.0, 3.0));
-    using TT = decltype(t.text_n.not_in("a", "b", "c"));
+    using TI = decltype(t.id.not_in(std::make_tuple(1, 2, 3)));
+    using TF = decltype(f.float_n.not_in(std::make_tuple(1.0, 2.0, 3.0)));
+    using TT = decltype(t.text_n.not_in(std::make_tuple("a", "b", "c")));
     static_assert(sqlpp::is_boolean<TI>::value, "type requirement");
     static_assert(sqlpp::is_arithmetic<TI>::value, "type requirement");
     static_assert(not sqlpp::is_text<TI>::value, "type requirement");

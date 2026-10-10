@@ -24,7 +24,6 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <cassert>
 #include <chrono>
 
 #include <sqlpp26/tests/postgresql/all.h>
@@ -39,9 +38,9 @@ void testSelectAll(sql::connection& db, int expectedRowCount) {
     ++i;
     std::cerr << ">>> row.id: " << row.id << ", row.int_n: " << row.int_n
               << ", row.text_nn_d: " << row.text_nn_d << std::endl;
-    assert(i == row.id);
+    require_equal(i, row.id);
   };
-  assert(i == expectedRowCount);
+  require_equal(i, expectedRowCount);
 
   auto preparedSelectAll = db.prepare(sqlpp::select(all_of(tab)).from(tab));
   i = 0;
@@ -49,9 +48,9 @@ void testSelectAll(sql::connection& db, int expectedRowCount) {
     ++i;
     std::cerr << ">>> row.id: " << row.id << ", row.int_n: " << row.int_n
               << ", row.text_nn_d: " << row.text_nn_d << std::endl;
-    assert(i == row.id);
+    require_equal(i, row.id);
   };
-  assert(i == expectedRowCount);
+  require_equal(i, expectedRowCount);
   std::cerr << "--------------------------------------" << std::endl;
 }
 
@@ -72,11 +71,11 @@ void testParameter(sql::connection& db) {
   ps.parameters.n = n;
 
   for (const auto& row : db(ps)) {
-    assert(row.b == true);
-    assert(row.i == 17);
-    assert(row.f == 0.1);
-    assert(row.t == "cheesecake");
-    assert(row.n == n);
+    require_equal(row.b, true);
+    require_equal(row.i, 17);
+    require_equal(row.f, 0.1);
+    require_equal(row.t, "cheesecake");
+    require_equal(row.n, n);
   }
 }
 
@@ -97,16 +96,16 @@ int Select(int, char*[]) {
 
   // Test size functionality
   const auto test_size = db(select(all_of(tab)).from(tab));
-  assert(test_size.size() == 3);
+  require_equal(test_size.size(), 3);
 
   // test functions and operators
   db(select(all_of(tab)).from(tab).where(tab.id.is_null()));
   db(select(all_of(tab)).from(tab).where(tab.id.is_not_null()));
-  db(select(all_of(tab)).from(tab).where(tab.id.in(1, 2, 3)));
+  db(select(all_of(tab)).from(tab).where(tab.id.in(std::make_tuple(1, 2, 3))));
   db(select(all_of(tab))
          .from(tab)
          .where(tab.id.in(std::vector<int>{1, 2, 3, 4})));
-  db(select(all_of(tab)).from(tab).where(tab.id.not_in(1, 2, 3)));
+  db(select(all_of(tab)).from(tab).where(tab.id.not_in(std::make_tuple(1, 2, 3))));
   db(select(all_of(tab))
          .from(tab)
          .where(tab.id.not_in(std::vector<int>{1, 2, 3, 4})));
@@ -137,20 +136,14 @@ int Select(int, char*[]) {
   db(insert_into(tab).set(tab.bool_n = true, tab.text_nn_d = "asdf"));
   db(insert_into(tab).set(tab.bool_n = false, tab.text_nn_d = "asdfg"));
 
-  assert(db(select(tab.bool_n).from(tab).where(tab.text_nn_d == "asdf"))
-             .front()
-             .bool_n);
-  assert(not db(select(tab.bool_n).from(tab).where(tab.text_nn_d == "asdfg"))
-                 .front()
-                 .bool_n.value());
-  assert(not db(select(tab.bool_n).from(tab).where(tab.id == 1))
-                 .front()
-                 .bool_n.has_value());
+  require_equal(db(select(tab.bool_n).from(tab).where(tab.text_nn_d == "asdf")).front().bool_n, true);
+  require_equal(db(select(tab.bool_n).from(tab).where(tab.text_nn_d == "asdfg")).front().bool_n.value(), false);
+  require_equal(db(select(tab.bool_n).from(tab).where(tab.id == 1)).front().bool_n.has_value(), false);
 
   // test
 
   // update
-  db(update(tab).set(tab.bool_n = false).where(tab.id.in(1)));
+  db(update(tab).set(tab.bool_n = false).where(tab.id.in(std::make_tuple(1))));
   db(update(tab)
          .set(tab.bool_n = false)
          .where(tab.id.in(std::vector<int>{1, 2, 3, 4})));

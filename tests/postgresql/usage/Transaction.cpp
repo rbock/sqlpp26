@@ -33,41 +33,41 @@ int Transaction(int, char*[]) {
 
   try {
     {
-      require_equal(__LINE__, db.is_transaction_active(), false);
+      require_equal(db.is_transaction_active(), false);
       auto current_level = std::string(
           db(sqlpp::statement_t{}
              << sqlpp::verbatim_clause("show transaction_isolation;")
              << with_result_type_of(select(sqlpp::value("").as<"level">())))
               .front()
               .level);
-      require_equal(__LINE__, current_level, "read committed");
+      require_equal(current_level, "read committed");
       std::cerr << "isolation level outside transaction: " << current_level
                 << "\n";
 
       auto tx = start_transaction(db, sqlpp::isolation_level::serializable);
-      require_equal(__LINE__, db.is_transaction_active(), true);
+      require_equal(db.is_transaction_active(), true);
       current_level =
           db(sqlpp::statement_t{}
              << sqlpp::verbatim_clause("show transaction_isolation;")
              << with_result_type_of(select(sqlpp::value("").as<"level">())))
               .front()
               .level;
-      require_equal(__LINE__, current_level, "serializable");
+      require_equal(current_level, "serializable");
       std::cerr << "isolation level in transaction(serializable) : "
                 << current_level << "\n";
 
       tx.commit();
-      require_equal(__LINE__, db.is_transaction_active(), false);
+      require_equal(db.is_transaction_active(), false);
       auto tx2 = start_transaction(db, sqlpp::isolation_level::serializable);
-      require_equal(__LINE__, db.is_transaction_active(), true);
+      require_equal(db.is_transaction_active(), true);
       tx2.rollback();
-      require_equal(__LINE__, db.is_transaction_active(), false);
+      require_equal(db.is_transaction_active(), false);
     }
 
-    require_equal(__LINE__, db.get_default_isolation_level(),
+    require_equal(db.get_default_isolation_level(),
                   sqlpp::isolation_level::read_committed);
     db.set_default_isolation_level(sqlpp::isolation_level::serializable);
-    require_equal(__LINE__, db.get_default_isolation_level(),
+    require_equal(db.get_default_isolation_level(),
                   sqlpp::isolation_level::serializable);
   } catch (const sqlpp::exception& ex) {
     std::cerr << "Got exception: " << ex.what() << std::endl;

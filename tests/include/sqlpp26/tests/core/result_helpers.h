@@ -75,9 +75,14 @@ inline std::ostream& operator<<(std::ostream& stream,
 }
 
 template <typename L, typename R>
-auto require_equal(int line, const L& l, const R& r) -> void {
+auto require_equal(const L& l,
+                   const R& r,
+                   const std::source_location location =
+                       std::source_location::current()) -> void {
   if (l != r) {
-    std::cerr << line << ": " << l << " != " << r << std::endl;
+    std::cerr << location.file_name() << "(" << location.line() << ")" << ": "
+              << l << " != " << r << std::endl;
     throw std::runtime_error("Unexpected result");
   }
 }
+

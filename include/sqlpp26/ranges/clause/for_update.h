@@ -44,6 +44,6 @@ constexpr auto to_filter_expression(const no_for_update_t&) {
   return ranges::no_for_update{};
 }
 constexpr inline auto to_filter_expression(const for_update_t&) {
-  return static_assert("Ranges connector: No support for for_update-clause");
+  static_assert("Ranges connector: No support for for_update-clause");
 }
 }  // namespace sqlpp

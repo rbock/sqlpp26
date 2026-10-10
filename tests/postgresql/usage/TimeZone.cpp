@@ -81,18 +81,18 @@ void check_saved_values(sqlpp::postgresql::connection& db,
   // date/time types from C++ to PostgreSQL while skipping the conversion from
   // C++ to PostgreSQL.
   const auto& row_1 = rows_1.front();
-  require_equal(__LINE__, row_1.a.value(), tp.time_since_epoch().count());
-  require_equal(__LINE__, row_1.b.value(), tod.count());
-  require_equal(__LINE__, row_1.c.value(), dp.time_since_epoch().count());
+  require_equal(row_1.a.value(), tp.time_since_epoch().count());
+  require_equal(row_1.b.value(), tod.count());
+  require_equal(row_1.c.value(), dp.time_since_epoch().count());
 
   // Check if saving date/time variables from C++ to PostgreSQL and then reading
   // them back yields the same values. This tests the conversion of date/time
   // types from C++ to PostgreSQL and then back from PostgreSQL to C++.
   const auto rows_2 = db(select(all_of(tab)).from(tab));
   const auto& row_2 = rows_2.front();
-  require_equal(__LINE__, row_2.timestamp_n_tz.value(), tp);
-  require_equal(__LINE__, row_2.time_n_tz.value(), tod);
-  require_equal(__LINE__, row_2.date_n.value(), dp);
+  require_equal(row_2.timestamp_n_tz.value(), tp);
+  require_equal(row_2.time_n_tz.value(), tod);
+  require_equal(row_2.date_n.value(), dp);
 }
 
 void test_timestamp(sqlpp::postgresql::connection& db,

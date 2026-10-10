@@ -44,13 +44,13 @@ int main(int, char*[]) {
     for (const auto& row :
          db(select(exists(select(tab.id).from(tab).where(tab.int_n == 7))
                        .as<"exists_">()))) {
-      assert(row.exists_ == true);
+      require_equal(row.exists_, true);
     }
 
     // select exists
     for (const auto& row : db(select(exists(
               select(tab.id).from(tab).where(tab.int_n == 8)).as<"exists_">()))) {
-      assert(row.exists_ == false);
+      require_equal(row.exists_, false);
     }
   } catch (const std::exception& e) {
     std::cerr << "Exception: " << e.what() << std::endl;

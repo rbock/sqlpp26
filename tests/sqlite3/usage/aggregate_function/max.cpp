@@ -47,8 +47,8 @@ int main(int, char*[]) {
             max(tab.int_n).as<"max_">(),
             max(sqlpp::distinct, tab.int_n).as<"distinct_max_">()
             ).from(tab))) {
-      assert(row.max_ == 9);
-      assert(row.distinct_max_ == 9);
+      require_equal(row.max_, 9);
+      require_equal(row.distinct_max_, 9);
     }
 
   } catch (const std::exception& e) {

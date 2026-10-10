@@ -72,9 +72,12 @@ std::chrono::microseconds build_tod(int hour = 0,
 }
 
 template <typename L, typename R>
-void require_equal(int line, const L& l, const R& r) {
+void require_equal(
+    const L& l,
+    const R& r,
+    const std::source_location location = std::source_location::current()) {
   if (l != r) {
-    std::cerr << line << ": ";
+    std::cerr << location.file_name() << "(" << location.line() << "): ";
     sqlpp::to_sql_string(std::cerr, l);
     std::cerr << " != ";
     sqlpp::to_sql_string(std::cerr, r);
@@ -135,7 +138,7 @@ void test_valid_dates() {
                 << std::endl;
       throw std::runtime_error{"Parse error"};
     }
-    require_equal(__LINE__, dp, date_pair.second);
+    require_equal(dp, date_pair.second);
   }
 }
 
@@ -221,7 +224,7 @@ void test_valid_time() {
                 << tod_pair.first << std::endl;
       throw std::runtime_error{"Parse error"};
     }
-    require_equal(__LINE__, us, tod_pair.second);
+    require_equal(us, tod_pair.second);
   }
 }
 
@@ -294,7 +297,7 @@ void test_valid_timestamp() {
                 << timestamp_pair.first << std::endl;
       throw std::runtime_error{"Parse error"};
     }
-    require_equal(__LINE__, tp, timestamp_pair.second);
+    require_equal(tp, timestamp_pair.second);
   }
 }
 

@@ -64,13 +64,13 @@ int FloatingPoint(int, char*[]) {
   auto rows = db(q);
 
   // raw string inserts
-  require_equal(__LINE__, rows.front().double_n, 1.0);
+  require_equal(rows.front().double_n, 1.0);
   rows.pop_front();
   require(__LINE__, std::isinf(rows.front().double_n.value()));
   rows.pop_front();
   require(__LINE__, std::isnan(rows.front().double_n.value()));
   rows.pop_front();
-  require_equal(__LINE__, rows.front().double_n, 0.0);
+  require_equal(rows.front().double_n, 0.0);
   rows.pop_front();
 
   // dsl inserts

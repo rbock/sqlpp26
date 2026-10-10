@@ -50,8 +50,8 @@ void test_in_expression(Value v) {
   static_assert(is_bool<decltype(in(v_not_null, std::vector<Value>{}))>::value,
                 "");
   static_assert(
-      is_bool<decltype(in(v_not_null,
-                          value(select(v_not_null.template as<"a">()))))>::value,
+      is_maybe_bool<decltype(in(v_not_null,
+                          select(v_not_null.template as<"a">())))>::value,
       "");
 
   // Compare non-nullable with nullable.
@@ -64,7 +64,7 @@ void test_in_expression(Value v) {
       "");
   static_assert(
       is_maybe_bool<decltype(in(
-          v_not_null, value(select(v_maybe_null.template as<"a">()))))>::value,
+          v_not_null, select(v_maybe_null.template as<"a">())))>::value,
       "");
 
   // Compare nullable with non-nullable.
@@ -77,7 +77,7 @@ void test_in_expression(Value v) {
       "");
   static_assert(
       is_maybe_bool<decltype(in(
-          v_maybe_null, value(select(v_not_null.template as<"a">()))))>::value,
+          v_maybe_null, select(v_not_null.template as<"a">())))>::value,
       "");
 
   // Compare nullable with nullable.
@@ -90,7 +90,7 @@ void test_in_expression(Value v) {
       "");
   static_assert(
       is_maybe_bool<decltype(in(
-          v_maybe_null, value(select(v_maybe_null.template as<"a">()))))>::value,
+          v_maybe_null, select(v_maybe_null.template as<"a">())))>::value,
       "");
 
   // IN expressions have the `as` member function.
@@ -113,7 +113,7 @@ void test_in_expression(Value v) {
           sqlpp::detail::type_vector<L, R1>>::value,
       "");
   static_assert(std::is_same<sqlpp::nodes_of_t<decltype(in(
-                                 v_maybe_null, v, std::optional{v}))>,
+                                 v_maybe_null, std::make_tuple(v, std::optional{v})))>,
                              sqlpp::detail::type_vector<L, R1, R2>>::value,
                 "");
 }
@@ -121,6 +121,7 @@ void test_in_expression(Value v) {
 int main() {
   // boolean
   test_in_expression(bool{true});
+
   // integral
   test_in_expression(int8_t{7});
   test_in_expression(int16_t{7});

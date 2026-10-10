@@ -38,9 +38,9 @@ void testSelectAll(sql::connection& db, size_t expectedRowCount) {
     std::cerr << ">>> row.id: " << row.id << ", row.int_n: " << row.int_n
               << ", row.text_nn_d: " << row.text_nn_d << ", row.bool_n: " << row.bool_n
               << std::endl;
-    assert(row.id == static_cast<int64_t>(i));
+    require_equal(row.id, static_cast<int64_t>(i));
   };
-  assert(i == expectedRowCount);
+  require_equal(i, expectedRowCount);
 
   auto preparedSelectAll = db.prepare(sqlpp::select(all_of(tab)).from(tab));
   i = 0;
@@ -49,9 +49,9 @@ void testSelectAll(sql::connection& db, size_t expectedRowCount) {
     std::cerr << ">>> row.id: " << row.id << ", row.int_n: " << row.int_n
               << ", row.text_nn_d: " << row.text_nn_d << ", row.bool_n: " << row.bool_n
               << std::endl;
-    assert(row.id == static_cast<int64_t>(i));
+    require_equal(row.id, static_cast<int64_t>(i));
   };
-  assert(i == expectedRowCount);
+  require_equal(i, expectedRowCount);
   std::cerr << "--------------------------------------" << std::endl;
 }
 
@@ -86,11 +86,11 @@ int Select(int, char*[]) {
   // test functions and operators
   db(select(all_of(tab)).from(tab).where(tab.int_n.is_null()));
   db(select(all_of(tab)).from(tab).where(tab.int_n.is_not_null()));
-  db(select(all_of(tab)).from(tab).where(tab.int_n.in(1, 2, 3)));
+  db(select(all_of(tab)).from(tab).where(tab.int_n.in(std::make_tuple(1, 2, 3))));
   db(select(all_of(tab))
          .from(tab)
          .where(tab.int_n.in(std::vector<int>{1, 2, 3, 4})));
-  db(select(all_of(tab)).from(tab).where(tab.int_n.not_in(1, 2, 3)));
+  db(select(all_of(tab)).from(tab).where(tab.int_n.not_in(std::make_tuple(1, 2, 3))));
   db(select(all_of(tab))
          .from(tab)
          .where(tab.int_n.not_in(std::vector<int>{1, 2, 3, 4})));
@@ -115,7 +115,7 @@ int Select(int, char*[]) {
          .where((tab.text_nn_d + tab.text_nn_d).like(R"(%'\"%)")));
 
   // update
-  db(update(tab).set(tab.bool_n = false).where(tab.int_n.in(1)));
+  db(update(tab).set(tab.bool_n = false).where(tab.int_n.in(std::make_tuple(1))));
   db(update(tab)
          .set(tab.bool_n = false)
          .where(tab.int_n.in(std::vector<int>{1, 2, 3, 4})));
@@ -148,7 +148,7 @@ int Select(int, char*[]) {
               << ", row.bool_n: " << row.bool_n << ", row.something: '"
               << row.something << "'" << std::endl;
     // check something
-    assert(string_util::trim(std::string(row.text_nn_d)) == row.something);
+    require_equal(string_util::trim(std::string(row.text_nn_d)), row.something);
     // end
   };
 

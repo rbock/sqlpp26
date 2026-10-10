@@ -35,21 +35,16 @@ int Sample(int, char*[]) {
     test::create_tab_bar(db);
     test::create_tab_foo(db);
 
-    assert(not db(select(sqlpp::value(false).as<"a">())).front().a);
+    require_equal(db(select(sqlpp::value(false).as<"a">())).front().a, false);
 
     const auto tab = test::tab_bar{};
     // clear the table
     db(delete_from(tab));
 
     // Several ways of ensuring that tab is empty
-    assert(
-        not db(select(exists(select(tab.int_n).from(tab)).as<"a">()))
-                .front()
-                .a);  // this is probably the fastest
-    assert(not db(select(count(tab.int_n).as<"a">()).from(tab))
-                   .front()
-                   .a);
-    assert(db(select(tab.int_n).from(tab)).empty());
+    require_equal(db(select(exists(select(tab.int_n).from(tab)).as<"a">())).front().a, false);  // this is probably the fastest
+    require_equal(db(select(count(tab.int_n).as<"a">()).from(tab)).front().a, 0);
+    require_equal(db(select(tab.int_n).from(tab)).empty(), true);
 
     // explicit all_of(tab)
     std::cerr << __FILE__ << ": " << __LINE__ << std::endl;
@@ -81,7 +76,7 @@ int Sample(int, char*[]) {
     db(update(tab)
            .set(tab.bool_nn = false)
            .where(tab.int_n.in(std::vector<int>{1, 2, 3, 4})));
-    db(update(tab).set(tab.bool_nn = true).where(tab.int_n.in(1)));
+    db(update(tab).set(tab.bool_nn = true).where(tab.int_n.in(std::make_tuple(1))));
 
     // remove
     {

@@ -24,7 +24,6 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <set>
 
 #include <sqlpp26/tests/sqlite3/all.h>
 
@@ -38,12 +37,13 @@ int AutoIncrement(int, char*[]) {
   db(insert_into(tab).default_values());
   db(insert_into(tab).default_values());
 
-  std::set<int64_t> results;
+  std::vector<int64_t> results;
   for (const auto& row : db(select(all_of(tab)).from(tab))) {
-    results.insert(row.id);
+    results.push_back(row.id);
   };
-  const auto expected = std::set<int64_t>{1, 2, 3};
-  assert(results == expected);
+  for (int i = 0; i < 3; ++i) {
+    require_equal(results[i], i + 1);
+  }
 
   return 0;
 }

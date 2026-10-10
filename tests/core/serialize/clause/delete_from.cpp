@@ -27,15 +27,17 @@
 #include <sqlpp26/tests/core/all.h>
 
 int main(int, char*[]) {
+  auto compare = comparer{};
+
   const auto foo = test::tab_foo{};
 
   // Delete all (don't do this at home, use truncate instead).
-  SQLPP_COMPARE(delete_from(foo), "DELETE FROM tab_foo");
-  SQLPP_COMPARE(delete_from(foo).where(dynamic(false, foo.id > 17)),
+  compare(delete_from(foo), "DELETE FROM tab_foo");
+  compare(delete_from(foo).where(dynamic(false, foo.id > 17)),
                 "DELETE FROM tab_foo ");
 
   // Delete some.
-  SQLPP_COMPARE(delete_from(foo).where(foo.id > 17),
+  compare(delete_from(foo).where(foo.id > 17),
                 "DELETE FROM tab_foo WHERE tab_foo.id > 17");
 
   return 0;

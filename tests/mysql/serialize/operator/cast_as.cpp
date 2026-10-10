@@ -27,13 +27,15 @@
 #include <sqlpp26/tests/mysql/all.h>
 
 int main() {
+  auto compare = comparer{};
+
   // Testing data type serialization
-  SQLPP_COMPARE(cast("7", sqlpp::as<sqlpp::integral>()), "CAST('7' AS SIGNED INTEGER)");
-  SQLPP_COMPARE(cast("7", sqlpp::as<sqlpp::unsigned_integral>()), "CAST('7' AS UNSIGNED INTEGER)");
-  SQLPP_COMPARE(cast("7", sqlpp::as<sqlpp::floating_point>()), "CAST('7' AS DOUBLE)");
-  SQLPP_COMPARE(cast("7", sqlpp::as<sqlpp::text>()), "CAST('7' AS CHAR)");
-  SQLPP_COMPARE(cast("7", sqlpp::as<sqlpp::blob>()), "CAST('7' AS BINARY)");
-  SQLPP_COMPARE(cast("7", sqlpp::as<sqlpp::timestamp>()), "CAST('7' AS DATETIME)");
+  compare(cast("7", sqlpp::as<sqlpp::integral>()), "CAST('7' AS SIGNED INTEGER)");
+  compare(cast("7", sqlpp::as<sqlpp::unsigned_integral>()), "CAST('7' AS UNSIGNED INTEGER)");
+  compare(cast("7", sqlpp::as<sqlpp::floating_point>()), "CAST('7' AS DOUBLE)");
+  compare(cast("7", sqlpp::as<sqlpp::text>()), "CAST('7' AS CHAR)");
+  compare(cast("7", sqlpp::as<sqlpp::blob>()), "CAST('7' AS BINARY)");
+  compare(cast("7", sqlpp::as<sqlpp::timestamp>()), "CAST('7' AS DATETIME)");
 
   return 0;
 }

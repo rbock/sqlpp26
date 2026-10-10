@@ -27,24 +27,26 @@
 #include <sqlpp26/tests/core/all.h>
 
 int main(int, char*[]) {
+  auto compare = comparer{};
+
   const auto bar = test::tab_bar{};
 
   // star
-  SQLPP_COMPARE(count(sqlpp::star), "COUNT(*)");
+  compare(count(sqlpp::star), "COUNT(*)");
 
   // Single column.
-  SQLPP_COMPARE(count(bar.id), "COUNT(tab_bar.id)");
-  SQLPP_COMPARE(count(sqlpp::distinct, bar.id), "COUNT(DISTINCT tab_bar.id)");
+  compare(count(bar.id), "COUNT(tab_bar.id)");
+  compare(count(sqlpp::distinct, bar.id), "COUNT(DISTINCT tab_bar.id)");
 
   // Expression.
-  SQLPP_COMPARE(count(bar.id + 7), "COUNT(tab_bar.id + 7)");
-  SQLPP_COMPARE(count(sqlpp::distinct, bar.id + 7),
+  compare(count(bar.id + 7), "COUNT(tab_bar.id + 7)");
+  compare(count(sqlpp::distinct, bar.id + 7),
                 "COUNT(DISTINCT tab_bar.id + 7)");
 
   // With sub select.
-  SQLPP_COMPARE(count(value(select(sqlpp::value(7).as<"a">()))),
+  compare(count(value(select(sqlpp::value(7).as<"a">()))),
                 "COUNT(SELECT 7 AS a)");
-  SQLPP_COMPARE(
+  compare(
       count(sqlpp::distinct, value(select(sqlpp::value(7).as<"a">()))),
       "COUNT(DISTINCT SELECT 7 AS a)");
 

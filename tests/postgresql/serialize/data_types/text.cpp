@@ -27,11 +27,13 @@
 #include <sqlpp26/tests/postgresql/all.h>
 
 int main() {
-  SQLPP_COMPARE(R"(a)", R"('a')");
-  SQLPP_COMPARE(R"(')", R"('''')");
-  SQLPP_COMPARE(R"(\)", R"('\')");
-  SQLPP_COMPARE(R"(\\)", R"('\\')");
-  SQLPP_COMPARE(R"(\')", R"('\''')");
+  auto compare = comparer{};
+
+  compare(R"(a)", R"('a')");
+  compare(R"(')", R"('''')");
+  compare(R"(\)", R"('\')");
+  compare(R"(\\)", R"('\\')");
+  compare(R"(\')", R"('\''')");
 
   return 0;
 }

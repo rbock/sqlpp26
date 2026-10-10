@@ -27,8 +27,10 @@
 #include <sqlpp26/tests/postgresql/all.h>
 
 int main() {
+  auto compare = comparer{};
+
   // Testing data type serialization
-  SQLPP_COMPARE(cast("7", sqlpp::as<sqlpp::blob>()), "CAST('7' AS BYTEA)");
+  compare(cast("7", sqlpp::as<sqlpp::blob>()), "CAST('7' AS BYTEA)");
 
   return 0;
 }

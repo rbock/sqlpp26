@@ -27,10 +27,12 @@
 #include <sqlpp26/tests/postgresql/all.h>
 
 int main() {
+  auto compare = comparer{};
+
   const auto foo = test::tab_foo{};
 
   // Multiple clauses with parameters
-  SQLPP_COMPARE(
+  compare(
       (sqlpp::select(
            sqlpp::parameter<sqlpp::integral, "a">().as<"a">())
            .from(foo)

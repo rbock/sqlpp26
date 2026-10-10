@@ -27,9 +27,11 @@
 #include <sqlpp26/tests/core/all.h>
 
 int main(int, char*[]) {
+  auto compare = comparer{};
+
   const auto foo = test::tab_foo{};
 
-  SQLPP_COMPARE(truncate(foo), "TRUNCATE tab_foo");
+  compare(truncate(foo), "TRUNCATE tab_foo");
 
   return 0;
 }

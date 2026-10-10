@@ -27,14 +27,16 @@
 #include <sqlpp26/tests/postgresql/all.h>
 
 int main() {
+  auto compare = comparer{};
+
   // vector<uint8_t>
   std::vector<uint8_t> vec{'c', 'h', 'e', 'e', 's', 'e', 'c', 'a', 'k', 'e'};
-  SQLPP_COMPARE(vec, "'\\x63686565736563616B65'");
+  compare(vec, "'\\x63686565736563616B65'");
 
   // array<uint8_t>
   std::array<uint8_t, 10> arr{
       'c', 'h', 'e', 'e', 's', 'e', 'c', 'a', 'k', 'e'};
-  SQLPP_COMPARE(arr, "'\\x63686565736563616B65'");
+  compare(arr, "'\\x63686565736563616B65'");
 
   return 0;
 }

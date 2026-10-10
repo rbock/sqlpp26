@@ -28,18 +28,27 @@
 
 #include <sqlpp26/tests/sqlite3/make_test_connection.h>
 
-#define SQLPP_COMPARE(expr, expected_string)                           \
-  {                                                                    \
-    static auto compare_db = sqlpp::sqlite3::make_test_connection({}); \
-    sqlpp::sqlite3::context_t compare_context{&compare_db};            \
-                                                                       \
-    using sqlpp::to_sql_string;                                        \
-    const auto result = to_sql_string(compare_context, expr);          \
-                                                                       \
-    if (result != expected_string) {                                   \
-      std::cerr << __FILE__ << " " << __LINE__ << '\n'                 \
-                << "Expected: -->|" << expected_string << "|<--\n"     \
-                << "Received: -->|" << result << "|<--\n";             \
-      return -1;                                                       \
-    }                                                                  \
+struct comparer {
+  comparer() = default;
+  ~comparer() { if (result) { std::exit(-1); }}
+  void operator()(
+      const auto& expr,
+      std::string_view expected_string,
+      const std::source_location location = std::source_location::current()) {
+    using sqlpp::to_sql_string;
+
+    static auto compare_db = sqlpp::sqlite3::make_test_connection({});
+    sqlpp::sqlite3::context_t context{&compare_db};
+    const auto result_string = to_sql_string(context, expr);
+
+    if (result_string != expected_string) {
+      std::cerr << location.file_name() << " " << location.line() << '\n'
+                << "Expected: -->|" << expected_string << "|<--\n"
+                << "Received: -->|" << result_string << "|<--\n";
+      result = -1;
+    }
   }
+
+  int result = 0;
+};
+

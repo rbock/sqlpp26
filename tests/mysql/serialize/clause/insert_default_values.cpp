@@ -27,7 +27,9 @@
 #include <sqlpp26/tests/mysql/all.h>
 
 int main(int, char*[]) {
-  SQLPP_COMPARE(sqlpp::insert_default_values(), " () VALUES()");
+  auto compare = comparer{};
+
+  compare(sqlpp::insert_default_values(), " () VALUES()");
 
   return 0;
 }

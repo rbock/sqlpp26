@@ -27,21 +27,23 @@
 #include <sqlpp26/tests/core/all.h>
 
 int main(int, char*[]) {
+  auto compare = comparer{};
+
   const auto bar = test::tab_bar{};
 
   // Single column.
-  SQLPP_COMPARE(avg(bar.id), "AVG(tab_bar.id)");
-  SQLPP_COMPARE(avg(sqlpp::distinct, bar.id), "AVG(DISTINCT tab_bar.id)");
+  compare(avg(bar.id), "AVG(tab_bar.id)");
+  compare(avg(sqlpp::distinct, bar.id), "AVG(DISTINCT tab_bar.id)");
 
   // Expression.
-  SQLPP_COMPARE(avg(bar.id + 7), "AVG(tab_bar.id + 7)");
-  SQLPP_COMPARE(avg(sqlpp::distinct, bar.id + 7),
+  compare(avg(bar.id + 7), "AVG(tab_bar.id + 7)");
+  compare(avg(sqlpp::distinct, bar.id + 7),
                 "AVG(DISTINCT tab_bar.id + 7)");
 
   // With sub select.
-  SQLPP_COMPARE(avg(value(select(sqlpp::value(7).as<"a">()))),
+  compare(avg(value(select(sqlpp::value(7).as<"a">()))),
                 "AVG(SELECT 7 AS a)");
-  SQLPP_COMPARE(
+  compare(
       avg(sqlpp::distinct, value(select(sqlpp::value(7).as<"a">()))),
       "AVG(DISTINCT SELECT 7 AS a)");
 

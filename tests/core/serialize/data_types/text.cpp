@@ -27,19 +27,21 @@
 #include <sqlpp26/tests/core/all.h>
 
 int main(int, char*[]) {
-  SQLPP_COMPARE("", "''");
-  SQLPP_COMPARE(std::string("ab'cd"), "'ab''cd'");
-  SQLPP_COMPARE(std::string_view("ab'cd"), "'ab''cd'");
+  auto compare = comparer{};
 
-  SQLPP_COMPARE("ab'cd", "'ab''cd'");
-  SQLPP_COMPARE(std::string("ab'cd"), "'ab''cd'");
-  SQLPP_COMPARE(std::string_view("ab'cd"), "'ab''cd'");
+  compare("", "''");
+  compare(std::string("ab'cd"), "'ab''cd'");
+  compare(std::string_view("ab'cd"), "'ab''cd'");
 
-  SQLPP_COMPARE("'", "''''");
-  SQLPP_COMPARE(std::string("'"), "''''");
-  SQLPP_COMPARE(std::string_view("'"), "''''");
+  compare("ab'cd", "'ab''cd'");
+  compare(std::string("ab'cd"), "'ab''cd'");
+  compare(std::string_view("ab'cd"), "'ab''cd'");
 
-  SQLPP_COMPARE("ab\"cd", "'ab\"cd'");
-  SQLPP_COMPARE(std::string("ab\"cd"), "'ab\"cd'");
-  SQLPP_COMPARE(std::string_view("ab\"cd"), "'ab\"cd'");
+  compare("'", "''''");
+  compare(std::string("'"), "''''");
+  compare(std::string_view("'"), "''''");
+
+  compare("ab\"cd", "'ab\"cd'");
+  compare(std::string("ab\"cd"), "'ab\"cd'");
+  compare(std::string_view("ab\"cd"), "'ab\"cd'");
 }

@@ -27,22 +27,24 @@
 #include <sqlpp26/tests/core/all.h>
 
 int main(int, char*[]) {
+  auto compare = comparer{};
+
   const auto bar = test::tab_bar{};
 
   // Single column.
-  SQLPP_COMPARE(sum(bar.id), "SUM(tab_bar.id)");
-  SQLPP_COMPARE(sum(sqlpp::distinct, bar.id), "SUM(DISTINCT tab_bar.id)");
+  compare(sum(bar.id), "SUM(tab_bar.id)");
+  compare(sum(sqlpp::distinct, bar.id), "SUM(DISTINCT tab_bar.id)");
 
   // Expression.
   // Note that the inner parens aren't necessary.
-  SQLPP_COMPARE(sum(bar.id + 7), "SUM(tab_bar.id + 7)");
-  SQLPP_COMPARE(sum(sqlpp::distinct, bar.id + 7),
+  compare(sum(bar.id + 7), "SUM(tab_bar.id + 7)");
+  compare(sum(sqlpp::distinct, bar.id + 7),
                 "SUM(DISTINCT tab_bar.id + 7)");
 
   // With sub select.
-  SQLPP_COMPARE(sum(value(select(sqlpp::value(7).as<"a">()))),
+  compare(sum(value(select(sqlpp::value(7).as<"a">()))),
                 "SUM(SELECT 7 AS a)");
-  SQLPP_COMPARE(
+  compare(
       sum(sqlpp::distinct, value(select(sqlpp::value(7).as<"a">()))),
       "SUM(DISTINCT SELECT 7 AS a)");
 

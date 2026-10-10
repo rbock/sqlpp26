@@ -27,16 +27,18 @@
 #include <sqlpp26/tests/sqlite3/all.h>
 
 int main(int, char*[]) {
+  auto compare = comparer{};
+
   const auto t = test::tab_bar{};
   const auto f = test::tab_foo{};
 
   // UNION ALL (as in other connectors)
-  SQLPP_COMPARE(select(t.id).from(t).union_all(select(f.id).from(f)),
+  compare(select(t.id).from(t).union_all(select(f.id).from(f)),
                 "SELECT tab_bar.id FROM tab_bar UNION ALL SELECT "
                 "tab_foo.id FROM tab_foo");
 
   // UNION is implicitly distinct
-  SQLPP_COMPARE(select(t.id).from(t).union_distinct(select(f.id).from(f)),
+  compare(select(t.id).from(t).union_distinct(select(f.id).from(f)),
                 "SELECT tab_bar.id FROM tab_bar UNION SELECT "
                 "tab_foo.id FROM tab_foo");
 

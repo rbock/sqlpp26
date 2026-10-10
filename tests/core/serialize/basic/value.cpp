@@ -27,11 +27,13 @@
 #include <sqlpp26/tests/core/all.h>
 
 int main(int, char*[]) {
-  SQLPP_COMPARE(sqlpp::value(7), "7");
-  SQLPP_COMPARE(sqlpp::value("cheese"), "'cheese'");
+  auto compare = comparer{};
 
-  SQLPP_COMPARE(sqlpp::value(7).as<"v">(), "7 AS v");
-  SQLPP_COMPARE(sqlpp::value("cheese").as<"v">(), "'cheese' AS v");
+  compare(sqlpp::value(7), "7");
+  compare(sqlpp::value("cheese"), "'cheese'");
+
+  compare(sqlpp::value(7).as<"v">(), "7 AS v");
+  compare(sqlpp::value("cheese").as<"v">(), "'cheese' AS v");
 
   return 0;
 }

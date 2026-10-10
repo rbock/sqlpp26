@@ -27,11 +27,13 @@
 #include <sqlpp26/tests/sqlite3/all.h>
 
 int main(int, char*[]) {
+  auto compare = comparer{};
+
   const auto t = test::tab_bar{};
 
   // There is no TRUNCATE in sqlite3, see
   // https://www.sqlite.org/lang_delete.html
-  SQLPP_COMPARE(truncate(t), "DELETE FROM tab_bar");
+  compare(truncate(t), "DELETE FROM tab_bar");
 
   return 0;
 }

@@ -27,13 +27,15 @@
 #include <sqlpp26/tests/postgresql/all.h>
 
 int main() {
+  auto compare = comparer{};
+
   ::sqlpp::chrono::sys_microseconds tp =
       static_cast<std::chrono::sys_days>(std::chrono::January / 8 / 1970) +
       std::chrono::hours{3} + std::chrono::minutes{20} +
       std::chrono::seconds{14} + std::chrono::microseconds{81};
 
   // Testing time point serialization
-  SQLPP_COMPARE(tp, "TIMESTAMP WITH TIME ZONE '1970-01-08 03:20:14.000081+00'");
+  compare(tp, "TIMESTAMP WITH TIME ZONE '1970-01-08 03:20:14.000081+00'");
 
   return 0;
 }

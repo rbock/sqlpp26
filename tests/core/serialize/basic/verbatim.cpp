@@ -27,11 +27,13 @@
 #include <sqlpp26/tests/core/all.h>
 
 int main(int, char*[]) {
-  SQLPP_COMPARE(sqlpp::verbatim<int64_t>("whatever"), "whatever");
-  SQLPP_COMPARE(sqlpp::verbatim<int64_t>("what'ver"), "what'ver");
-  SQLPP_COMPARE(sqlpp::verbatim<int64_t>("'what''ver'"), "'what''ver'");
+  auto compare = comparer{};
 
-  SQLPP_COMPARE(sqlpp::verbatim<int64_t>("'what''ver'").as<"verb">(),
+  compare(sqlpp::verbatim<int64_t>("whatever"), "whatever");
+  compare(sqlpp::verbatim<int64_t>("what'ver"), "what'ver");
+  compare(sqlpp::verbatim<int64_t>("'what''ver'"), "'what''ver'");
+
+  compare(sqlpp::verbatim<int64_t>("'what''ver'").as<"verb">(),
                 "'what''ver' AS verb");
 
   return 0;

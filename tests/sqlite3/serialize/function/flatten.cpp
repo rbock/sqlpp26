@@ -27,11 +27,13 @@
 #include <sqlpp26/tests/sqlite3/all.h>
 
 int main(int, char*[]) {
+  auto compare = comparer{};
+
   auto db = sqlpp::sqlite3::make_test_connection();
   auto ctx = sqlpp::sqlite3::context_t{&db};
 
-  SQLPP_COMPARE(flatten(ctx, test::tab_foo{}.id), "tab_foo.id");
-  SQLPP_COMPARE(flatten(ctx, from(test::tab_foo{})), "FROM tab_foo");
+  compare(flatten(ctx, test::tab_foo{}.id), "tab_foo.id");
+  compare(flatten(ctx, from(test::tab_foo{})), "FROM tab_foo");
 
   return 0;
 }

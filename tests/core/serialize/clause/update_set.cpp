@@ -27,18 +27,20 @@
 #include <sqlpp26/tests/core/all.h>
 
 int main(int, char*[]) {
+  auto compare = comparer{};
+
   const auto foo = test::tab_foo{};
 
   // Plain assignments.
-  SQLPP_COMPARE(update_set(foo.int_n = 7), "SET int_n = 7");
-  SQLPP_COMPARE(update_set(foo.int_n = 7, foo.text_nn_d = "cheesecake"),
+  compare(update_set(foo.int_n = 7), "SET int_n = 7");
+  compare(update_set(foo.int_n = 7, foo.text_nn_d = "cheesecake"),
                 "SET int_n = 7, text_nn_d = 'cheesecake'");
 
   // Dynamic assignments.
-  SQLPP_COMPARE(update_set(sqlpp::dynamic(true, foo.int_n = 7),
+  compare(update_set(sqlpp::dynamic(true, foo.int_n = 7),
                            sqlpp::dynamic(false, foo.text_nn_d = "cheesecake")),
                 "SET int_n = 7");
-  SQLPP_COMPARE(update_set(sqlpp::dynamic(false, foo.int_n = 7),
+  compare(update_set(sqlpp::dynamic(false, foo.int_n = 7),
                            sqlpp::dynamic(true, foo.text_nn_d = "cheesecake")),
                 "SET text_nn_d = 'cheesecake'");
 

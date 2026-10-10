@@ -27,17 +27,19 @@
 #include <sqlpp26/tests/core/all.h>
 
 int main(int, char*[]) {
+  auto compare = comparer{};
+
   const auto val = sqlpp::value(17);
   const auto expr = sqlpp::value(17) + 4;
 
   // Without static offset.
-  SQLPP_COMPARE(sqlpp::offset(17), "OFFSET 17");
-  SQLPP_COMPARE(offset(val), "OFFSET 17");
-  SQLPP_COMPARE(offset(expr), "OFFSET 17 + 4");
+  compare(sqlpp::offset(17), "OFFSET 17");
+  compare(offset(val), "OFFSET 17");
+  compare(offset(expr), "OFFSET 17 + 4");
 
   // With dynamic offset.
-  SQLPP_COMPARE(offset(dynamic(true, val)), "OFFSET 17");
-  SQLPP_COMPARE(offset(dynamic(false, val)), "");
+  compare(offset(dynamic(true, val)), "OFFSET 17");
+  compare(offset(dynamic(false, val)), "");
 
   return 0;
 }

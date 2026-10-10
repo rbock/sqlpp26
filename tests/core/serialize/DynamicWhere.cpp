@@ -27,15 +27,17 @@
 #include <sqlpp26/tests/core/all.h>
 
 int DynamicWhere(int, char*[]) {
+  auto compare = comparer{};
+
   const auto foo = test::tab_foo{};
   const auto bar = test::tab_bar{};
 
-  SQLPP_COMPARE(sqlpp::where(true), "WHERE 1");
-  SQLPP_COMPARE(where(bar.bool_nn), "WHERE tab_bar.bool_nn");
+  compare(sqlpp::where(true), "WHERE 1");
+  compare(where(bar.bool_nn), "WHERE tab_bar.bool_nn");
 
-  SQLPP_COMPARE(where(bar.bool_nn and dynamic(true, foo.bool_n)),
+  compare(where(bar.bool_nn and dynamic(true, foo.bool_n)),
                 "WHERE tab_bar.bool_nn AND tab_foo.bool_n");
-  SQLPP_COMPARE(where(bar.bool_nn and dynamic(false, foo.bool_n)),
+  compare(where(bar.bool_nn and dynamic(false, foo.bool_n)),
                 "WHERE tab_bar.bool_nn");
 
   return 0;

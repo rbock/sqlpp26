@@ -27,17 +27,19 @@
 #include <sqlpp26/tests/core/all.h>
 
 int main(int, char*[]) {
+  auto compare = comparer{};
+
   const auto foo = test::tab_foo{};
 
   // Without values.
-  SQLPP_COMPARE(insert_into(foo), "INSERT INTO tab_foo");
+  compare(insert_into(foo), "INSERT INTO tab_foo");
 
   // Default values.
-  SQLPP_COMPARE(insert_into(foo).default_values(),
+  compare(insert_into(foo).default_values(),
                 "INSERT INTO tab_foo DEFAULT VALUES");
 
   // Single row with "SET".
-  SQLPP_COMPARE(
+  compare(
       insert_into(foo).set(foo.int_n = 17, foo.bool_n = std::nullopt,
                            foo.text_nn_d = "cake"),
       "INSERT INTO tab_foo (int_n, bool_n, text_nn_d) VALUES(17, NULL, 'cake')");
@@ -48,7 +50,7 @@ int main(int, char*[]) {
     i.add_values(foo.int_n = sqlpp::default_value,
                  foo.bool_n = sqlpp::default_value, foo.text_nn_d = "cheese");
     i.add_values(foo.int_n = 17, foo.bool_n = std::nullopt, foo.text_nn_d = "cake");
-    SQLPP_COMPARE(i,
+    compare(i,
                   "INSERT INTO tab_foo (int_n, bool_n, text_nn_d) VALUES "
                   "(DEFAULT, DEFAULT, 'cheese'), (17, NULL, 'cake')");
   }

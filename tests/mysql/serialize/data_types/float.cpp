@@ -27,7 +27,9 @@
 #include <sqlpp26/tests/mysql/all.h>
 
 int main(int, char*[]) {
-  SQLPP_COMPARE(sqlpp::value(10.0000114), "10.0000114");
+  auto compare = comparer{};
+
+  compare(sqlpp::value(10.0000114), "10.0000114");
 
   return 0;
 }

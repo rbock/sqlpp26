@@ -27,36 +27,38 @@
 #include <sqlpp26/tests/core/all.h>
 
 int main(int, char*[]) {
+  auto compare = comparer{};
+
   const auto t = test::tab_bar{};
   const auto f = test::tab_foo{};
 
   // Using member function
-  SQLPP_COMPARE(select(t.id).from(t).union_all(select(f.id).from(f)),
+  compare(select(t.id).from(t).union_all(select(f.id).from(f)),
                 "SELECT tab_bar.id FROM tab_bar "
                 "UNION ALL "
                 "SELECT tab_foo.id FROM tab_foo");
 
-  SQLPP_COMPARE(select(t.id).from(t).union_all(select(f.id).from(f)).order_by(t.id.asc()),
+  compare(select(t.id).from(t).union_all(select(f.id).from(f)).order_by(t.id.asc()),
                 "SELECT tab_bar.id FROM tab_bar "
                 "UNION ALL "
                 "SELECT tab_foo.id FROM tab_foo ORDER BY id ASC");
 
-  SQLPP_COMPARE(select(t.id).from(t).union_distinct(select(f.id).from(f)),
+  compare(select(t.id).from(t).union_distinct(select(f.id).from(f)),
                 "SELECT tab_bar.id FROM tab_bar "
                 "UNION DISTINCT "
                 "SELECT tab_foo.id FROM tab_foo");
 
-  SQLPP_COMPARE(
+  compare(
       select(t.id).from(t).union_distinct(dynamic(true, select(f.id).from(f))),
       "SELECT tab_bar.id FROM tab_bar "
       "UNION DISTINCT "
       "SELECT tab_foo.id FROM tab_foo");
 
-  SQLPP_COMPARE(
+  compare(
       select(t.id).from(t).union_distinct(dynamic(false, select(f.id).from(f))),
       "SELECT tab_bar.id FROM tab_bar");
 
-  SQLPP_COMPARE(select(t.int_n.as<"id">())
+  compare(select(t.int_n.as<"id">())
                     .from(t)
                     .union_distinct(select(f.id).from(f))
                     .union_all(select(t.id).from(t)),
@@ -67,17 +69,17 @@ int main(int, char*[]) {
                 "SELECT tab_bar.id FROM tab_bar");
 
   // Using free function
-  SQLPP_COMPARE(union_all(select(t.id).from(t), select(f.id).from(f)),
+  compare(union_all(select(t.id).from(t), select(f.id).from(f)),
                 "SELECT tab_bar.id FROM tab_bar "
                 "UNION ALL "
                 "SELECT tab_foo.id FROM tab_foo");
 
-  SQLPP_COMPARE(union_distinct(select(t.id).from(t), select(f.id).from(f)),
+  compare(union_distinct(select(t.id).from(t), select(f.id).from(f)),
                 "SELECT tab_bar.id FROM tab_bar "
                 "UNION DISTINCT "
                 "SELECT tab_foo.id FROM tab_foo");
 
-  SQLPP_COMPARE(union_all(union_distinct(select(t.int_n.as<"id">()).from(t),
+  compare(union_all(union_distinct(select(t.int_n.as<"id">()).from(t),
                                          select(f.id).from(f)),
                           select(t.id).from(t)),
                 "SELECT tab_bar.int_n AS id FROM tab_bar "

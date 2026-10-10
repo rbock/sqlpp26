@@ -27,78 +27,80 @@
 #include <sqlpp26/tests/core/all.h>
 
 int main(int, char*[]) {
+  auto compare = comparer{};
+
   {
-    SQLPP_COMPARE(sqlpp::coalesce("a"), "COALESCE('a')");
-    SQLPP_COMPARE(sqlpp::coalesce("a", "b"), "COALESCE('a', 'b')");
-    SQLPP_COMPARE(sqlpp::coalesce("a", sqlpp::dynamic(true, "b"), "c"),
+    compare(sqlpp::coalesce("a"), "COALESCE('a')");
+    compare(sqlpp::coalesce("a", "b"), "COALESCE('a', 'b')");
+    compare(sqlpp::coalesce("a", sqlpp::dynamic(true, "b"), "c"),
                   "COALESCE('a', 'b', 'c')");
-    SQLPP_COMPARE(sqlpp::coalesce("a", sqlpp::dynamic(false, "b"), "c"),
+    compare(sqlpp::coalesce("a", sqlpp::dynamic(false, "b"), "c"),
                   "COALESCE('a', NULL, 'c')");
   }
   {
-    SQLPP_COMPARE(sqlpp::concat("a"), "CONCAT('a')");
-    SQLPP_COMPARE(sqlpp::concat("a", "b"), "CONCAT('a', 'b')");
-    SQLPP_COMPARE(sqlpp::concat("a", sqlpp::dynamic(true, "b"), "c"),
+    compare(sqlpp::concat("a"), "CONCAT('a')");
+    compare(sqlpp::concat("a", "b"), "CONCAT('a', 'b')");
+    compare(sqlpp::concat("a", sqlpp::dynamic(true, "b"), "c"),
                   "CONCAT('a', 'b', 'c')");
-    SQLPP_COMPARE(sqlpp::concat("a", sqlpp::dynamic(false, "b"), "c"),
+    compare(sqlpp::concat("a", sqlpp::dynamic(false, "b"), "c"),
                   "CONCAT('a', NULL, 'c')");
   }
   {
-    SQLPP_COMPARE(sqlpp::current_date, "CURRENT_DATE");
+    compare(sqlpp::current_date, "CURRENT_DATE");
   }
   {
-    SQLPP_COMPARE(sqlpp::current_time, "CURRENT_TIME");
+    compare(sqlpp::current_time, "CURRENT_TIME");
   }
   {
-    SQLPP_COMPARE(sqlpp::current_timestamp, "CURRENT_TIMESTAMP");
+    compare(sqlpp::current_timestamp, "CURRENT_TIMESTAMP");
   }
   {
     auto ctx = sqlpp::mock_db::context_t{};
 
-    SQLPP_COMPARE(flatten(ctx, test::tab_foo{}.id), "tab_foo.id");
-    SQLPP_COMPARE(flatten(ctx, from(test::tab_foo{})), "FROM tab_foo");
-    SQLPP_COMPARE(flatten(ctx, test::tab_foo{}.id).asc(), "tab_foo.id ASC");
+    compare(flatten(ctx, test::tab_foo{}.id), "tab_foo.id");
+    compare(flatten(ctx, from(test::tab_foo{})), "FROM tab_foo");
+    compare(flatten(ctx, test::tab_foo{}.id).asc(), "tab_foo.id ASC");
   }
   {
     const auto bar = test::tab_bar{};
 
     // Single column.
-    SQLPP_COMPARE(lower(bar.text_n), "LOWER(tab_bar.text_n)");
+    compare(lower(bar.text_n), "LOWER(tab_bar.text_n)");
 
     // Expression.
-    SQLPP_COMPARE(lower(bar.text_n + "suffix"),
+    compare(lower(bar.text_n + "suffix"),
                   "LOWER(CONCAT(tab_bar.text_n, 'suffix'))");
 
     // With sub select.
-    SQLPP_COMPARE(lower(value(select(sqlpp::value("something").as<"a">()))),
+    compare(lower(value(select(sqlpp::value("something").as<"a">()))),
                   "LOWER(SELECT 'something' AS a)");
   }
   {
     const auto bar = test::tab_bar{};
 
     // Single column.
-    SQLPP_COMPARE(trim(bar.text_n), "TRIM(tab_bar.text_n)");
+    compare(trim(bar.text_n), "TRIM(tab_bar.text_n)");
 
     // Expression.
-    SQLPP_COMPARE(trim(bar.text_n + "suffix"),
+    compare(trim(bar.text_n + "suffix"),
                   "TRIM(CONCAT(tab_bar.text_n, 'suffix'))");
 
     // With sub select.
-    SQLPP_COMPARE(trim(value(select(sqlpp::value("something").as<"a">()))),
+    compare(trim(value(select(sqlpp::value("something").as<"a">()))),
                   "TRIM(SELECT 'something' AS a)");
   }
   {
     const auto bar = test::tab_bar{};
 
     // Single column.
-    SQLPP_COMPARE(upper(bar.text_n), "UPPER(tab_bar.text_n)");
+    compare(upper(bar.text_n), "UPPER(tab_bar.text_n)");
 
     // Expression.
-    SQLPP_COMPARE(upper(bar.text_n + "suffix"),
+    compare(upper(bar.text_n + "suffix"),
                   "UPPER(CONCAT(tab_bar.text_n, 'suffix'))");
 
     // With sub select.
-    SQLPP_COMPARE(upper(value(select(sqlpp::value("something").as<"a">()))),
+    compare(upper(value(select(sqlpp::value("something").as<"a">()))),
                   "UPPER(SELECT 'something' AS a)");
   }
   return 0;

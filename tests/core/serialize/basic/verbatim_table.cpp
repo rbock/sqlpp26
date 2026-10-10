@@ -27,7 +27,9 @@
 #include <sqlpp26/tests/core/all.h>
 
 int main(int, char*[]) {
-  SQLPP_COMPARE(sqlpp::verbatim_table("cheese").as<"verb">(), "cheese AS verb");
+  auto compare = comparer{};
+
+  compare(sqlpp::verbatim_table("cheese").as<"verb">(), "cheese AS verb");
 
   return 0;
 }

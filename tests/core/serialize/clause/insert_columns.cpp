@@ -27,17 +27,19 @@
 #include <sqlpp26/tests/core/all.h>
 
 int main(int, char*[]) {
+  auto compare = comparer{};
+
   const auto foo = test::tab_foo{};
 
   // Without values.
-  SQLPP_COMPARE(insert_columns(foo.int_n), "(int_n)");
-  SQLPP_COMPARE(insert_columns(foo.int_n, foo.text_nn_d), "(int_n, text_nn_d)");
+  compare(insert_columns(foo.int_n), "(int_n)");
+  compare(insert_columns(foo.int_n, foo.text_nn_d), "(int_n, text_nn_d)");
 
   // Single column.
   {
     auto i = insert_columns(foo.text_nn_d);
     i.add_values(foo.text_nn_d = "cheese");
-    SQLPP_COMPARE(i, "(text_nn_d) VALUES ('cheese')");
+    compare(i, "(text_nn_d) VALUES ('cheese')");
   }
   {
     auto i = insert_columns(foo.int_n);
@@ -45,7 +47,7 @@ int main(int, char*[]) {
     i.add_values(foo.int_n = sqlpp::default_value);
     i.add_values(dynamic(true, foo.int_n = 42));
     i.add_values(dynamic(false, foo.int_n = 42));
-    SQLPP_COMPARE(i, "(int_n) VALUES (17), (DEFAULT), (42), (DEFAULT)");
+    compare(i, "(int_n) VALUES (17), (DEFAULT), (42), (DEFAULT)");
   }
 
   {
@@ -53,7 +55,7 @@ int main(int, char*[]) {
     i.add_values(foo.bool_n = true);
     i.add_values(foo.bool_n = sqlpp::default_value);
     i.add_values(foo.bool_n = std::nullopt);
-    SQLPP_COMPARE(i, "(bool_n) VALUES (1), (DEFAULT), (NULL)");
+    compare(i, "(bool_n) VALUES (1), (DEFAULT), (NULL)");
   }
 
   // Multiple columns.
@@ -61,11 +63,11 @@ int main(int, char*[]) {
     auto i = insert_columns(foo.int_n, foo.bool_n, foo.text_nn_d);
     i.add_values(foo.int_n = sqlpp::default_value,
                  foo.bool_n = sqlpp::default_value, foo.text_nn_d = "cheese");
-    SQLPP_COMPARE(
+    compare(
         i, "(int_n, bool_n, text_nn_d) VALUES (DEFAULT, DEFAULT, 'cheese')");
 
     i.add_values(foo.int_n = 17, foo.bool_n = std::nullopt, foo.text_nn_d = "cake");
-    SQLPP_COMPARE(i,
+    compare(i,
                   "(int_n, bool_n, text_nn_d) VALUES (DEFAULT, DEFAULT, "
                   "'cheese'), (17, NULL, 'cake')");
   }

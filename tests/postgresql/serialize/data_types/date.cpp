@@ -27,11 +27,13 @@
 #include <sqlpp26/tests/postgresql/all.h>
 
 int main() {
+  auto compare = comparer{};
+
   std::chrono::sys_days dp =
       static_cast<std::chrono::sys_days>(std::chrono::February / 2 / 2025);
 
   // Testing time point serialization
-  SQLPP_COMPARE(dp, "DATE '2025-02-02'");
+  compare(dp, "DATE '2025-02-02'");
 
   return 0;
 }

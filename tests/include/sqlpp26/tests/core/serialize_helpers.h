@@ -27,6 +27,7 @@
  */
 
 #include <iostream>
+#include <source_location>
 
 #ifdef BUILD_WITH_MODULES
 import sqlpp26.core;
@@ -36,17 +37,27 @@ import sqlpp26.mock_db;
 #include <sqlpp26/mock_db/mock_db.h>
 #endif
 
-#define SQLPP_COMPARE(expr, expected_string)                       \
-  {                                                                \
-    sqlpp::mock_db::context_t printer;                             \
-                                                                   \
-    using sqlpp::to_sql_string;                                    \
-    const auto result = to_sql_string(printer, expr);              \
-                                                                   \
-    if (result != expected_string) {                               \
-      std::cerr << __FILE__ << " " << __LINE__ << '\n'             \
-                << "Expected: -->|" << expected_string << "|<--\n" \
-                << "Received: -->|" << result << "|<--\n";         \
-      return -1;                                                   \
-    }                                                              \
+struct comparer {
+  comparer() = default;
+  ~comparer() { if (result) { std::exit(-1); }}
+  void operator()(
+      const auto& expr,
+      std::string_view expected_string,
+      const std::source_location location = std::source_location::current()) {
+    using sqlpp::to_sql_string;
+
+    sqlpp::mock_db::context_t context{};
+    const auto result_string = to_sql_string(context, expr);
+
+    if (result_string != expected_string) {
+      std::cerr << location.file_name() << " " << location.line() << '\n'
+                << "Expected: -->|" << expected_string << "|<--\n"
+                << "Received: -->|" << result_string << "|<--\n";
+      result = -1;
+    }
   }
+
+  int result = 0;
+};
+
+

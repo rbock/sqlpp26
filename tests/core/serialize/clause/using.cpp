@@ -27,6 +27,8 @@
 #include <sqlpp26/tests/core/all.h>
 
 int main() {
+  auto compare = comparer{};
+
   const auto foo = test::tab_foo{};
   const auto bar = test::tab_bar{};
   const auto aFoo = foo.as<"a">();
@@ -35,23 +37,23 @@ int main() {
   const auto xa = x.as<"a">();
 
   // Single table
-  SQLPP_COMPARE(using_(foo), "USING tab_foo");
-  SQLPP_COMPARE(using_(aFoo), "USING tab_foo AS a");
-  SQLPP_COMPARE(using_(dynamic(true, foo)), "USING tab_foo");
-  SQLPP_COMPARE(using_(dynamic(false, foo)), "");
+  compare(using_(foo), "USING tab_foo");
+  compare(using_(aFoo), "USING tab_foo AS a");
+  compare(using_(dynamic(true, foo)), "USING tab_foo");
+  compare(using_(dynamic(false, foo)), "");
 
   // Static joins
-  SQLPP_COMPARE(using_(foo.cross_join(bar)),
+  compare(using_(foo.cross_join(bar)),
                 "USING tab_foo CROSS JOIN tab_bar");
-  SQLPP_COMPARE(using_(dynamic(true, foo.cross_join(bar))),
+  compare(using_(dynamic(true, foo.cross_join(bar))),
                 "USING tab_foo CROSS JOIN tab_bar");
-  SQLPP_COMPARE(using_(dynamic(false, foo.cross_join(bar))), "");
+  compare(using_(dynamic(false, foo.cross_join(bar))), "");
 
   // CTE
-  SQLPP_COMPARE(using_(x), "USING x");
-  SQLPP_COMPARE(using_(xa), "USING x AS a");
-  SQLPP_COMPARE(using_(dynamic(true, x)), "USING x");
-  SQLPP_COMPARE(using_(dynamic(false, x)), "");
+  compare(using_(x), "USING x");
+  compare(using_(xa), "USING x AS a");
+  compare(using_(dynamic(true, x)), "USING x");
+  compare(using_(dynamic(false, x)), "");
 
   return 0;
 }

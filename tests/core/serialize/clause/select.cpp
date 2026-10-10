@@ -27,37 +27,39 @@
 #include <sqlpp26/tests/core/all.h>
 
 int main(int, char*[]) {
+  auto compare = comparer{};
+
   const auto expr = sqlpp::value(17) + 4;
 
   const auto foo = test::tab_foo{};
 
   // Empty.
-  SQLPP_COMPARE(sqlpp::select(), "SELECT");
+  compare(sqlpp::select(), "SELECT");
 
   // SELECT a value.
-  SQLPP_COMPARE(sqlpp::select(expr.as<"id">()), "SELECT (17 + 4) AS id");
+  compare(sqlpp::select(expr.as<"id">()), "SELECT (17 + 4) AS id");
 
   // SELECT FROM.
-  SQLPP_COMPARE(select(foo.id).from(foo), "SELECT tab_foo.id FROM tab_foo");
-  SQLPP_COMPARE(select(foo.id, foo.text_nn_d).from(foo),
+  compare(select(foo.id).from(foo), "SELECT tab_foo.id FROM tab_foo");
+  compare(select(foo.id, foo.text_nn_d).from(foo),
                 "SELECT tab_foo.id, tab_foo.text_nn_d FROM tab_foo");
-  SQLPP_COMPARE(sqlpp::select().columns(foo.id).from(foo),
+  compare(sqlpp::select().columns(foo.id).from(foo),
                 "SELECT tab_foo.id FROM tab_foo");
-  SQLPP_COMPARE(sqlpp::select(sqlpp::all, foo.id).from(foo),
+  compare(sqlpp::select(sqlpp::all, foo.id).from(foo),
                 "SELECT ALL tab_foo.id FROM tab_foo");
-  SQLPP_COMPARE(
+  compare(
       sqlpp::select(sqlpp::all, sqlpp::distinct, foo.id, foo.int_n).from(foo),
       "SELECT ALL DISTINCT tab_foo.id, tab_foo.int_n FROM tab_foo");
 
   // SELECT FROM WHERE.
-  SQLPP_COMPARE(select(foo.id).from(foo), "SELECT tab_foo.id FROM tab_foo");
-  SQLPP_COMPARE(select(foo.id).from(foo).where(foo.int_n > 17),
+  compare(select(foo.id).from(foo), "SELECT tab_foo.id FROM tab_foo");
+  compare(select(foo.id).from(foo).where(foo.int_n > 17),
                 "SELECT tab_foo.id FROM tab_foo WHERE tab_foo.int_n > 17");
-  SQLPP_COMPARE(select(foo.id).from(foo).where(dynamic(false, foo.int_n > 17)),
+  compare(select(foo.id).from(foo).where(dynamic(false, foo.int_n > 17)),
                 "SELECT tab_foo.id FROM tab_foo ");
 
   // SELECT FROM WHERE GROUP BY HAVING.
-  SQLPP_COMPARE(select(count(foo.id).as<"something">())
+  compare(select(count(foo.id).as<"something">())
                     .from(foo)
                     .group_by(foo.int_n)
                     .having(max(foo.id) < 100),
@@ -65,7 +67,7 @@ int main(int, char*[]) {
                 "GROUP BY tab_foo.int_n HAVING MAX(tab_foo.id) < 100");
 
   // SELECT FROM WHERE GROUP BY HAVING ORDER BY LIMIT OFFSET
-  SQLPP_COMPARE(select(count(foo.id).as<"something">())
+  compare(select(count(foo.id).as<"something">())
                     .from(foo)
                     .group_by(foo.int_n)
                     .having(max(foo.id) < 100)

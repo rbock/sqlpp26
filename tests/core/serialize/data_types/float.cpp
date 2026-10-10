@@ -27,11 +27,12 @@
 #include <sqlpp26/tests/core/all.h>
 
 int main(int, char*[]) {
+  auto compare = comparer{};
   // float only has a few digits of precision
-  SQLPP_COMPARE(10.123456789f, "10.1235");
+  compare(10.123456789f, "10.1235");
 
   // double has more digits of precision
-  SQLPP_COMPARE(10.12345678901234567890, "10.1234567890123");
+  compare(10.12345678901234567890, "10.1234567890123");
 
   // No tests for long double as libc++ and libstdc++ use different representations
 

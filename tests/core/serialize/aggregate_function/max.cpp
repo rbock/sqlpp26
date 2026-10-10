@@ -27,21 +27,23 @@
 #include <sqlpp26/tests/core/all.h>
 
 int main(int, char*[]) {
+  auto compare = comparer{};
+
   const auto bar = test::tab_bar{};
 
   // Single column.
-  SQLPP_COMPARE(max(bar.id), "MAX(tab_bar.id)");
-  SQLPP_COMPARE(max(sqlpp::distinct, bar.id), "MAX(DISTINCT tab_bar.id)");
+  compare(max(bar.id), "MAX(tab_bar.id)");
+  compare(max(sqlpp::distinct, bar.id), "MAX(DISTINCT tab_bar.id)");
 
   // Expression.
-  SQLPP_COMPARE(max(bar.id + 7), "MAX(tab_bar.id + 7)");
-  SQLPP_COMPARE(max(sqlpp::distinct, bar.id + 7),
+  compare(max(bar.id + 7), "MAX(tab_bar.id + 7)");
+  compare(max(sqlpp::distinct, bar.id + 7),
                 "MAX(DISTINCT tab_bar.id + 7)");
 
   // With sub select.
-  SQLPP_COMPARE(max(value(select(sqlpp::value(7).as<"a">()))),
+  compare(max(value(select(sqlpp::value(7).as<"a">()))),
                 "MAX(SELECT 7 AS a)");
-  SQLPP_COMPARE(
+  compare(
       max(sqlpp::distinct, value(select(sqlpp::value(7).as<"a">()))),
       "MAX(DISTINCT SELECT 7 AS a)");
 

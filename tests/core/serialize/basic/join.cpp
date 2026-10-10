@@ -27,6 +27,8 @@
 #include <sqlpp26/tests/core/all.h>
 
 int main(int, char*[]) {
+  auto compare = comparer{};
+
   const auto foo = test::tab_foo{};
   const auto bar = test::tab_bar{};
 
@@ -34,40 +36,40 @@ int main(int, char*[]) {
   const auto bFoo = foo.as<"b">();
 
   // Join with two tables
-  SQLPP_COMPARE(foo.join(bar).on(foo.id == bar.id),
+  compare(foo.join(bar).on(foo.id == bar.id),
                 "tab_foo INNER JOIN tab_bar ON tab_foo.id = tab_bar.id");
-  SQLPP_COMPARE(foo.inner_join(bar).on(foo.id == bar.id),
+  compare(foo.inner_join(bar).on(foo.id == bar.id),
                 "tab_foo INNER JOIN tab_bar ON tab_foo.id = tab_bar.id");
-  SQLPP_COMPARE(foo.left_outer_join(bar).on(foo.id == bar.id),
+  compare(foo.left_outer_join(bar).on(foo.id == bar.id),
                 "tab_foo LEFT OUTER JOIN tab_bar ON tab_foo.id = tab_bar.id");
-  SQLPP_COMPARE(foo.right_outer_join(bar).on(foo.id == bar.id),
+  compare(foo.right_outer_join(bar).on(foo.id == bar.id),
                 "tab_foo RIGHT OUTER JOIN tab_bar ON tab_foo.id = tab_bar.id");
-  SQLPP_COMPARE(foo.full_outer_join(bar).on(foo.id == bar.id),
+  compare(foo.full_outer_join(bar).on(foo.id == bar.id),
                 "tab_foo FULL OUTER JOIN tab_bar ON tab_foo.id = tab_bar.id");
 
-  SQLPP_COMPARE(foo.cross_join(bar), "tab_foo CROSS JOIN tab_bar");
+  compare(foo.cross_join(bar), "tab_foo CROSS JOIN tab_bar");
 
   // Join with table aliases.
-  SQLPP_COMPARE(foo.join(bFoo).on(foo.id == bFoo.id),
+  compare(foo.join(bFoo).on(foo.id == bFoo.id),
                 "tab_foo INNER JOIN tab_foo AS b ON tab_foo.id = b.id");
-  SQLPP_COMPARE(aFoo.join(foo).on(aFoo.id == foo.id),
+  compare(aFoo.join(foo).on(aFoo.id == foo.id),
                 "tab_foo AS a INNER JOIN tab_foo ON a.id = tab_foo.id");
-  SQLPP_COMPARE(aFoo.join(bFoo).on(aFoo.id == bFoo.id),
+  compare(aFoo.join(bFoo).on(aFoo.id == bFoo.id),
                 "tab_foo AS a INNER JOIN tab_foo AS b ON a.id = b.id");
 
   // Static joins involving verbatim tables
-  SQLPP_COMPARE(
+  compare(
       aFoo.join(sqlpp::verbatim_table("unknown_table"))
           .on(aFoo.id ==
               sqlpp::verbatim<double>("unknown_table.column_x")),
       "tab_foo AS a INNER JOIN unknown_table ON a.id = unknown_table.column_x");
-  SQLPP_COMPARE(
+  compare(
       sqlpp::verbatim_table("unknown_table")
           .join(aFoo)
           .on(aFoo.id ==
               sqlpp::verbatim<double>("unknown_table.column_x")),
       "unknown_table INNER JOIN tab_foo AS a ON a.id = unknown_table.column_x");
-  SQLPP_COMPARE(
+  compare(
       sqlpp::verbatim_table("unknown_table")
           .as<"a">()
           .join(sqlpp::verbatim_table("another_table"))
@@ -76,56 +78,56 @@ int main(int, char*[]) {
       "another_table.x");
 
   // Join with dynamic table
-  SQLPP_COMPARE(foo.join(dynamic(true, bar)).on(foo.id == bar.id),
+  compare(foo.join(dynamic(true, bar)).on(foo.id == bar.id),
                 "tab_foo INNER JOIN tab_bar ON tab_foo.id = tab_bar.id");
-  SQLPP_COMPARE(foo.inner_join(dynamic(true, bar)).on(foo.id == bar.id),
+  compare(foo.inner_join(dynamic(true, bar)).on(foo.id == bar.id),
                 "tab_foo INNER JOIN tab_bar ON tab_foo.id = tab_bar.id");
-  SQLPP_COMPARE(foo.left_outer_join(dynamic(true, bar)).on(foo.id == bar.id),
+  compare(foo.left_outer_join(dynamic(true, bar)).on(foo.id == bar.id),
                 "tab_foo LEFT OUTER JOIN tab_bar ON tab_foo.id = tab_bar.id");
-  SQLPP_COMPARE(foo.right_outer_join(dynamic(true, bar)).on(foo.id == bar.id),
+  compare(foo.right_outer_join(dynamic(true, bar)).on(foo.id == bar.id),
                 "tab_foo RIGHT OUTER JOIN tab_bar ON tab_foo.id = tab_bar.id");
-  SQLPP_COMPARE(foo.full_outer_join(dynamic(true, bar)).on(foo.id == bar.id),
+  compare(foo.full_outer_join(dynamic(true, bar)).on(foo.id == bar.id),
                 "tab_foo FULL OUTER JOIN tab_bar ON tab_foo.id = tab_bar.id");
 
-  SQLPP_COMPARE(foo.cross_join(dynamic(true, bar)),
+  compare(foo.cross_join(dynamic(true, bar)),
                 "tab_foo CROSS JOIN tab_bar");
 
-  SQLPP_COMPARE(foo.join(dynamic(false, bar)).on(foo.id == bar.id), "tab_foo");
-  SQLPP_COMPARE(foo.inner_join(dynamic(false, bar)).on(foo.id == bar.id),
+  compare(foo.join(dynamic(false, bar)).on(foo.id == bar.id), "tab_foo");
+  compare(foo.inner_join(dynamic(false, bar)).on(foo.id == bar.id),
                 "tab_foo");
-  SQLPP_COMPARE(foo.left_outer_join(dynamic(false, bar)).on(foo.id == bar.id),
+  compare(foo.left_outer_join(dynamic(false, bar)).on(foo.id == bar.id),
                 "tab_foo");
-  SQLPP_COMPARE(foo.right_outer_join(dynamic(false, bar)).on(foo.id == bar.id),
+  compare(foo.right_outer_join(dynamic(false, bar)).on(foo.id == bar.id),
                 "tab_foo");
-  SQLPP_COMPARE(foo.full_outer_join(dynamic(false, bar)).on(foo.id == bar.id),
+  compare(foo.full_outer_join(dynamic(false, bar)).on(foo.id == bar.id),
                 "tab_foo");
 
-  SQLPP_COMPARE(foo.cross_join(dynamic(false, bar)), "tab_foo");
+  compare(foo.cross_join(dynamic(false, bar)), "tab_foo");
 
   // Joining three tables
-  SQLPP_COMPARE(
+  compare(
       foo.join(bar).on(foo.id == bar.id).join(aFoo).on(bar.id == aFoo.id),
       "tab_foo INNER JOIN tab_bar ON tab_foo.id = tab_bar.id INNER JOIN "
       "tab_foo AS a ON tab_bar.id = a.id");
-  SQLPP_COMPARE(foo.join(bar)
+  compare(foo.join(bar)
                     .on(foo.id == bar.id)
                     .join(dynamic(true, aFoo))
                     .on(bar.id == aFoo.id),
                 "tab_foo INNER JOIN tab_bar ON tab_foo.id = tab_bar.id INNER "
                 "JOIN tab_foo AS a ON tab_bar.id = a.id");
-  SQLPP_COMPARE(foo.join(bar)
+  compare(foo.join(bar)
                     .on(foo.id == bar.id)
                     .join(dynamic(false, aFoo))
                     .on(bar.id == aFoo.id),
                 "tab_foo INNER JOIN tab_bar ON tab_foo.id = tab_bar.id");
 
-  SQLPP_COMPARE(foo.join(dynamic(true, bar))
+  compare(foo.join(dynamic(true, bar))
                     .on(foo.id == bar.id)
                     .join(aFoo)
                     .on(foo.id == aFoo.id),
                 "tab_foo INNER JOIN tab_bar ON tab_foo.id = tab_bar.id INNER "
                 "JOIN tab_foo AS a ON tab_foo.id = a.id");
-  SQLPP_COMPARE(foo.join(dynamic(false, bar))
+  compare(foo.join(dynamic(false, bar))
                     .on(foo.id == bar.id)
                     .join(aFoo)
                     .on(foo.id == aFoo.id),
@@ -136,11 +138,11 @@ int main(int, char*[]) {
   auto ctx = sqlpp::mock_db::context_t{};
   const auto s_string = to_sql_string(ctx, s);
 
-  SQLPP_COMPARE(foo.cross_join(s), "tab_foo CROSS JOIN " + s_string);
-  SQLPP_COMPARE(foo.cross_join(dynamic(true, s)),
+  compare(foo.cross_join(s), "tab_foo CROSS JOIN " + s_string);
+  compare(foo.cross_join(dynamic(true, s)),
                 "tab_foo CROSS JOIN " + s_string);
-  SQLPP_COMPARE(s.cross_join(foo), s_string + " CROSS JOIN tab_foo");
-  SQLPP_COMPARE(s.cross_join(dynamic(true, foo)),
+  compare(s.cross_join(foo), s_string + " CROSS JOIN tab_foo");
+  compare(s.cross_join(dynamic(true, foo)),
                 s_string + " CROSS JOIN tab_foo");
 
   // Joining sub ctes
@@ -148,11 +150,11 @@ int main(int, char*[]) {
   const auto c = c_ref.as(select(all_of(foo)).from(foo));
   const auto c_string = to_sql_string(ctx, c_ref);
 
-  SQLPP_COMPARE(foo.cross_join(c), "tab_foo CROSS JOIN " + c_string);
-  SQLPP_COMPARE(foo.cross_join(dynamic(true, c)),
+  compare(foo.cross_join(c), "tab_foo CROSS JOIN " + c_string);
+  compare(foo.cross_join(dynamic(true, c)),
                 "tab_foo CROSS JOIN " + c_string);
-  SQLPP_COMPARE(c.cross_join(foo), c_string + " CROSS JOIN tab_foo");
-  SQLPP_COMPARE(c.cross_join(dynamic(true, foo)),
+  compare(c.cross_join(foo), c_string + " CROSS JOIN tab_foo");
+  compare(c.cross_join(dynamic(true, foo)),
                 c_string + " CROSS JOIN tab_foo");
 
   return 0;

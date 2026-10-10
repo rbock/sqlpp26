@@ -27,16 +27,18 @@
 #include <sqlpp26/tests/core/all.h>
 
 int main(int, char*[]) {
+  auto compare = comparer{};
+
   const auto foo = test::tab_foo{};
   const auto bar = test::tab_bar{};
 
-  SQLPP_COMPARE((sqlpp::parameter<double, "float_n">()), "?");
-  SQLPP_COMPARE((bar.id > sqlpp::parameter<double, "float_n">()),
+  compare((sqlpp::parameter<double, "float_n">()), "?");
+  compare((bar.id > sqlpp::parameter<double, "float_n">()),
                 "tab_bar.id > ?");
 
-  SQLPP_COMPARE((sqlpp::parameter<int64_t, "something">()), "?");
+  compare((sqlpp::parameter<int64_t, "something">()), "?");
 
-  SQLPP_COMPARE(sqlpp::on_conflict(foo.id).do_update(
+  compare(sqlpp::on_conflict(foo.id).do_update(
                     foo.int_n = sqlpp::parameter<int, "int_n">(),
                     foo.text_nn_d = sqlpp::parameter<std::string, "text_nn_d">()),
                 "ON CONFLICT (id) DO UPDATE SET int_n = ?, text_nn_d = ?");

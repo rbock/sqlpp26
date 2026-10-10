@@ -27,33 +27,35 @@
 #include <sqlpp26/tests/postgresql/all.h>
 
 int main() {
+  auto compare = comparer{};
+
   const auto foo = test::tab_foo{};
   const auto bar = test::tab_bar{};
 
-  SQLPP_COMPARE(parameter(foo.double_n), "$1");
-  SQLPP_COMPARE(bar.id > parameter(foo.double_n), "tab_bar.id > $1");
+  compare(parameter(foo.double_n), "$1");
+  compare(bar.id > parameter(foo.double_n), "tab_bar.id > $1");
 
-  SQLPP_COMPARE((sqlpp::parameter<sqlpp::integral, "something">()), "$1");
+  compare((sqlpp::parameter<sqlpp::integral, "something">()), "$1");
 
-  SQLPP_COMPARE((sqlpp::parameter<sqlpp::integral, "something">() >
+  compare((sqlpp::parameter<sqlpp::integral, "something">() >
                     sqlpp::parameter<sqlpp::integral, "other">()),
                 "$1 > $2");
-  SQLPP_COMPARE((sqlpp::parameter<sqlpp::integral, "something">() +
+  compare((sqlpp::parameter<sqlpp::integral, "something">() +
                     sqlpp::parameter<sqlpp::integral, "other">()),
                 "$1 + $2");
-  SQLPP_COMPARE((sqlpp::parameter<sqlpp::integral, "something">() |
+  compare((sqlpp::parameter<sqlpp::integral, "something">() |
                     sqlpp::parameter<sqlpp::integral, "other">()),
                 "$1 | $2");
-  SQLPP_COMPARE((sqlpp::parameter<sqlpp::integral, "something">()
+  compare((sqlpp::parameter<sqlpp::integral, "something">()
                     .between(sqlpp::parameter<sqlpp::integral, "other">(),
                              sqlpp::parameter<sqlpp::integral, "a">())),
                 "$1 BETWEEN $2 AND $3");
 
-  SQLPP_COMPARE((sqlpp::parameter<sqlpp::integral, "something">() +
+  compare((sqlpp::parameter<sqlpp::integral, "something">() +
                     sqlpp::parameter<sqlpp::integral, "other">() +
                     sqlpp::parameter<sqlpp::integral, "a">()),
                 "($1 + $2) + $3");
-  SQLPP_COMPARE((sqlpp::parameter<sqlpp::boolean, "something">() and
+  compare((sqlpp::parameter<sqlpp::boolean, "something">() and
                     sqlpp::parameter<sqlpp::boolean, "other">() and
                     sqlpp::parameter<sqlpp::boolean, "a">()),
                 "$1 AND $2 AND $3");
@@ -63,7 +65,7 @@ int main() {
         select(parameter(foo.id).as<"something">(), parameter(bar.text_n).as<"other">(),
                parameter(foo.double_n).as<"double_n">());
 
-    SQLPP_COMPARE(s, "SELECT $1 AS something, $2 AS other, $3 AS double_n");
+    compare(s, "SELECT $1 AS something, $2 AS other, $3 AS double_n");
   }
 
   {
@@ -71,10 +73,10 @@ int main() {
     auto right =
         select(parameter(bar.text_n).as<"something">()).as<"right">();
 
-    SQLPP_COMPARE(left.join(right).on(parameter(foo.double_n) > 7),
+    compare(left.join(right).on(parameter(foo.double_n) > 7),
                   "(SELECT $1 AS something) AS left INNER JOIN (SELECT $2 AS "
                   "something) AS right ON $3 > 7");
-    SQLPP_COMPARE(left.cross_join(right),
+    compare(left.cross_join(right),
                   "(SELECT $1 AS something) AS left CROSS JOIN (SELECT $2 AS "
                   "something) AS right");
   }
@@ -83,7 +85,7 @@ int main() {
     auto left = select(parameter(foo.id).as<"something">());
     auto right = select(parameter(bar.id).as<"something">());
 
-    SQLPP_COMPARE(left.union_all(right),
+    compare(left.union_all(right),
                   "SELECT $1 AS something UNION ALL SELECT $2 AS something");
   }
 
@@ -92,7 +94,7 @@ int main() {
                    .then(parameter(foo.id))
                    .else_(parameter(bar.int_n));
 
-    SQLPP_COMPARE(cwt, "CASE WHEN $1 THEN $2 ELSE $3 END");
+    compare(cwt, "CASE WHEN $1 THEN $2 ELSE $3 END");
   }
 
   {
@@ -102,10 +104,10 @@ int main() {
                    .then(parameter(bar.id))
                    .else_(parameter(bar.int_n));
 
-    SQLPP_COMPARE(cwt, "CASE WHEN $1 THEN $2 WHEN $3 THEN $4 ELSE $5 END");
+    compare(cwt, "CASE WHEN $1 THEN $2 WHEN $3 THEN $4 ELSE $5 END");
   }
 
-  SQLPP_COMPARE(
+  compare(
       sqlpp::on_conflict(foo.id).do_update(
           foo.int_n = parameter(foo.int_n), foo.text_nn_d = parameter(foo.text_nn_d)),
       "ON CONFLICT (id) DO UPDATE SET int_n = $1, text_nn_d = $2");

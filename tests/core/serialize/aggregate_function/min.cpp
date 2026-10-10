@@ -27,22 +27,24 @@
 #include <sqlpp26/tests/core/all.h>
 
 int main(int, char*[]) {
+  auto compare = comparer{};
+
   const auto bar = test::tab_bar{};
 
   // Single column.
-  SQLPP_COMPARE(min(bar.id), "MIN(tab_bar.id)");
-  SQLPP_COMPARE(min(sqlpp::distinct, bar.id), "MIN(DISTINCT tab_bar.id)");
+  compare(min(bar.id), "MIN(tab_bar.id)");
+  compare(min(sqlpp::distinct, bar.id), "MIN(DISTINCT tab_bar.id)");
 
   // Expression.
   // Note that the inner parens aren't necessary.
-  SQLPP_COMPARE(min(bar.id + 7), "MIN(tab_bar.id + 7)");
-  SQLPP_COMPARE(min(sqlpp::distinct, bar.id + 7),
+  compare(min(bar.id + 7), "MIN(tab_bar.id + 7)");
+  compare(min(sqlpp::distinct, bar.id + 7),
                 "MIN(DISTINCT tab_bar.id + 7)");
 
   // With sub select.
-  SQLPP_COMPARE(min(value(select(sqlpp::value(7).as<"a">()))),
+  compare(min(value(select(sqlpp::value(7).as<"a">()))),
                 "MIN(SELECT 7 AS a)");
-  SQLPP_COMPARE(
+  compare(
       min(sqlpp::distinct, value(select(sqlpp::value(7).as<"a">()))),
       "MIN(DISTINCT SELECT 7 AS a)");
 

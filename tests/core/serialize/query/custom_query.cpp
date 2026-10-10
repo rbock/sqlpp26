@@ -27,16 +27,18 @@
 #include <sqlpp26/tests/core/all.h>
 
 int main() {
+  auto compare = comparer{};
+
   const auto foo = test::tab_foo{};
   const auto bar = test::tab_bar{};
 
   // Unconditionally
-  SQLPP_COMPARE(sqlpp::select() << select_columns(sqlpp::distinct, foo.float_n)
+  compare(sqlpp::select() << select_columns(sqlpp::distinct, foo.float_n)
                                 << from(foo),
                 "SELECT DISTINCT tab_foo.double_n AS float_n FROM tab_foo");
 
   // A full select statement made individual clauses
-  SQLPP_COMPARE(sqlpp::select()
+  compare(sqlpp::select()
                     << select_columns(sqlpp::distinct, foo.float_n)
                     << from(foo.join(bar).on(foo.float_n == bar.id))
                     << where(bar.id > 17) << group_by(foo.float_n)
@@ -49,7 +51,7 @@ int main() {
                 "LIMIT 10 OFFSET 100");
 
   // A full select statement made of individual clauses
-  SQLPP_COMPARE(sqlpp::select()
+  compare(sqlpp::select()
                     << select_columns(sqlpp::distinct, foo.float_n)
                     << from(foo.join(bar).on(foo.float_n == bar.id))
                     << where(bar.id > 17) << group_by(foo.float_n)
@@ -64,14 +66,14 @@ int main() {
                 "ASC, tab_foo.u_int_n DESC LIMIT 7 OFFSET 3");
 
   // A pragma query for sqlite
-  SQLPP_COMPARE(sqlpp::statement_t<>{}
+  compare(sqlpp::statement_t<>{}
                     << sqlpp::verbatim_clause("PRAGMA user_version")
                     << with_result_type_of(select(sqlpp::value(1).as<"pragma">())),
                 "PRAGMA user_version");
 
   // An insert from select for postgresql
   const auto x = 17;
-  SQLPP_COMPARE(
+  compare(
       insert_into(foo).columns(foo.float_n)
           << select(sqlpp::value(x).as<"double_n">())
                  .from(foo)
@@ -87,7 +89,7 @@ int main() {
   auto batch = insert_columns(bar.text_n, bar.bool_nn);
   batch.add_values(bar.text_n = "sample", bar.bool_nn = true);
   batch.add_values(bar.text_n = "ample", bar.bool_nn = false);
-  SQLPP_COMPARE(sqlpp::insert()
+  compare(sqlpp::insert()
                     << sqlpp::verbatim_clause("OR IGNORE") << into(bar) << batch,
                 "INSERT OR IGNORE INTO tab_bar (text_n, bool_nn) VALUES "
                 "('sample', 1), ('ample', 0)");

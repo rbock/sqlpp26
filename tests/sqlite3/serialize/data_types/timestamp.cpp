@@ -27,13 +27,15 @@
 #include <sqlpp26/tests/sqlite3/all.h>
 
 int main() {
+  auto compare = comparer{};
+
   ::sqlpp::chrono::sys_microseconds tp =
       static_cast<std::chrono::sys_days>(std::chrono::January / 8 / 1970) +
       std::chrono::hours{3} + std::chrono::minutes{20} +
       std::chrono::seconds{14} + std::chrono::milliseconds{17};
 
   // Testing time point serialization
-  SQLPP_COMPARE(tp, "DATETIME('1970-01-08 03:20:14.017000', 'subsec')");
+  compare(tp, "DATETIME('1970-01-08 03:20:14.017000', 'subsec')");
 
   return 0;
 }

@@ -27,12 +27,14 @@
 #include <sqlpp26/tests/sqlite3/all.h>
 
 int main() {
+  auto compare = comparer{};
+
   std::chrono::microseconds ms =
       std::chrono::hours{1} + std::chrono::minutes{20} +
       std::chrono::seconds{14} + std::chrono::milliseconds{178};
 
   // Testing microseconds serialization
-  SQLPP_COMPARE(ms, "TIME('01:20:14.178000', 'subsec')");
+  compare(ms, "TIME('01:20:14.178000', 'subsec')");
 
   return 0;
 }

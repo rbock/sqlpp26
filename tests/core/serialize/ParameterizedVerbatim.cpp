@@ -28,13 +28,15 @@
 #include <sqlpp26/tests/core/all.h>
 
 int ParameterizedVerbatim(int, char*[]) {
+  auto compare = comparer{};
+
   // An example thing that needs parameterized verbatim (as it's database
   // specific)
   auto checking_value_in_range = sqlpp::parameterized_verbatim<sqlpp::boolean>(
       "(quests.spawn_level_range @> CAST(",
       sqlpp::parameter<int64_t, "quester_player_level">(), " AS integer))");
 
-  SQLPP_COMPARE(checking_value_in_range,
+  compare(checking_value_in_range,
                 "(quests.spawn_level_range @> CAST(? AS integer))");
 
   return 0;

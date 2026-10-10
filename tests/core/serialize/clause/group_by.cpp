@@ -27,73 +27,75 @@
 #include <sqlpp26/tests/core/all.h>
 
 int main(int, char*[]) {
+  auto compare = comparer{};
+
   const auto val = sqlpp::value(17);
 
   const auto foo = test::tab_foo{};
 
   // Plain columns.
-  SQLPP_COMPARE(group_by(foo.id), "GROUP BY tab_foo.id");
-  SQLPP_COMPARE(group_by(foo.text_nn_d), "GROUP BY tab_foo.text_nn_d");
-  SQLPP_COMPARE(group_by(foo.bool_n), "GROUP BY tab_foo.bool_n");
+  compare(group_by(foo.id), "GROUP BY tab_foo.id");
+  compare(group_by(foo.text_nn_d), "GROUP BY tab_foo.text_nn_d");
+  compare(group_by(foo.bool_n), "GROUP BY tab_foo.bool_n");
 
   // Multiple plain columns.
-  SQLPP_COMPARE(group_by(foo.id, foo.text_nn_d, foo.bool_n),
+  compare(group_by(foo.id, foo.text_nn_d, foo.bool_n),
                 "GROUP BY tab_foo.id, tab_foo.text_nn_d, tab_foo.bool_n");
 
   // Single dynamic column
-  SQLPP_COMPARE(group_by(dynamic(true, foo.id)), "GROUP BY tab_foo.id");
-  SQLPP_COMPARE(group_by(dynamic(false, foo.id)), "");
+  compare(group_by(dynamic(true, foo.id)), "GROUP BY tab_foo.id");
+  compare(group_by(dynamic(false, foo.id)), "");
 
   // Multiple dynamic columns (including all dynamic)
-  SQLPP_COMPARE(group_by(dynamic(true, foo.id), foo.text_nn_d, foo.bool_n),
+  compare(group_by(dynamic(true, foo.id), foo.text_nn_d, foo.bool_n),
                 "GROUP BY tab_foo.id, tab_foo.text_nn_d, tab_foo.bool_n");
-  SQLPP_COMPARE(group_by(foo.id, dynamic(true, foo.text_nn_d), foo.bool_n),
+  compare(group_by(foo.id, dynamic(true, foo.text_nn_d), foo.bool_n),
                 "GROUP BY tab_foo.id, tab_foo.text_nn_d, tab_foo.bool_n");
-  SQLPP_COMPARE(group_by(foo.id, foo.text_nn_d, dynamic(true, foo.bool_n)),
+  compare(group_by(foo.id, foo.text_nn_d, dynamic(true, foo.bool_n)),
                 "GROUP BY tab_foo.id, tab_foo.text_nn_d, tab_foo.bool_n");
 
-  SQLPP_COMPARE(group_by(dynamic(false, foo.id), foo.text_nn_d, foo.bool_n),
+  compare(group_by(dynamic(false, foo.id), foo.text_nn_d, foo.bool_n),
                 "GROUP BY tab_foo.text_nn_d, tab_foo.bool_n");
-  SQLPP_COMPARE(group_by(foo.id, dynamic(false, foo.text_nn_d), foo.bool_n),
+  compare(group_by(foo.id, dynamic(false, foo.text_nn_d), foo.bool_n),
                 "GROUP BY tab_foo.id, tab_foo.bool_n");
-  SQLPP_COMPARE(group_by(foo.id, foo.text_nn_d, dynamic(false, foo.bool_n)),
+  compare(group_by(foo.id, foo.text_nn_d, dynamic(false, foo.bool_n)),
                 "GROUP BY tab_foo.id, tab_foo.text_nn_d");
 
-  SQLPP_COMPARE(
+  compare(
       group_by(foo.id, dynamic(false, foo.text_nn_d), dynamic(false, foo.bool_n)),
       "GROUP BY tab_foo.id");
-  SQLPP_COMPARE(
+  compare(
       group_by(dynamic(false, foo.id), foo.text_nn_d, dynamic(false, foo.bool_n)),
       "GROUP BY tab_foo.text_nn_d");
-  SQLPP_COMPARE(
+  compare(
       group_by(dynamic(false, foo.id), dynamic(false, foo.text_nn_d), foo.bool_n),
       "GROUP BY tab_foo.bool_n");
 
-  SQLPP_COMPARE(group_by(dynamic(false, foo.id), dynamic(false, foo.text_nn_d),
+  compare(group_by(dynamic(false, foo.id), dynamic(false, foo.text_nn_d),
                          dynamic(false, foo.bool_n)),
                 "");
 
   // Single declared column
-  SQLPP_COMPARE(group_by(val), "GROUP BY 17");
+  compare(group_by(val), "GROUP BY 17");
   // Note that the parentheses are superflous but also don't hurt.
-  SQLPP_COMPARE(group_by(foo.id + 17),
+  compare(group_by(foo.id + 17),
                 "GROUP BY (tab_foo.id + 17)");
 
   // Mixed declared column
-  SQLPP_COMPARE(group_by(foo.id, val),
+  compare(group_by(foo.id, val),
                 "GROUP BY tab_foo.id, 17");
-  SQLPP_COMPARE(group_by(val, foo.id),
+  compare(group_by(val, foo.id),
                 "GROUP BY 17, tab_foo.id");
 
   // Mixed dynamic declared column
-  SQLPP_COMPARE(group_by(foo.id, dynamic(true, val)),
+  compare(group_by(foo.id, dynamic(true, val)),
                 "GROUP BY tab_foo.id, 17");
-  SQLPP_COMPARE(group_by(dynamic(true, val), foo.id),
+  compare(group_by(dynamic(true, val), foo.id),
                 "GROUP BY 17, tab_foo.id");
 
-  SQLPP_COMPARE(group_by(foo.id, dynamic(false, val)),
+  compare(group_by(foo.id, dynamic(false, val)),
                 "GROUP BY tab_foo.id");
-  SQLPP_COMPARE(group_by(dynamic(false, val), foo.id),
+  compare(group_by(dynamic(false, val), foo.id),
                 "GROUP BY tab_foo.id");
 
   return 0;

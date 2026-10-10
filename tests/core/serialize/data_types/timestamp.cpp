@@ -27,13 +27,15 @@
 #include <sqlpp26/tests/core/all.h>
 
 int main() {
+  auto compare = comparer{};
+
   ::sqlpp::chrono::sys_microseconds tp =
       static_cast<std::chrono::sys_days>(std::chrono::January / 10 / 1970) +
       std::chrono::hours{5} + std::chrono::minutes{20} +
       std::chrono::seconds{14} + std::chrono::milliseconds{71};
 
   // Testing time point serialization
-  SQLPP_COMPARE(tp, "TIMESTAMP '1970-01-10T05:20:14.071000'");
+  compare(tp, "TIMESTAMP '1970-01-10T05:20:14.071000'");
 
   return 0;
 }

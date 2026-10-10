@@ -27,15 +27,17 @@
 #include <sqlpp26/tests/mysql/all.h>
 
 int main(int, char*[]) {
+  auto compare = comparer{};
+
   auto db = sqlpp::mysql::make_test_connection();
 
   const auto foo = test::tab_foo{};
 
-  SQLPP_COMPARE(foo.int_n.is_distinct_from(7), "NOT (tab_foo.int_n <=> 7)");
-  SQLPP_COMPARE(foo.int_n.is_distinct_from(std::nullopt),
+  compare(foo.int_n.is_distinct_from(7), "NOT (tab_foo.int_n <=> 7)");
+  compare(foo.int_n.is_distinct_from(std::nullopt),
                 "NOT (tab_foo.int_n <=> NULL)");
-  SQLPP_COMPARE(foo.int_n.is_not_distinct_from(7), "tab_foo.int_n <=> 7");
-  SQLPP_COMPARE(foo.int_n.is_not_distinct_from(std::nullopt),
+  compare(foo.int_n.is_not_distinct_from(7), "tab_foo.int_n <=> 7");
+  compare(foo.int_n.is_not_distinct_from(std::nullopt),
                 "tab_foo.int_n <=> NULL");
 
   return 0;

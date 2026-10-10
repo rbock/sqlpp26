@@ -27,10 +27,12 @@
 #include <sqlpp26/tests/postgresql/all.h>
 
 int main() {
-  SQLPP_COMPARE(true, "'t'::boolean");
-  SQLPP_COMPARE(false, "'f'::boolean");
-  SQLPP_COMPARE(17, "17");
-  SQLPP_COMPARE(0.1f, "0.1");
+  auto compare = comparer{};
+
+  compare(true, "'t'::boolean");
+  compare(false, "'f'::boolean");
+  compare(17, "17");
+  compare(0.1f, "0.1");
 
   return 0;
 }

@@ -27,10 +27,12 @@
 #include <sqlpp26/tests/sqlite3/all.h>
 
 int main() {
-  SQLPP_COMPARE(10.0000114, "10.0000114");
-  SQLPP_COMPARE(std::numeric_limits<double>::quiet_NaN(), "'NaN'");
-  SQLPP_COMPARE(std::numeric_limits<double>::infinity(), "'Inf'");
-  SQLPP_COMPARE(-std::numeric_limits<double>::infinity(), "'-Inf'");
+  auto compare = comparer{};
+
+  compare(10.0000114, "10.0000114");
+  compare(std::numeric_limits<double>::quiet_NaN(), "'NaN'");
+  compare(std::numeric_limits<double>::infinity(), "'Inf'");
+  compare(-std::numeric_limits<double>::infinity(), "'-Inf'");
 
   return 0;
 }

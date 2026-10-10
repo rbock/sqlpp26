@@ -27,8 +27,10 @@
 #include <sqlpp26/tests/core/all.h>
 
 int main(int, char*[]) {
+  auto compare = comparer{};
+
   // No parameters.
-  SQLPP_COMPARE(sqlpp::for_update(), " FOR UPDATE");
+  compare(sqlpp::for_update(), " FOR UPDATE");
 
   return 0;
 }

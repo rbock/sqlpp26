@@ -27,11 +27,13 @@
 #include <sqlpp26/tests/core/all.h>
 
 int main() {
+  auto compare = comparer{};
+
   std::chrono::sys_days tp =
       static_cast<std::chrono::sys_days>(std::chrono::February / 8 / 2025);
 
   // Testing date serialization
-  SQLPP_COMPARE(tp, "DATE '2025-02-08'");
+  compare(tp, "DATE '2025-02-08'");
 
   return 0;
 }

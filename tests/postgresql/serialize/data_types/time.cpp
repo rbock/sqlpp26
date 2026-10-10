@@ -27,12 +27,14 @@
 #include <sqlpp26/tests/postgresql/all.h>
 
 int main() {
+  auto compare = comparer{};
+
   std::chrono::microseconds ms =
       std::chrono::hours{1} + std::chrono::minutes{20} +
       std::chrono::seconds{14} + std::chrono::milliseconds{178};
 
   // Testing microseconds serialization
-  SQLPP_COMPARE(ms, "TIME WITH TIME ZONE'01:20:14.178000+00'");
+  compare(ms, "TIME WITH TIME ZONE'01:20:14.178000+00'");
 
   return 0;
 }

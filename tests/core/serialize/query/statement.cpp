@@ -27,10 +27,12 @@
 #include <sqlpp26/tests/core/all.h>
 
 int main() {
+  auto compare = comparer{};
+
   const auto foo = test::tab_foo{};
 
   // Multiple clauses with parameters
-  SQLPP_COMPARE(
+  compare(
       (sqlpp::select(
            sqlpp::parameter<int64_t, "a">().as<"a">())
            .from(foo)

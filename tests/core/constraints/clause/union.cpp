@@ -61,14 +61,17 @@ concept cannot_call_union_distinct_with =
     not(can_call_union_distinct_with_standalone<Lhs, Rhs> or
         can_call_union_distinct_with_in_statement<Lhs, Rhs>);
 
-#define CAN_CALL_ALL_UNIONS_WITH(LHS, RHS)                                  \
-  static_assert(can_call_union_all_with<decltype(LHS), decltype(RHS)>, ""); \
-  static_assert(can_call_union_distinct_with<decltype(LHS), decltype(RHS)>, "");
+template <typename Lhs, typename Rhs>
+void can_call_all_unions_with(const Lhs&, const Rhs&) {
+  static_assert(can_call_union_all_with<Lhs, Rhs>);
+  static_assert(can_call_union_distinct_with<Lhs, Rhs>);
+}
 
-#define CANNOT_CALL_ANY_UNION_WITH(LHS, RHS)                                   \
-  static_assert(cannot_call_union_all_with<decltype(LHS), decltype(RHS)>, ""); \
-  static_assert(cannot_call_union_distinct_with<decltype(LHS), decltype(RHS)>, \
-                "");
+template <typename Lhs, typename Rhs>
+void cannot_call_any_union_with(const Lhs&, const Rhs&) {
+  static_assert(cannot_call_union_all_with<Lhs, Rhs>);
+  static_assert(cannot_call_union_distinct_with<Lhs, Rhs>);
+}
 
 }  // namespace
 
@@ -86,23 +89,23 @@ int main() {
   static_assert(
       can_call_union_all_with_in_statement<decltype(lhs), decltype(rhs)>,
       "");  // OK
-  CAN_CALL_ALL_UNIONS_WITH(lhs, rhs);
-  CAN_CALL_ALL_UNIONS_WITH(lhs, dynamic(maybe, rhs));
+  can_call_all_unions_with(lhs, rhs);
+  can_call_all_unions_with(lhs, dynamic(maybe, rhs));
 
   // Cannot union with non-statement
-  CANNOT_CALL_ANY_UNION_WITH(lhs, bar);
-  CANNOT_CALL_ANY_UNION_WITH(lhs, bar.id);
-  CANNOT_CALL_ANY_UNION_WITH(lhs, all_of(bar));
-  CANNOT_CALL_ANY_UNION_WITH(bar, rhs);
-  CANNOT_CALL_ANY_UNION_WITH(bar.id, rhs);
-  CANNOT_CALL_ANY_UNION_WITH(all_of(bar), rhs);
+  cannot_call_any_union_with(lhs, bar);
+  cannot_call_any_union_with(lhs, bar.id);
+  cannot_call_any_union_with(lhs, all_of(bar));
+  cannot_call_any_union_with(bar, rhs);
+  cannot_call_any_union_with(bar.id, rhs);
+  cannot_call_any_union_with(all_of(bar), rhs);
 
   // UNION requires statements with result row
   {
     const auto bad_custom_lhs = sqlpp::statement_t<sqlpp::no_union_t>{};
     const auto bad_custom_rhs = sqlpp::statement_t<>{};
-    CANNOT_CALL_ANY_UNION_WITH(bad_custom_lhs, rhs);
-    CANNOT_CALL_ANY_UNION_WITH(lhs, bad_custom_rhs);
+    cannot_call_any_union_with(bad_custom_lhs, rhs);
+    cannot_call_any_union_with(lhs, bad_custom_rhs);
   }
 
   // UNION requires statements with same result row (single column)
@@ -116,12 +119,12 @@ int main() {
     static_assert(
         not std::is_same_v<sqlpp::data_type_of_t<decltype(foo.id)>,
                            sqlpp::data_type_of_t<decltype(foo.int_n)>>);
-    CANNOT_CALL_ANY_UNION_WITH(s_foo_int, s_foo_int_n);
+    cannot_call_any_union_with(s_foo_int, s_foo_int_n);
     // Different name
-    CANNOT_CALL_ANY_UNION_WITH(s_value_id, s_value_oid);
-    CANNOT_CALL_ANY_UNION_WITH(s_foo_int, dynamic(maybe, s_foo_int_n));
+    cannot_call_any_union_with(s_value_id, s_value_oid);
+    cannot_call_any_union_with(s_foo_int, dynamic(maybe, s_foo_int_n));
     // Different name
-    CANNOT_CALL_ANY_UNION_WITH(s_value_id, dynamic(maybe, s_value_oid));
+    cannot_call_any_union_with(s_value_id, dynamic(maybe, s_value_oid));
   }
 
   // UNION requires statements with same result row (more than one column)
@@ -136,12 +139,12 @@ int main() {
         not std::is_same<sqlpp::data_type_of_t<decltype(foo.id)>,
                          sqlpp::data_type_of_t<decltype(foo.int_n)>>::value,
         "");
-    CANNOT_CALL_ANY_UNION_WITH(s_foo_int, s_foo_int_n);
+    cannot_call_any_union_with(s_foo_int, s_foo_int_n);
     // Different name
-    CANNOT_CALL_ANY_UNION_WITH(s_value_id, s_value_oid);
-    CANNOT_CALL_ANY_UNION_WITH(s_foo_int, dynamic(maybe, s_foo_int_n));
+    cannot_call_any_union_with(s_value_id, s_value_oid);
+    cannot_call_any_union_with(s_foo_int, dynamic(maybe, s_foo_int_n));
     // Different name
-    CANNOT_CALL_ANY_UNION_WITH(s_value_id, dynamic(maybe, s_value_oid));
+    cannot_call_any_union_with(s_value_id, dynamic(maybe, s_value_oid));
   }
 
   // UNION arguments must not contain for_update.
@@ -150,17 +153,17 @@ int main() {
     auto s_bar = select(bar.id).from(bar);
 
     // Do not allow for_update in the LHS expression.
-    CANNOT_CALL_ANY_UNION_WITH(s_foo.for_update(), s_foo);
-    CANNOT_CALL_ANY_UNION_WITH(s_foo.for_update(), s_bar);
+    cannot_call_any_union_with(s_foo.for_update(), s_foo);
+    cannot_call_any_union_with(s_foo.for_update(), s_bar);
 
     // Do not allow for_update in the RHS expression.
-    CANNOT_CALL_ANY_UNION_WITH(s_foo, s_bar.for_update());
-    CANNOT_CALL_ANY_UNION_WITH(s_bar, s_bar.for_update());
+    cannot_call_any_union_with(s_foo, s_bar.for_update());
+    cannot_call_any_union_with(s_bar, s_bar.for_update());
 
     // Do not allow for_update in both expressions.
-    CANNOT_CALL_ANY_UNION_WITH(s_bar.for_update(),
+    cannot_call_any_union_with(s_bar.for_update(),
                                s_bar.for_update());
-    CANNOT_CALL_ANY_UNION_WITH(s_bar.for_update(),
+    cannot_call_any_union_with(s_bar.for_update(),
                                s_bar.for_update());
   }
 
@@ -170,17 +173,17 @@ int main() {
     auto s_bar = select(bar.id).from(bar);
 
     // Do not allow order_by in the LHS expression.
-    CANNOT_CALL_ANY_UNION_WITH(s_foo.order_by(foo.id.asc()), s_foo);
-    CANNOT_CALL_ANY_UNION_WITH(s_foo.order_by(foo.id.asc()), s_bar);
+    cannot_call_any_union_with(s_foo.order_by(foo.id.asc()), s_foo);
+    cannot_call_any_union_with(s_foo.order_by(foo.id.asc()), s_bar);
 
     // Do not allow order_by in the RHS expression.
-    CANNOT_CALL_ANY_UNION_WITH(s_foo, s_bar.order_by(foo.id.asc()));
-    CANNOT_CALL_ANY_UNION_WITH(s_bar, s_bar.order_by(foo.id.asc()));
+    cannot_call_any_union_with(s_foo, s_bar.order_by(foo.id.asc()));
+    cannot_call_any_union_with(s_bar, s_bar.order_by(foo.id.asc()));
 
     // Do not allow order_by in both expressions.
-    CANNOT_CALL_ANY_UNION_WITH(s_bar.order_by(foo.id.asc()),
+    cannot_call_any_union_with(s_bar.order_by(foo.id.asc()),
                                s_bar.order_by(foo.id.asc()));
-    CANNOT_CALL_ANY_UNION_WITH(s_bar.order_by(foo.id.asc()),
+    cannot_call_any_union_with(s_bar.order_by(foo.id.asc()),
                                s_bar.order_by(foo.id.asc()));
   }
 
@@ -190,17 +193,17 @@ int main() {
     auto s_bar = select(bar.id).from(bar);
 
     // Do not allow order_by in the LHS expression.
-    CANNOT_CALL_ANY_UNION_WITH(s_foo.order_by(foo.id.asc()), s_foo);
-    CANNOT_CALL_ANY_UNION_WITH(s_foo.order_by(foo.id.asc()), s_bar);
+    cannot_call_any_union_with(s_foo.order_by(foo.id.asc()), s_foo);
+    cannot_call_any_union_with(s_foo.order_by(foo.id.asc()), s_bar);
 
     // Do not allow order_by in the RHS expression.
-    CANNOT_CALL_ANY_UNION_WITH(s_foo, s_bar.order_by(foo.id.asc()));
-    CANNOT_CALL_ANY_UNION_WITH(s_bar, s_bar.order_by(foo.id.asc()));
+    cannot_call_any_union_with(s_foo, s_bar.order_by(foo.id.asc()));
+    cannot_call_any_union_with(s_bar, s_bar.order_by(foo.id.asc()));
 
     // Do not allow order_by in both expressions.
-    CANNOT_CALL_ANY_UNION_WITH(s_bar.order_by(foo.id.asc()),
+    cannot_call_any_union_with(s_bar.order_by(foo.id.asc()),
                                s_bar.order_by(foo.id.asc()));
-    CANNOT_CALL_ANY_UNION_WITH(s_bar.order_by(foo.id.asc()),
+    cannot_call_any_union_with(s_bar.order_by(foo.id.asc()),
                                s_bar.order_by(foo.id.asc()));
   }
 
@@ -210,17 +213,17 @@ int main() {
     auto s_bar = select(bar.id).from(bar);
 
     // Do not allow order_by in the LHS expression.
-    CANNOT_CALL_ANY_UNION_WITH(s_foo.order_by(foo.id.asc()), s_foo);
-    CANNOT_CALL_ANY_UNION_WITH(s_foo.order_by(foo.id.asc()), s_bar);
+    cannot_call_any_union_with(s_foo.order_by(foo.id.asc()), s_foo);
+    cannot_call_any_union_with(s_foo.order_by(foo.id.asc()), s_bar);
 
     // Do not allow order_by in the RHS expression.
-    CANNOT_CALL_ANY_UNION_WITH(s_foo, s_bar.order_by(foo.id.asc()));
-    CANNOT_CALL_ANY_UNION_WITH(s_bar, s_bar.order_by(foo.id.asc()));
+    cannot_call_any_union_with(s_foo, s_bar.order_by(foo.id.asc()));
+    cannot_call_any_union_with(s_bar, s_bar.order_by(foo.id.asc()));
 
     // Do not allow order_by in both expressions.
-    CANNOT_CALL_ANY_UNION_WITH(s_bar.order_by(foo.id.asc()),
+    cannot_call_any_union_with(s_bar.order_by(foo.id.asc()),
                                s_bar.order_by(foo.id.asc()));
-    CANNOT_CALL_ANY_UNION_WITH(s_bar.order_by(foo.id.asc()),
+    cannot_call_any_union_with(s_bar.order_by(foo.id.asc()),
                                s_bar.order_by(foo.id.asc()));
   }
 
@@ -230,17 +233,17 @@ int main() {
     auto s_bar = select(bar.id).from(bar);
 
     // Do not allow limit in the LHS expression.
-    CANNOT_CALL_ANY_UNION_WITH(s_foo.limit(7), s_foo);
-    CANNOT_CALL_ANY_UNION_WITH(s_foo.limit(7), s_bar);
+    cannot_call_any_union_with(s_foo.limit(7), s_foo);
+    cannot_call_any_union_with(s_foo.limit(7), s_bar);
 
     // Do not allow limit in the RHS expression.
-    CANNOT_CALL_ANY_UNION_WITH(s_foo, s_bar.limit(7));
-    CANNOT_CALL_ANY_UNION_WITH(s_bar, s_bar.limit(7));
+    cannot_call_any_union_with(s_foo, s_bar.limit(7));
+    cannot_call_any_union_with(s_bar, s_bar.limit(7));
 
     // Do not allow limit in both expressions.
-    CANNOT_CALL_ANY_UNION_WITH(s_bar.limit(7),
+    cannot_call_any_union_with(s_bar.limit(7),
                                s_bar.limit(7));
-    CANNOT_CALL_ANY_UNION_WITH(s_bar.limit(7),
+    cannot_call_any_union_with(s_bar.limit(7),
                                s_bar.limit(7));
   }
 
@@ -250,17 +253,17 @@ int main() {
     auto s_bar = select(bar.id).from(foo);
 
     // Do not allow offset in the LHS expression.
-    CANNOT_CALL_ANY_UNION_WITH(s_foo.offset(42), s_foo);
-    CANNOT_CALL_ANY_UNION_WITH(s_foo.offset(42), s_bar);
+    cannot_call_any_union_with(s_foo.offset(42), s_foo);
+    cannot_call_any_union_with(s_foo.offset(42), s_bar);
 
     // Do not allow offset in the RHS expression.
-    CANNOT_CALL_ANY_UNION_WITH(s_foo, s_bar.offset(42));
-    CANNOT_CALL_ANY_UNION_WITH(s_bar, s_bar.offset(42));
+    cannot_call_any_union_with(s_foo, s_bar.offset(42));
+    cannot_call_any_union_with(s_bar, s_bar.offset(42));
 
     // Do not allow offset in both expressions.
-    CANNOT_CALL_ANY_UNION_WITH(s_bar.offset(42),
+    cannot_call_any_union_with(s_bar.offset(42),
                                s_bar.offset(42));
-    CANNOT_CALL_ANY_UNION_WITH(s_bar.offset(42),
+    cannot_call_any_union_with(s_bar.offset(42),
                                s_bar.offset(42));
   }
 

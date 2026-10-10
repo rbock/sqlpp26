@@ -141,7 +141,6 @@ template <typename L, typename... Clauses>
   requires(values_are_comparable<L, statement_data_type_of_t<statement_t<Clauses...>>>::value)
 constexpr auto in(L lhs, statement_t<Clauses...> arg)
     -> in_expression<L, operator_in, statement_t<Clauses...>> {
-  // TODO Require compile fail test
   constexpr auto check = check_basic_consistency(type_v<statement_t<Clauses...>>{});
   static_assert(check, check.error());
   return {std::move(lhs), std::move(arg)};
@@ -166,7 +165,6 @@ template <typename L, typename... Clauses>
   requires(values_are_comparable<L, statement_data_type_of_t<statement_t<Clauses...>>>::value)
 constexpr auto not_in(L lhs, statement_t<Clauses...> arg)
     -> in_expression<L, operator_not_in, statement_t<Clauses...>> {
-  // TODO Require compile fail test
   constexpr auto check = check_basic_consistency(type_v<statement_t<Clauses...>>{});
   static_assert(check, check.error());
   return {std::move(lhs), std::move(arg)};

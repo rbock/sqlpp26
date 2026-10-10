@@ -27,10 +27,15 @@ create_tests_assert(
     bad_returning_as "The returning-clause requires table tab_foo"
     bad_select_as "The select-columns-clause requires table tab_bar"
 
+    # Operators
+    bad_in "The select-columns-clause statically requires table tab_bar which is"
+    bad_not_in "The select-columns-clause statically requires table tab_bar which is"
+
     # Connection
     bad_execute "cannot execute statements with parameters directly"
     bad_prepare "The select-columns-clause requires table tab_bar"
 
+    # Incompatibility
     incompatible_execute "No support for using incompatible expression"
     incompatible_prepare "No support for using incompatible expression"
 )

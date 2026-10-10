@@ -34,34 +34,59 @@
 namespace sqlpp {
 struct enable_join {
  public:
-  template <typename Table, typename T>
-  auto join(this Table&& self, T t) {
-    return ::sqlpp::join(std::forward<Table>(self), std::move(t));
+  template <typename Table, typename Rhs>
+  requires(can_be_joined_v<std::decay_t<Table>, Rhs>)
+  auto join(this Table&& self, Rhs rhs)
+      -> pre_join_t<table_ref_t<std::decay_t<Table>>,
+                    inner_join_t,
+                    table_ref_t<Rhs>> {
+    return ::sqlpp::join(std::forward<Table>(self), std::move(rhs));
   }
 
-  template <typename Table, typename T>
-  auto inner_join(this Table&& self, T t) {
-    return ::sqlpp::inner_join(std::forward<Table>(self), std::move(t));
+  template <typename Table, typename Rhs>
+  requires(can_be_joined_v<std::decay_t<Table>, Rhs>)
+  auto inner_join(this Table&& self, Rhs rhs)
+      -> pre_join_t<table_ref_t<std::decay_t<Table>>,
+                    inner_join_t,
+                    table_ref_t<Rhs>> {
+    return ::sqlpp::inner_join(std::forward<Table>(self), std::move(rhs));
   }
 
-  template <typename Table, typename T>
-  auto left_outer_join(this Table&& self, T t) {
-    return ::sqlpp::left_outer_join(std::forward<Table>(self), std::move(t));
+  template <typename Table, typename Rhs>
+  requires(can_be_joined_v<std::decay_t<Table>, Rhs>)
+  auto left_outer_join(this Table&& self, Rhs rhs)
+      -> pre_join_t<table_ref_t<std::decay_t<Table>>,
+                    left_outer_join_t,
+                    table_ref_t<Rhs>> {
+    return ::sqlpp::left_outer_join(std::forward<Table>(self), std::move(rhs));
   }
 
-  template <typename Table, typename T>
-  auto right_outer_join(this Table&& self, T t) {
-    return ::sqlpp::right_outer_join(std::forward<Table>(self), std::move(t));
+  template <typename Table, typename Rhs>
+  requires(can_be_joined_v<std::decay_t<Table>, Rhs>)
+  auto right_outer_join(this Table&& self, Rhs rhs)
+      -> pre_join_t<table_ref_t<std::decay_t<Table>>,
+                    right_outer_join_t,
+                    table_ref_t<Rhs>> {
+    return ::sqlpp::right_outer_join(std::forward<Table>(self), std::move(rhs));
   }
 
-  template <typename Table, typename T>
-  auto full_outer_join(this Table&& self, T t) {
-    return ::sqlpp::full_outer_join(std::forward<Table>(self), std::move(t));
+  template <typename Table, typename Rhs>
+  requires(can_be_joined_v<std::decay_t<Table>, Rhs>)
+  auto full_outer_join(this Table&& self, Rhs rhs)
+      -> pre_join_t<table_ref_t<std::decay_t<Table>>,
+                    full_outer_join_t,
+                    table_ref_t<Rhs>> {
+    return ::sqlpp::full_outer_join(std::forward<Table>(self), std::move(rhs));
   }
 
-  template <typename Table, typename T>
-  auto cross_join(this Table&& self, T t) {
-    return ::sqlpp::cross_join(std::forward<Table>(self), std::move(t));
+  template <typename Table, typename Rhs>
+  requires(can_be_joined_v<std::decay_t<Table>, Rhs>)
+  auto cross_join(this Table&& self, Rhs rhs)
+      -> join_t<table_ref_t<std::decay_t<Table>>,
+                cross_join_t,
+                table_ref_t<Rhs>,
+                unconditional_t> {
+    return ::sqlpp::cross_join(std::forward<Table>(self), std::move(rhs));
   }
 };
 

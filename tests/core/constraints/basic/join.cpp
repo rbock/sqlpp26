@@ -27,116 +27,94 @@
 #include <sqlpp26/tests/core/all.h>
 
 namespace {
-// Returns true if `JOIN(declval<Lhs>(), declval<Rhs>)` is a valid function
-// call.
-#define MAKE_CAN_CALL_JOIN_WITH(JOIN)                          \
-  template <typename Lhs, typename Rhs, typename = void>       \
-  struct can_call_##JOIN##_with : public std::false_type {};   \
-                                                               \
-  template <typename Lhs, typename Rhs>                        \
-  struct can_call_##JOIN##_with<                               \
-      Lhs, Rhs,                                                \
-      std::void_t<decltype(sqlpp::JOIN(std::declval<Lhs>(),    \
-                                       std::declval<Rhs>()))>> \
-      : public std::true_type {};
+// ---- lhs.join(rhs) -------------------
+template <typename Lhs, typename Rhs>
+concept can_call_join_with = requires(Lhs lhs, Rhs rhs) {
+  lhs.join(rhs);
+};
+template <typename Lhs, typename Rhs>
+concept can_call_inner_join_with = requires(Lhs lhs, Rhs rhs) {
+  lhs.join(rhs);
+};
+template <typename Lhs, typename Rhs>
+concept can_call_full_outer_join_with = requires(Lhs lhs, Rhs rhs) {
+  lhs.join(rhs);
+};
+template <typename Lhs, typename Rhs>
+concept can_call_left_outer_join_with = requires(Lhs lhs, Rhs rhs) {
+  lhs.join(rhs);
+};
+template <typename Lhs, typename Rhs>
+concept can_call_right_outer_join_with = requires(Lhs lhs, Rhs rhs) {
+  lhs.join(rhs);
+};
+template <typename Lhs, typename Rhs>
+concept can_call_cross_join_with = requires(Lhs lhs, Rhs rhs) {
+  lhs.join(rhs);
+};
 
-MAKE_CAN_CALL_JOIN_WITH(join);
-MAKE_CAN_CALL_JOIN_WITH(inner_join);
-MAKE_CAN_CALL_JOIN_WITH(left_outer_join);
-MAKE_CAN_CALL_JOIN_WITH(right_outer_join);
-MAKE_CAN_CALL_JOIN_WITH(full_outer_join);
-MAKE_CAN_CALL_JOIN_WITH(cross_join);
+// ---- lhs.join(rhs).on(expr) -------------------
 
-// Returns true if `JOIN(declval<Lhs>(), declval<Rhs>).on(Expr)` is a valid
-// function call.
-#define MAKE_CAN_CALL_JOIN_ON_WITH(JOIN)                                \
-  template <typename Lhs, typename Rhs, typename Expr, typename = void> \
-  struct can_call_##JOIN##_on_with : public std::false_type {};         \
-                                                                        \
-  template <typename Lhs, typename Rhs, typename Expr>                  \
-  struct can_call_##JOIN##_on_with<                                     \
-      Lhs, Rhs, Expr,                                                   \
-      std::void_t<decltype(sqlpp::JOIN(std::declval<Lhs>(),             \
-                                       std::declval<Rhs>())             \
-                               .on(std::declval<Expr>()))>>             \
-      : public std::true_type {};
+template <typename Lhs, typename Rhs, typename Expr>
+concept can_call_join_on_with = requires(Lhs lhs, Rhs rhs, Expr expr) {
+  lhs.join(rhs).on(expr);
+};
+template <typename Lhs, typename Rhs, typename Expr>
+concept can_call_inner_join_on_with = requires(Lhs lhs, Rhs rhs, Expr expr) {
+  lhs.join(rhs).on(expr);
+};
+template <typename Lhs, typename Rhs, typename Expr>
+concept can_call_full_outer_join_on_with = requires(Lhs lhs, Rhs rhs, Expr expr) {
+  lhs.join(rhs).on(expr);
+};
+template <typename Lhs, typename Rhs, typename Expr>
+concept can_call_left_outer_join_on_with = requires(Lhs lhs, Rhs rhs, Expr expr) {
+  lhs.join(rhs).on(expr);
+};
+template <typename Lhs, typename Rhs, typename Expr>
+concept can_call_right_outer_join_on_with = requires(Lhs lhs, Rhs rhs, Expr expr) {
+  lhs.join(rhs).on(expr);
+};
 
-MAKE_CAN_CALL_JOIN_ON_WITH(join);
-MAKE_CAN_CALL_JOIN_ON_WITH(inner_join);
-MAKE_CAN_CALL_JOIN_ON_WITH(left_outer_join);
-MAKE_CAN_CALL_JOIN_ON_WITH(right_outer_join);
-MAKE_CAN_CALL_JOIN_ON_WITH(full_outer_join);
-MAKE_CAN_CALL_JOIN_ON_WITH(cross_join);
+// can_call_all joins_with
+template <typename Lhs, typename Rhs>
+void can_call_all_joins_with(const Lhs&, const Rhs&) {
+  static_assert(can_call_join_with<Lhs, Rhs>);
+  static_assert(can_call_inner_join_with<Lhs, Rhs>);
+  static_assert(can_call_left_outer_join_with<Lhs, Rhs>);
+  static_assert(can_call_right_outer_join_with<Lhs, Rhs>);
+  static_assert(can_call_full_outer_join_with<Lhs, Rhs>);
+  static_assert(can_call_cross_join_with<Lhs, Rhs>);
+}
 
-#define CAN_CALL_ALL_JOINS_WITH(LHS, RHS)                                      \
-  static_assert(can_call_join_with<decltype(LHS), decltype(RHS)>::value, "");  \
-  static_assert(can_call_inner_join_with<decltype(LHS), decltype(RHS)>::value, \
-                "");                                                           \
-  static_assert(                                                               \
-      can_call_left_outer_join_with<decltype(LHS), decltype(RHS)>::value, ""); \
-  static_assert(                                                               \
-      can_call_right_outer_join_with<decltype(LHS), decltype(RHS)>::value,     \
-      "");                                                                     \
-  static_assert(                                                               \
-      can_call_full_outer_join_with<decltype(LHS), decltype(RHS)>::value, ""); \
-  static_assert(can_call_cross_join_with<decltype(LHS), decltype(RHS)>::value, \
-                "");
+template <typename Lhs, typename Rhs>
+void cannot_call_any_join_with(const Lhs&, const Rhs&) {
+  static_assert(not can_call_join_with<Lhs, Rhs>);
+  static_assert(not can_call_inner_join_with<Lhs, Rhs>);
+  static_assert(not can_call_left_outer_join_with<Lhs, Rhs>);
+  static_assert(not can_call_right_outer_join_with<Lhs, Rhs>);
+  static_assert(not can_call_full_outer_join_with<Lhs, Rhs>);
+  static_assert(not can_call_cross_join_with<Lhs, Rhs>);
+}
 
-#define CANNOT_CALL_ANY_JOIN_WITH(LHS, RHS)                                    \
-  static_assert(not can_call_join_with<decltype(LHS), decltype(RHS)>::value,   \
-                "");                                                           \
-  static_assert(                                                               \
-      not can_call_inner_join_with<decltype(LHS), decltype(RHS)>::value, "");  \
-  static_assert(                                                               \
-      not can_call_left_outer_join_with<decltype(LHS), decltype(RHS)>::value,  \
-      "");                                                                     \
-  static_assert(                                                               \
-      not can_call_right_outer_join_with<decltype(LHS), decltype(RHS)>::value, \
-      "");                                                                     \
-  static_assert(                                                               \
-      not can_call_full_outer_join_with<decltype(LHS), decltype(RHS)>::value,  \
-      "");                                                                     \
-  static_assert(                                                             \
-      not can_call_cross_join_with<decltype(LHS), decltype(RHS)>::value, "");
+template <typename Lhs, typename Rhs, typename Expr>
+void can_call_all_joins_on_with(const Lhs&, const Rhs&, const Expr&) {
+  static_assert(can_call_join_on_with<Lhs, Rhs, Expr>);
+  static_assert(can_call_inner_join_on_with<Lhs, Rhs, Expr>);
+  static_assert(can_call_left_outer_join_on_with<Lhs, Rhs, Expr>);
+  static_assert(can_call_right_outer_join_on_with<Lhs, Rhs, Expr>);
+  static_assert(can_call_full_outer_join_on_with<Lhs, Rhs, Expr>);
+}
 
-#define CAN_CALL_ALL_JOINS_ON_WITH(LHS, RHS, EXPR)                             \
-  static_assert(can_call_join_on_with<decltype(LHS), decltype(RHS),            \
-                                      decltype(EXPR)>::value,                  \
-                "");                                                           \
-  static_assert(can_call_inner_join_on_with<decltype(LHS), decltype(RHS),      \
-                                            decltype(EXPR)>::value,            \
-                "");                                                           \
-  static_assert(can_call_left_outer_join_on_with<decltype(LHS), decltype(RHS), \
-                                                 decltype(EXPR)>::value,       \
-                "");                                                           \
-  static_assert(                                                               \
-      can_call_right_outer_join_on_with<decltype(LHS), decltype(RHS),          \
-                                        decltype(EXPR)>::value,                \
-      "");                                                                     \
-  static_assert(can_call_full_outer_join_on_with<decltype(LHS), decltype(RHS), \
-                                                 decltype(EXPR)>::value,       \
-                "");
-
-#define CANNOT_CALL_ALL_JOINS_ON_WITH(LHS, RHS, EXPR)                         \
-  CAN_CALL_ALL_JOINS_WITH(LHS, RHS);                                          \
-  static_assert(not can_call_join_on_with<decltype(LHS), decltype(RHS),  \
-                                               decltype(EXPR)>::value,        \
-                     "");                                                     \
-  static_assert(not can_call_inner_join_on_with<decltype(LHS), decltype(RHS), \
-                                                decltype(EXPR)>::value,       \
-                "");                                                          \
-  static_assert(                                                              \
-      not can_call_left_outer_join_on_with<decltype(LHS), decltype(RHS),      \
-                                           decltype(EXPR)>::value,            \
-      "");                                                                    \
-  static_assert(                                                              \
-      not can_call_right_outer_join_on_with<decltype(LHS), decltype(RHS),     \
-                                            decltype(EXPR)>::value,           \
-      "");                                                                    \
-  static_assert(                                                              \
-      not can_call_full_outer_join_on_with<decltype(LHS), decltype(RHS),      \
-                                           decltype(EXPR)>::value,            \
-      "");
+template <typename Lhs, typename Rhs, typename Expr>
+void cannot_call_any_join_on_with(const Lhs& lhs, const Rhs& rhs, const Expr&) {
+  can_call_all_joins_with(lhs, rhs);
+  static_assert(not can_call_join_on_with<Lhs, Rhs, Expr>);
+  static_assert(not can_call_inner_join_on_with<Lhs, Rhs, Expr>);
+  static_assert(not can_call_left_outer_join_on_with<Lhs, Rhs, Expr>);
+  static_assert(not can_call_right_outer_join_on_with<Lhs, Rhs, Expr>);
+  static_assert(not can_call_full_outer_join_on_with<Lhs, Rhs, Expr>);
+}
 
 struct weird_table : public sqlpp::enable_join {};
 
@@ -159,32 +137,32 @@ int main() {
   const auto bFoo = foo.as<"b">();
 
   // OK
-  CAN_CALL_ALL_JOINS_WITH(bar, foo);
-  CAN_CALL_ALL_JOINS_WITH(bar, foo.as<"something">());
+  can_call_all_joins_with(bar, foo);
+  can_call_all_joins_with(bar, foo.as<"something">());
 
   // Cannot join with a non-table
-  CANNOT_CALL_ANY_JOIN_WITH(bar, foo.id);
+  cannot_call_any_join_with(bar, foo.id);
 
   // Cannot join two identical tables.
-  CANNOT_CALL_ANY_JOIN_WITH(foo, foo);
+  cannot_call_any_join_with(foo, foo);
 
   // Cannot join two tables with identical names.
-  CANNOT_CALL_ANY_JOIN_WITH(foo, bar.as<"tab_foo">());
+  cannot_call_any_join_with(foo, bar.as<"tab_foo">());
 
   // JOIN must not be called with tables that depend on other tables.
   // Not sure this can happen in the wild, which is why we are using the
   // `weird_table` to simulate the situation.
-  CANNOT_CALL_ANY_JOIN_WITH(weird_table{}, foo);
-  CANNOT_CALL_ANY_JOIN_WITH(foo, weird_table{});
+  cannot_call_any_join_with(weird_table{}, foo);
+  cannot_call_any_join_with(foo, weird_table{});
 
   // JOIN ... ON can be called with any boolean expression, but will fail with
   // static_assert if it uses the wrong tables. Here, bFoo is not provided by
   // the join.
-  CANNOT_CALL_ALL_JOINS_ON_WITH(foo, bar, bFoo.id == bar.id);
-  CANNOT_CALL_ALL_JOINS_ON_WITH(foo, bar, bFoo.id == aFoo.id);
+  cannot_call_any_join_on_with(foo, bar, bFoo.id == bar.id);
+  cannot_call_any_join_on_with(foo, bar, bFoo.id == aFoo.id);
   //
   // Here, bar is provided /dynamically/ by the first join, but required
   // /statically/ by the second join.
-  CANNOT_CALL_ALL_JOINS_ON_WITH(foo.join(dynamic(maybe, bar))
+  cannot_call_any_join_on_with(foo.join(dynamic(maybe, bar))
                                   .on(foo.id == bar.id), aFoo, bar.id == aFoo.id);
 }

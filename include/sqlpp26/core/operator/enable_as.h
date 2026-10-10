@@ -29,8 +29,6 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <sqlpp26/core/operator/as_expression.h>
 #include <sqlpp26/core/type_traits.h>
 
-#include <sqlpp26/core/name/create_reflection_name_tag.h>
-
 namespace sqlpp {
 // To be used as CRTP base for expressions that should offer the as() member
 // function.

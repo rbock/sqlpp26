@@ -286,10 +286,12 @@ int main(int, char*[]) {
     SQLPP_COMPARE(val.in(val), "17 IN (17)");
     SQLPP_COMPARE(val.in(expr), "17 IN (17 + 4)");
     SQLPP_COMPARE(val.in(value(select(val.as<"v">()))), "17 IN (SELECT 17 AS v)");
+    SQLPP_COMPARE(val.in(select(val.as<"v">())), "17 IN (SELECT 17 AS v)");
 
     SQLPP_COMPARE(val.not_in(val), "17 NOT IN (17)");
     SQLPP_COMPARE(val.not_in(expr), "17 NOT IN (17 + 4)");
     SQLPP_COMPARE(val.not_in(value(select(val.as<"v">()))), "17 NOT IN (SELECT 17 AS v)");
+    SQLPP_COMPARE(val.not_in(select(val.as<"v">())), "17 NOT IN (SELECT 17 AS v)");
 
     // IN expressions with multiple arguments require inner parentheses.
     SQLPP_COMPARE(val.in(1, value(select(val.as<"v">())), 23),

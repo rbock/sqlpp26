@@ -26,6 +26,7 @@ ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
+#include <sqlpp26/core/query/statement_fwd.h>
 #include <sqlpp26/core/operator/comparison_functions.h>
 #include <sqlpp26/core/type_traits.h>
 
@@ -35,26 +36,23 @@ namespace sqlpp {
 class enable_comparison {
  public:
   template <typename Expr, typename... Args>
+  requires((sizeof...(Args) != 0) and
+           logic::all<values_are_comparable<std::decay_t<Expr>, Args>::value...>::value)
   constexpr auto in(this Expr&& self, std::tuple<Args...> args)
       -> decltype(::sqlpp::in(std::forward<Expr>(self), std::move(args))) {
     return ::sqlpp::in(std::forward<Expr>(self), std::move(args));
   }
 
-  template <typename Expr, typename... Args>
-  constexpr auto in(this Expr&& self, Args... args)
-      -> decltype(::sqlpp::in(std::forward<Expr>(self), std::move(args)...)) {
-    return ::sqlpp::in(std::forward<Expr>(self), std::move(args)...);
-  }
-
   template <typename Expr, typename Arg>
+    requires(values_are_comparable<std::decay_t<Expr>, Arg>::value)
   constexpr auto in(this Expr&& self, std::vector<Arg> args)
       -> decltype(::sqlpp::in(std::forward<Expr>(self), std::move(args))) {
     return ::sqlpp::in(std::forward<Expr>(self), std::move(args));
   }
 
-  template <typename Expr, typename Select>
-    requires(has_statement_data_type_v<Select>)
-  constexpr auto in(this Expr&& self, Select arg)
+  template <typename Expr, typename... Clauses>
+    requires(values_are_comparable<std::decay_t<Expr>, statement_data_type_of_t<statement_t<Clauses...>>>::value)
+  constexpr auto in(this Expr&& self, statement_t<Clauses...> arg)
       -> decltype(::sqlpp::in(std::forward<Expr>(self), std::move(arg))) {
     return ::sqlpp::in(std::forward<Expr>(self), std::move(arg));
   }
@@ -63,13 +61,6 @@ class enable_comparison {
   constexpr auto not_in(this Expr&& self, std::tuple<Args...> args)
       -> decltype(::sqlpp::not_in(std::forward<Expr>(self), std::move(args))) {
     return ::sqlpp::not_in(std::forward<Expr>(self), std::move(args));
-  }
-
-  template <typename Expr, typename... Args>
-  constexpr auto not_in(this Expr&& self, Args... args)
-      -> decltype(::sqlpp::not_in(std::forward<Expr>(self),
-                                  std::move(args)...)) {
-    return ::sqlpp::not_in(std::forward<Expr>(self), std::move(args)...);
   }
 
   template <typename Expr, typename Arg>

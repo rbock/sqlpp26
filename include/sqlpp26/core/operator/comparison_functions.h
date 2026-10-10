@@ -130,15 +130,6 @@ constexpr auto in(L lhs, std::tuple<Args...> args)
   return {std::move(lhs), std::move(args)};
 }
 
-template <typename L, typename... Args>
-  requires((sizeof...(Args) != 0) and
-           logic::all<values_are_comparable<L, Args>::value...>::value)
-constexpr auto in(L lhs, Args... args)
-    -> in_expression<L, operator_in, std::tuple<Args...>> {
-  static_assert(sizeof...(Args) > 0, "");
-  return {std::move(lhs), std::make_tuple(std::move(args)...)};
-}
-
 template <typename L, typename Arg>
   requires(values_are_comparable<L, Arg>::value)
 constexpr auto in(L lhs, std::vector<Arg> args)
@@ -146,14 +137,13 @@ constexpr auto in(L lhs, std::vector<Arg> args)
   return {std::move(lhs), std::move(args)};
 }
 
-template <typename L, typename Select>
-  requires(values_are_comparable<L, statement_data_type_of_t<Select>>::value)
-constexpr auto in(L lhs, Select arg)
-    -> in_expression<L, operator_in, Select> {
-  consteval {
-    // TODO Require compile fail test
-    check_basic_consistency(type_v<Select>{});
-  }
+template <typename L, typename... Clauses>
+  requires(values_are_comparable<L, statement_data_type_of_t<statement_t<Clauses...>>>::value)
+constexpr auto in(L lhs, statement_t<Clauses...> arg)
+    -> in_expression<L, operator_in, statement_t<Clauses...>> {
+  // TODO Require compile fail test
+  constexpr auto check = check_basic_consistency(type_v<statement_t<Clauses...>>{});
+  static_assert(check, check.error());
   return {std::move(lhs), std::move(arg)};
 }
 
@@ -165,14 +155,6 @@ constexpr auto not_in(L lhs, std::tuple<Args...> args)
   return {std::move(lhs), std::move(args)};
 }
 
-template <typename L, typename... Args>
-  requires((sizeof...(Args) != 0) and
-           logic::all<values_are_comparable<L, Args>::value...>::value)
-constexpr auto not_in(L lhs, Args... args)
-    -> in_expression<L, operator_not_in, std::tuple<Args...>> {
-  return {std::move(lhs), std::make_tuple(std::move(args)...)};
-}
-
 template <typename L, typename Arg>
   requires(values_are_comparable<L, Arg>::value)
 constexpr auto not_in(L lhs, std::vector<Arg> args)
@@ -180,12 +162,12 @@ constexpr auto not_in(L lhs, std::vector<Arg> args)
   return {std::move(lhs), std::move(args)};
 }
 
-template <typename L, typename Select>
-  requires(values_are_comparable<L, statement_data_type_of_t<Select>>::value)
-constexpr auto not_in(L lhs, Select arg)
-    -> in_expression<L, operator_not_in, Select> {
+template <typename L, typename... Clauses>
+  requires(values_are_comparable<L, statement_data_type_of_t<statement_t<Clauses...>>>::value)
+constexpr auto not_in(L lhs, statement_t<Clauses...> arg)
+    -> in_expression<L, operator_not_in, statement_t<Clauses...>> {
   // TODO Require compile fail test
-  constexpr auto check = check_basic_consistency(type_v<Select>{});
+  constexpr auto check = check_basic_consistency(type_v<statement_t<Clauses...>>{});
   static_assert(check, check.error());
   return {std::move(lhs), std::move(arg)};
 }

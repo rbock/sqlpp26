@@ -37,12 +37,6 @@ namespace sqlpp::ranges {
 struct no_for_update {
 };
 
-// TODO: Need real implementation
-struct for_update {
-  constexpr auto operator()(const auto& /*row*/) const -> void {
-  }
-};
-
 }  // namespace sqlpp::ranges
 
 namespace sqlpp {
@@ -50,6 +44,6 @@ constexpr auto to_filter_expression(const no_for_update_t&) {
   return ranges::no_for_update{};
 }
 constexpr inline auto to_filter_expression(const for_update_t&) {
-  return ranges::for_update{};
+  return static_assert("Ranges connector: No support for for_update-clause");
 }
 }  // namespace sqlpp

@@ -33,10 +33,48 @@ template <typename Lhs, typename Rhs>
 concept can_call_equal_with = requires(Lhs lhs, Rhs rhs) {
   lhs == rhs;
 };
+
+template <typename Lhs, typename Rhs>
+concept can_call_member_in_with = requires(Lhs lhs, Rhs rhs) {
+  lhs.in(rhs);
+};
+template <typename Lhs, typename Rhs>
+concept can_call_free_in_with = requires(Lhs lhs, Rhs rhs) {
+  in(lhs, rhs);
+};
+template <typename Lhs, typename Rhs>
+concept can_call_member_not_in_with = requires(Lhs lhs, Rhs rhs) {
+  lhs.not_in(rhs);
+};
+template <typename Lhs, typename Rhs>
+concept can_call_free_not_in_with = requires(Lhs lhs, Rhs rhs) {
+  not_in(lhs, rhs);
+};
+
+// Returns true if `lhs.in(rhs)` is a valid function
+// call.
+template <typename Lhs, typename Rhs>
+concept can_call_in_with =
+    can_call_member_in_with<Lhs, Rhs> and
+    can_call_free_in_with<Lhs, Rhs> and
+    can_call_member_not_in_with<Lhs, Rhs> and
+    can_call_free_not_in_with<Lhs, Rhs>;
+
+template <typename Lhs, typename Rhs>
+concept cannot_call_in_with =
+    not can_call_member_in_with<Lhs, Rhs> and
+    not can_call_free_in_with<Lhs, Rhs> and
+    not can_call_member_not_in_with<Lhs, Rhs> and
+    not can_call_free_not_in_with<Lhs, Rhs>;
 }  // namespace
 
 int main() {
   const auto bar = test::tab_bar{};
+  const auto foo = test::tab_foo{};
+
+  // ---------------------------------------------------
+  // -----  Equality                   -----------------
+  // ---------------------------------------------------
 
   // OK
   bar.int_n == 7;
@@ -54,4 +92,19 @@ int main() {
 
   // Cannot compare with default value.
   static_assert(not can_call_equal_with<decltype(bar.int_n), decltype(sqlpp::default_value)>);
+
+
+  // ---------------------------------------------------
+  // -----  in / not_in                -----------------
+  // ---------------------------------------------------
+
+  static_assert(can_call_in_with<decltype(bar.int_n), decltype(std::make_tuple(7))>);
+  static_assert(can_call_in_with<decltype(bar.int_n), decltype(std::make_tuple(7, 8.f, true))>);
+  static_assert(can_call_in_with<decltype(bar.int_n), decltype(std::vector{7, 8, 9})>);
+  static_assert(can_call_in_with<decltype(bar.int_n), decltype(select(foo.id).from(foo))>);
+
+  // Cannot call in with incompatible value types
+  static_assert(cannot_call_in_with<decltype(bar.int_n), decltype(std::make_tuple("seven"))>);
+  static_assert(cannot_call_in_with<decltype(bar.int_n), decltype(std::vector({"seven"}))>);
+  static_assert(cannot_call_in_with<decltype(bar.int_n), decltype(select(foo.text_nn_d).from(foo))>);
 }

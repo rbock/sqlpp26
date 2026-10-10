@@ -28,15 +28,15 @@
 
 #include <print>
 
-#define assert_throw(code, exception)              \
-  {                                                \
-    bool exception_thrown = false;                 \
-    try {                                          \
-      code;                                        \
-    } catch (const exception& e) {                 \
-      exception_thrown = true;                     \
-      std::println("message: {}", e.what());       \
-    }                                              \
-    if (not exception_thrown)                      \
-      throw std::logic_error("missing exception"); \
+template <typename Exception>
+void assert_throw(auto expression) {
+  bool exception_thrown = false;
+  try {
+    expression();
+  } catch (const Exception& e) {
+    exception_thrown = true;
+    // TODO: Check message
   }
+  if (not exception_thrown)
+    throw std::logic_error("missing exception");
+}

@@ -33,7 +33,7 @@ int main() {
       // broken_connection exception on bad config
       auto config = std::make_shared<sql::connection_config>();
       config->host = "non-existing-host";
-      assert_throw(sql::connection{config}, sql::connection_exception);
+      assert_throw<sql::connection_exception>([&] { sql::connection{config}; });
     }
 
     sql::connection db = sql::make_test_connection();
@@ -41,12 +41,13 @@ int main() {
 
     constexpr auto foo = test::tab_foo{};
 
-    assert_throw(db(insert_into(foo).set(
-                     foo.int_n = sqlpp::verbatim<sqlpp::integral>("nonsense"))),
-                 sql::result_exception);
+    assert_throw<sql::result_exception>([&] {
+      db(insert_into(foo).set(
+          foo.int_n = sqlpp::verbatim<sqlpp::integral>("nonsense")));
+    });
 
-    assert_throw(db.last_insert_id("tabfoo", "no_such_column"),
-                 sql::result_exception);
+    assert_throw<sql::result_exception>(
+        [&] { db.last_insert_id("tabfoo", "no_such_column"); });
 
     // Test fields of a result_exception
     try {

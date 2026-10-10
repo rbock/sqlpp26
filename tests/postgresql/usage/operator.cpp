@@ -36,14 +36,20 @@ int main() {
   // cast to bool
   db(select(cast("t", sqlpp::as<sqlpp::boolean>()).as<"something">()));
   db(select(cast(17, sqlpp::as<sqlpp::boolean>()).as<"something">()));
-  assert_throw(db(select(cast(17.5, sqlpp::as<sqlpp::boolean>()).as<"something">())), sql::result_exception);
+  assert_throw<sql::result_exception>([&] {
+    db(select(cast(17.5, sqlpp::as<sqlpp::boolean>()).as<"something">()));
+  });
   db(select(cast(std::nullopt, sqlpp::as<sqlpp::boolean>()).as<"something">()));
-  assert_throw(db(select(cast("nonsense", sqlpp::as<sqlpp::boolean>()).as<"something">())), sql::result_exception);
+  assert_throw<sql::result_exception>([&] {
+    db(select(cast("nonsense", sqlpp::as<sqlpp::boolean>()).as<"something">()));
+  });
 
   // cast to integer
   db(select(cast(17.5, sqlpp::as<sqlpp::integral>()).as<"something">()));
   db(select(cast("17", sqlpp::as<sqlpp::integral>()).as<"something">()));
-  assert_throw(db(select(cast("17.5", sqlpp::as<sqlpp::integral>()).as<"something">())), sql::result_exception);
+  assert_throw<sql::result_exception>([&] {
+    db(select(cast("17.5", sqlpp::as<sqlpp::integral>()).as<"something">()));
+  });
 
   // cast to double precision
   db(select(cast(17.5, sqlpp::as<sqlpp::floating_point>()).as<"something">()));

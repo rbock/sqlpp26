@@ -99,11 +99,6 @@ write_basic_package_version_file(Sqlpp26ConfigVersion.cmake
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/Sqlpp26ConfigVersion.cmake
     DESTINATION ${SQLPP26_INSTALL_CMAKEDIR}
 )
-install(EXPORT Sqlpp26Targets
-    DESTINATION ${SQLPP26_INSTALL_CMAKEDIR}
-    NAMESPACE   sqlpp26::
-    CXX_MODULES_DIRECTORY .
-)
 
 ### Tests
 if(PROJECT_IS_TOP_LEVEL AND BUILD_TESTING)

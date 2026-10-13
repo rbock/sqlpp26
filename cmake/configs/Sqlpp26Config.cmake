@@ -45,7 +45,7 @@ foreach(comp IN LISTS ${CMAKE_FIND_PACKAGE_NAME}_comps)
 endforeach()
 
 # Add the target file
-include(${CMAKE_CURRENT_LIST_DIR}/Sqlpp26Targets.cmake)
+include(${CMAKE_CURRENT_LIST_DIR}/Sqlpp26CoreTargets.cmake)
 
 # Load any optional components
 foreach(comp IN LISTS ${CMAKE_FIND_PACKAGE_NAME}_comps)

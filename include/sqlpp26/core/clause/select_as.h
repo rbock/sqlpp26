@@ -27,6 +27,8 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include <meta>
+
 #include <sqlpp26/core/basic/enable_join.h>
 #include <sqlpp26/core/basic/field_column.h>
 #include <sqlpp26/core/detail/type_set.h>

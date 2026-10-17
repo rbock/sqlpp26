@@ -645,7 +645,11 @@ namespace {namespace} {{
         print(template.format(
         commandline = ' '.join(sys.argv),
         import_std = "import std;" if self._args.use_import_std else "",
-        include_std = "" if self._args.use_import_std else "#include <optional>",
+        include_std = "" if self._args.use_import_std else """#include <chrono>
+#include <cstdint>
+#include <optional>
+#include <span>
+#include <string_view>""",
         import_core = "import sqlpp26.core;" if self._args.use_import_sqlpp26 else "",
         include_core = "" if self._args.use_import_sqlpp26 else "#include <sqlpp26/core/basic/table.h>",
         namespace = self._args.namespace,

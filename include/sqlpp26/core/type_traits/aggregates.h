@@ -31,6 +31,7 @@
 #include <sqlpp26/core/detail/type_vector.h>
 #include <sqlpp26/core/logic.h>
 #include <sqlpp26/core/query/dynamic_fwd.h>
+#include <sqlpp26/core/query/statement_fwd.h>
 #include <sqlpp26/core/type_traits/nodes_of.h>
 #include <sqlpp26/core/type_v.h>
 

@@ -27,6 +27,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include <meta>
 #include <tuple>
 #include <utility>
 

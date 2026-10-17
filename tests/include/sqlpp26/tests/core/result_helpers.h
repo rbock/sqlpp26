@@ -27,6 +27,7 @@
  */
 
 #include <iostream>
+#include <source_location>
 
 #ifdef BUILD_WITH_MODULES
 import sqlpp26.core;

@@ -27,7 +27,14 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include <sqlpp26/core/detail/type_info_set.h>
+#include <sqlpp26/core/type_v.h>
+
 namespace sqlpp {
 template <typename... Clauses>
 struct statement_t;
+
+template <typename... Clauses>
+consteval auto get_known_static_aggregate_columns_of_statement(
+    type_v<statement_t<Clauses...>>) -> detail::type_info_set;
 }  // namespace sqlpp

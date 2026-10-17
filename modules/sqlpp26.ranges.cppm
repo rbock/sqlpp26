@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025, Roland Bock
+ * Copyright (c) 2026, Roland Bock
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -27,33 +27,13 @@
 
 module;
 
-#include <sqlpp26/sqlite3/sqlite3.h>
+#include <sqlpp26/ranges/ranges.h>
 
-export module sqlpp26.sqlite3;
+export module sqlpp26.ranges;
 
-export namespace sqlpp::sqlite3 {
-using ::sqlpp::sqlite3::bind_parameter;
-using ::sqlpp::sqlite3::read_field;
-using ::sqlpp::sqlite3::connection;
-using ::sqlpp::sqlite3::connection_config;
-using ::sqlpp::sqlite3::connection_pool;
-using ::sqlpp::sqlite3::pooled_connection;
-using ::sqlpp::sqlite3::context_t;
-
-using ::sqlpp::sqlite3::command_result;
-using ::sqlpp::sqlite3::exception;
-
-using ::sqlpp::sqlite3::delete_from;
-using ::sqlpp::sqlite3::update;
-using ::sqlpp::sqlite3::insert_into;
-using ::sqlpp::sqlite3::insert_or_replace;
-using ::sqlpp::sqlite3::insert_or_ignore;
-
-using ::sqlpp::sqlite3::assert_no_cast_to_date_time;
-using ::sqlpp::sqlite3::assert_no_any_t;
-
-using ::sqlpp::sqlite3::to_sql_string;
-using ::sqlpp::sqlite3::nan_to_sql_string;
-using ::sqlpp::sqlite3::inf_to_sql_string;
-using ::sqlpp::sqlite3::neg_inf_to_sql_string;
+export namespace sqlpp::ranges {
+using ::sqlpp::ranges::table_generator;
+using ::sqlpp::ranges::table;
+using ::sqlpp::ranges::make_table;
+using ::sqlpp::ranges::accessor;
 }

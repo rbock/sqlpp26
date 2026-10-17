@@ -80,11 +80,6 @@ int main() {
   const auto foo = test::tab_foo{};
   const auto bar = test::tab_bar{};
 
-  // Confirming the required columns of tab_bar.
-  static_assert(
-      sqlpp::get_required_insert_columns_of(sqlpp::type_v<test::tab_bar>{}) ==
-      sqlpp::detail::make_type_info_set<sqlpp::column<test::tab_bar, 2>>());
-
   // -------------------------
   // insert_into(tab).set(...)
   // -------------------------

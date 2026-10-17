@@ -27,6 +27,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include <meta>
 #include <utility>
 
 #include <sqlpp26/core/indices.h>

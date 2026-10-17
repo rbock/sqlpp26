@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025, Roland Bock
+ * Copyright (c) 2025-2026, Roland Bock
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -34,13 +34,20 @@ export module sqlpp26.core;
 
 export namespace sqlpp {
 // basics:
-using ::sqlpp::column_t;
-using ::sqlpp::table_t;
-using ::sqlpp::table_as_t;
+using ::sqlpp::column;
+using ::sqlpp::column_spec;
+using ::sqlpp::column_spec_of;
+using ::sqlpp::column_spec_of_t;
+using ::sqlpp::table;
+using ::sqlpp::table_generator;
+using ::sqlpp::table_as;
+using ::sqlpp::enable_table_as;
+using ::sqlpp::table_spec_of;
+using ::sqlpp::table_spec_of_t;
 using ::sqlpp::verbatim_clause_t;
 using ::sqlpp::verbatim_t;
 using ::sqlpp::verbatim_table_t;
-using ::sqlpp::table_columns;
+using ::sqlpp::verbatim_table_as_t;
 using ::sqlpp::all_of;
 using ::sqlpp::enable_join;
 using ::sqlpp::join;
@@ -50,19 +57,18 @@ using ::sqlpp::right_outer_join;
 using ::sqlpp::full_outer_join;
 using ::sqlpp::cross_join;
 using ::sqlpp::parameter;
-using ::sqlpp::parameter_t; // TODO remove?
-using ::sqlpp::parameter_value;
+using ::sqlpp::parameter_t;
 using ::sqlpp::verbatim;
 using ::sqlpp::verbatim_clause;
 using ::sqlpp::verbatim_table;
 using ::sqlpp::parameterized_verbatim;
-using ::sqlpp::schema;
-using ::sqlpp::schema_qualified_table;
 using ::sqlpp::star;
 using ::sqlpp::value;
+using ::sqlpp::value_t;
 using ::sqlpp::no_value_t;
 using ::sqlpp::noop;
-using ::sqlpp::wrapped_static_assert; // TODO: Move
+using ::sqlpp::fixed_string;
+using ::sqlpp::type_v;
 
 // data types
 using ::sqlpp::boolean;
@@ -73,7 +79,7 @@ using ::sqlpp::text;
 using ::sqlpp::blob;
 using ::sqlpp::date;
 using ::sqlpp::timestamp;
-using ::sqlpp::time;
+using ::sqlpp::time_of_day;
 
 // operators:arithmetic
 using ::sqlpp::plus;
@@ -93,6 +99,7 @@ using ::sqlpp::operator%;
 // operators:as
 using ::sqlpp::as;
 using ::sqlpp::enable_as;
+using ::sqlpp::as_expression;
 
 // operators:assign
 using ::sqlpp::assign;
@@ -112,8 +119,6 @@ using ::sqlpp::operator==;
 using ::sqlpp::operator!=;
 using ::sqlpp::operator>=;
 using ::sqlpp::operator>;
-using ::sqlpp::operator==;
-using ::sqlpp::operator==;
 using ::sqlpp::is_null;
 using ::sqlpp::is_not_null;
 using ::sqlpp::is_distinct_from;
@@ -131,7 +136,7 @@ using ::sqlpp::any;
 using ::sqlpp::between;
 using ::sqlpp::case_when;
 using ::sqlpp::cast;
-using ::sqlpp::cast_as_t; // TODO: Remove?
+using ::sqlpp::cast_as_t;
 using ::sqlpp::exists;
 using ::sqlpp::in;
 using ::sqlpp::not_in;
@@ -140,7 +145,7 @@ using ::sqlpp::desc;
 using ::sqlpp::sort_type; // enum
 using ::sqlpp::null_position; // enum
 using ::sqlpp::order;
-using ::sqlpp::when_then_pair_t; // TODO: Remove?
+using ::sqlpp::when_then_pair_t;
 
 // clauses:
 using ::sqlpp::cte;
@@ -181,7 +186,7 @@ using ::sqlpp::where;
 using ::sqlpp::with;
 using ::sqlpp::with_result_type_of;
 using ::sqlpp::no_insert_value_list_t;
-using ::sqlpp::having_t; // TODO: remove
+using ::sqlpp::having_t;
 using ::sqlpp::no_having_t;
 using ::sqlpp::no_limit_t;
 using ::sqlpp::no_offset_t;
@@ -199,10 +204,10 @@ using ::sqlpp::no_union_t;
 using ::sqlpp::no_union_order_by_t;
 using ::sqlpp::no_using_t;
 using ::sqlpp::no_update_set_list_t;
-using ::sqlpp::cte_ref_t; // TODO: remove?
-using ::sqlpp::select_ref_t; // TODO: remove?
-using ::sqlpp::cte_union_t; // TODO: remove?
-using ::sqlpp::with_t; // TODO: remove?
+using ::sqlpp::cte_ref_t;
+using ::sqlpp::select_ref_t;
+using ::sqlpp::cte_union_t;
+using ::sqlpp::with_t;
 
 // select flags
 using ::sqlpp::all;
@@ -227,7 +232,10 @@ using ::sqlpp::current_date;
 using ::sqlpp::current_time;
 using ::sqlpp::current_timestamp;
 using ::sqlpp::flatten;
-using ::sqlpp::get_sql_name;
+using ::sqlpp::name_of;
+using ::sqlpp::name_of_v;
+using ::sqlpp::sql_name_of;
+using ::sqlpp::sql_name_of_v;
 using ::sqlpp::lower;
 using ::sqlpp::make_table_ref;
 using ::sqlpp::trim;
@@ -258,176 +266,97 @@ using ::sqlpp::debug_logger;
 
 // type_traits
 using ::sqlpp::no_of_result_columns;
-using ::sqlpp::make_char_sequence_t; // TODO: Remove?
 using ::sqlpp::can_be_null;
+using ::sqlpp::data_type_of;
 using ::sqlpp::data_type_of_t;
 using ::sqlpp::get_result_row_t;
 using ::sqlpp::has_data_type;
 using ::sqlpp::has_data_type_v;
-using ::sqlpp::has_name_tag;
 using ::sqlpp::is_aggregate_neutral;
-using ::sqlpp::has_name_tag_v;
 using ::sqlpp::has_result_row;
 using ::sqlpp::is_boolean;
+using ::sqlpp::is_boolean_v;
 using ::sqlpp::is_floating_point;
+using ::sqlpp::is_floating_point_v;
 using ::sqlpp::is_integral;
-using ::sqlpp::provided_ctes_of_t;
-using ::sqlpp::is_numeric;
+using ::sqlpp::is_integral_v;
+using ::sqlpp::is_arithmetic;
+using ::sqlpp::is_arithmetic_v;
 using ::sqlpp::is_optional;
 using ::sqlpp::is_prepared_statement;
 using ::sqlpp::is_prepared_statement_v;
 using ::sqlpp::is_raw_select_flag;
 using ::sqlpp::is_table;
 using ::sqlpp::is_text;
+using ::sqlpp::is_text_v;
 using ::sqlpp::is_unsigned_integral;
+using ::sqlpp::is_unsigned_integral_v;
 using ::sqlpp::make_parameter_list_t;
-using ::sqlpp::parameter_value_t;
 using ::sqlpp::have_correct_static_cte_dependencies;
+using ::sqlpp::parameter_data_type;
 using ::sqlpp::parameters_of_t;
 using ::sqlpp::remove_as_t;
 using ::sqlpp::requires_parentheses;
 using ::sqlpp::remove_any_t;
 using ::sqlpp::remove_dynamic_t;
 using ::sqlpp::remove_optional_t;
-using ::sqlpp::required_tables_of;
-using ::sqlpp::required_tables_of_t;
-using ::sqlpp::required_insert_columns_of_t;
-using ::sqlpp::provided_static_ctes_of_t;
 using ::sqlpp::is_aggregate_function;
-using ::sqlpp::provided_static_ctes_of_t;
 using ::sqlpp::is_as_expression;
 using ::sqlpp::is_data_type;
+using ::sqlpp::is_data_type_v;
 using ::sqlpp::contains_aggregate_function;
 using ::sqlpp::is_aggregate_expression;
 using ::sqlpp::is_non_aggregate_expression;
-using ::sqlpp::assert_no_parameters_t; // TODO: constraint test?
-using ::sqlpp::is_time;
+using ::sqlpp::is_time_of_day;
+using ::sqlpp::is_time_of_day_v;
 using ::sqlpp::values_are_assignable;
 using ::sqlpp::values_are_comparable;
 using ::sqlpp::nodes_of;
-using ::sqlpp::wrong;
-using ::sqlpp::compatibility_check;
-using ::sqlpp::result_data_type_of;
-using ::sqlpp::data_type_of;
-using ::sqlpp::is_timestamp;
-using ::sqlpp::is_blob;
-using ::sqlpp::is_boolean;
-using ::sqlpp::is_date;
 using ::sqlpp::nodes_of_t;
+using ::sqlpp::wrong;
+using ::sqlpp::result_data_type_of;
+using ::sqlpp::is_timestamp;
+using ::sqlpp::is_timestamp_v;
+using ::sqlpp::is_blob;
+using ::sqlpp::is_blob_v;
+using ::sqlpp::is_date;
+using ::sqlpp::is_date_v;
+using ::sqlpp::is_date_or_timestamp;
 using ::sqlpp::select_column_has_name;
 using ::sqlpp::has_enabled_over;
 using ::sqlpp::has_enabled_comparison;
 using ::sqlpp::has_enabled_as;
 using ::sqlpp::has_enabled_join;
-using ::sqlpp::provided_tables_of_t;
 using ::sqlpp::has_default;
-using ::sqlpp::name_tag_of_t;
-using ::sqlpp::provided_static_tables_of_t;
-using ::sqlpp::provided_optional_tables_of_t;
-using ::sqlpp::required_static_tables_of_t;
-using ::sqlpp::required_tables_of_t;
-using ::sqlpp::required_static_ctes_of_t;
-using ::sqlpp::required_ctes_of_t;
 using ::sqlpp::select_column_data_type_of_t;
 using ::sqlpp::is_raw_table;
 using ::sqlpp::is_result_clause;
 using ::sqlpp::is_column;
 using ::sqlpp::is_cte;
 using ::sqlpp::is_recursive_cte;
-using ::sqlpp::known_aggregate_columns_of_t;
-using ::sqlpp::known_static_aggregate_columns_of_t;
 using ::sqlpp::have_correct_cte_dependencies;
 
-// constraints
-using ::sqlpp::assert_insert_values_t; // Need constraint test
-using ::sqlpp::assert_no_unknown_tables_in_column_list_t; // Need constraint test
-using ::sqlpp::assert_all_required_assignments_t;
-using ::sqlpp::assert_all_required_columns_t;
-using ::sqlpp::assert_no_unknown_tables_in_insert_assignments_t;
-using ::sqlpp::assert_columns_selected_t;
-using ::sqlpp::assert_correct_order_by_aggregates_t;
-using ::sqlpp::assert_correct_order_by_aggregates_with_group_by_t;
-using ::sqlpp::assert_correct_static_order_by_aggregates_with_group_by_t;
-using ::sqlpp::assert_having_all_aggregates_t;
-using ::sqlpp::assert_having_all_static_aggregates_t;
-using ::sqlpp::assert_into_t;
-using ::sqlpp::assert_no_duplicate_table_providers_t;
-using ::sqlpp::assert_no_unknown_columns_in_union_sort_order_t;
-using ::sqlpp::assert_no_unknown_ctes_t;
-using ::sqlpp::assert_no_unknown_static_tables_in_group_by_t;
-using ::sqlpp::assert_no_unknown_static_tables_in_having_t;
-using ::sqlpp::assert_no_unknown_static_tables_in_on_conflict_do_update_t;
-using ::sqlpp::assert_no_unknown_static_tables_in_order_by_t;
-using ::sqlpp::assert_no_unknown_static_tables_in_selected_columns_t;
-using ::sqlpp::assert_no_unknown_static_tables_in_where_t;
-using ::sqlpp::assert_no_unknown_tables_in_group_by_t;
-using ::sqlpp::assert_no_unknown_tables_in_having_t;
-using ::sqlpp::assert_no_unknown_tables_in_on_conflict_do_update_t;
-using ::sqlpp::assert_no_unknown_tables_in_order_by_t;
-using ::sqlpp::assert_no_unknown_tables_in_returning_columns_t;
-using ::sqlpp::assert_no_unknown_tables_in_selected_columns_t;
-using ::sqlpp::assert_no_unknown_tables_in_update_assignments_t;
-using ::sqlpp::assert_no_unknown_tables_in_where_t;
-using ::sqlpp::assert_on_conflict_action_t;
-using ::sqlpp::assert_returning_columns_contain_no_aggregates_t;
-using ::sqlpp::assert_select_columns_all_aggregates_t;
-using ::sqlpp::assert_select_columns_with_group_by_are_aggregates_t;
-using ::sqlpp::assert_select_columns_with_group_by_match_static_aggregates_t;
-using ::sqlpp::assert_single_table_provided_t;
-using ::sqlpp::assert_update_assignments_t;
+// consistency checks
 using ::sqlpp::check_compatibility;
 using ::sqlpp::check_basic_consistency;
 using ::sqlpp::check_prepare_consistency;
 using ::sqlpp::check_run_consistency;
-using ::sqlpp::consistency_check_t;
-using ::sqlpp::consistent_t;
-using ::sqlpp::prepare_check_t;
-using ::sqlpp::statement_consistency_check_t;
-using ::sqlpp::statement_prepare_check_t;
-using ::sqlpp::statement_run_check_t;
-}
+using ::sqlpp::basic_consistency_check;
+using ::sqlpp::prepare_check;
+using ::sqlpp::run_check;
 
-export namespace sqlpp::alias {
-using ::sqlpp::alias::avg_;
-using ::sqlpp::alias::count_;
-using ::sqlpp::alias::distinct_avg_;
-using ::sqlpp::alias::distinct_count_;
-using ::sqlpp::alias::distinct_max_;
-using ::sqlpp::alias::distinct_min_;
-using ::sqlpp::alias::distinct_sum_;
-using ::sqlpp::alias::exists_;
-using ::sqlpp::alias::max_;
-using ::sqlpp::alias::min_;
-using ::sqlpp::alias::sum_;
-
-using ::sqlpp::alias::a;
-using ::sqlpp::alias::b;
-using ::sqlpp::alias::c;
-using ::sqlpp::alias::d;
-using ::sqlpp::alias::e;
-using ::sqlpp::alias::f;
-using ::sqlpp::alias::g;
-using ::sqlpp::alias::h;
-using ::sqlpp::alias::i;
-using ::sqlpp::alias::j;
-using ::sqlpp::alias::k;
-using ::sqlpp::alias::l;
-using ::sqlpp::alias::m;
-using ::sqlpp::alias::n;
-using ::sqlpp::alias::o;
-using ::sqlpp::alias::p;
-using ::sqlpp::alias::q;
-using ::sqlpp::alias::r;
-using ::sqlpp::alias::s;
-using ::sqlpp::alias::t;
-using ::sqlpp::alias::u;
-using ::sqlpp::alias::v;
-using ::sqlpp::alias::w;
-using ::sqlpp::alias::x;
-using ::sqlpp::alias::y;
-using ::sqlpp::alias::z;
-using ::sqlpp::alias::left;
-using ::sqlpp::alias::right;
+// reflection-based get functions
+using ::sqlpp::get_required_tables_of;
+using ::sqlpp::get_required_static_tables_of;
+using ::sqlpp::get_provided_tables_of;
+using ::sqlpp::get_provided_static_tables_of;
+using ::sqlpp::get_provided_optional_tables_of;
+using ::sqlpp::get_required_ctes_of;
+using ::sqlpp::get_required_static_ctes_of;
+using ::sqlpp::get_provided_ctes_of;
+using ::sqlpp::get_provided_static_ctes_of;
+using ::sqlpp::get_known_aggregate_columns_of;
+using ::sqlpp::get_known_static_aggregate_columns_of;
 }
 
 export namespace sqlpp::chrono {
@@ -440,7 +369,9 @@ using ::sqlpp::detail::circular_buffer;
 using ::sqlpp::detail::parse_date;
 using ::sqlpp::detail::parse_time;
 using ::sqlpp::detail::parse_timestamp;
-using ::sqlpp::detail::type_set;
+using ::sqlpp::detail::type_info_set;
+using ::sqlpp::detail::type_info_less;
+using ::sqlpp::detail::make_type_info_set;
 using ::sqlpp::detail::type_vector;
 using ::sqlpp::detail::get_last_if_t;
 }

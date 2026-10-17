@@ -27,6 +27,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include <meta>
 #include <ranges>
 
 #include <sqlpp26/ranges/type_traits.h>

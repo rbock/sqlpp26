@@ -27,6 +27,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 #include <sqlpp26/core/logic.h>
+#include <sqlpp26/core/query/statement_fwd.h>
 #include <sqlpp26/core/type_traits.h>
 
 namespace sqlpp {

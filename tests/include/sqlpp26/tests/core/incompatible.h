@@ -27,6 +27,8 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include <expected>
+
 #ifdef BUILD_WITH_MODULES
 import sqlpp26.core;
 #else

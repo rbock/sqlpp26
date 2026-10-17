@@ -27,34 +27,30 @@
 
 module;
 
-#include <sqlpp26/mysql/mysql.h>
+#include <sqlpp26/sqlite3/sqlite3.h>
 
-export module sqlpp26.mysql;
+export module sqlpp26.sqlite3;
 
-export namespace sqlpp::mysql {
-using ::sqlpp::mysql::bind_parameter;
-using ::sqlpp::mysql::read_field;
-using ::sqlpp::mysql::bind_field;
-using ::sqlpp::mysql::connection;
-using ::sqlpp::mysql::connection_config;
-using ::sqlpp::mysql::connection_pool;
-using ::sqlpp::mysql::pooled_connection;
-using ::sqlpp::mysql::context_t;
+export namespace sqlpp::sqlite3 {
+using ::sqlpp::sqlite3::bind_parameter;
+using ::sqlpp::sqlite3::read_field;
+using ::sqlpp::sqlite3::connection;
+using ::sqlpp::sqlite3::connection_config;
+using ::sqlpp::sqlite3::connection_pool;
+using ::sqlpp::sqlite3::pooled_connection;
+using ::sqlpp::sqlite3::context_t;
 
-using ::sqlpp::mysql::command_result;
-using ::sqlpp::mysql::exception;
+using ::sqlpp::sqlite3::command_result;
+using ::sqlpp::sqlite3::exception;
 
-using ::sqlpp::mysql::scoped_library_initializer_t;
-using ::sqlpp::mysql::global_library_init;
+using ::sqlpp::sqlite3::delete_from;
+using ::sqlpp::sqlite3::update;
+using ::sqlpp::sqlite3::insert_into;
+using ::sqlpp::sqlite3::insert_or_replace;
+using ::sqlpp::sqlite3::insert_or_ignore;
 
-using ::sqlpp::mysql::delete_from;
-using ::sqlpp::mysql::update;
-
-using ::sqlpp::mysql::assert_no_bool_cast;
-using ::sqlpp::mysql::assert_no_full_outer_join_t;
-using ::sqlpp::mysql::assert_no_nulls_first_last;
-
-using ::sqlpp::mysql::to_sql_string;
-using ::sqlpp::mysql::quoted_name_to_sql_string;
-using ::sqlpp::mysql::data_type_to_sql_string;
+using ::sqlpp::sqlite3::to_sql_string;
+using ::sqlpp::sqlite3::nan_to_sql_string;
+using ::sqlpp::sqlite3::inf_to_sql_string;
+using ::sqlpp::sqlite3::neg_inf_to_sql_string;
 }

@@ -25,6 +25,8 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include <meta>
+
 #include <sqlpp26/core/basic/column.h>
 #include <sqlpp26/core/basic/table.h>
 

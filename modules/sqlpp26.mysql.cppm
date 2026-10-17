@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2026, Roland Bock
+ * Copyright (c) 2025, Roland Bock
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -27,9 +27,29 @@
 
 module;
 
-#include <sqlpp26/ranges/ranges.h>
+#include <sqlpp26/mysql/mysql.h>
 
-export module sqlpp26.ranges;
+export module sqlpp26.mysql;
 
-export namespace sqlpp::ranges {
+export namespace sqlpp::mysql {
+using ::sqlpp::mysql::bind_parameter;
+using ::sqlpp::mysql::read_field;
+using ::sqlpp::mysql::bind_field;
+using ::sqlpp::mysql::connection;
+using ::sqlpp::mysql::connection_config;
+using ::sqlpp::mysql::connection_pool;
+using ::sqlpp::mysql::pooled_connection;
+using ::sqlpp::mysql::context_t;
+
+using ::sqlpp::mysql::command_result;
+using ::sqlpp::mysql::exception;
+
+using ::sqlpp::mysql::scoped_library_initializer_t;
+using ::sqlpp::mysql::global_library_init;
+
+using ::sqlpp::mysql::delete_from;
+using ::sqlpp::mysql::update;
+using ::sqlpp::mysql::to_sql_string;
+using ::sqlpp::mysql::quoted_name_to_sql_string;
+using ::sqlpp::mysql::data_type_to_sql_string;
 }

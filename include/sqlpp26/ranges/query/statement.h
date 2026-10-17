@@ -27,13 +27,14 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include <cstddef>
+#include <cstdlib>
+#include <meta>
+#include <ranges>
+
 #include <sqlpp26/core/query/statement.h>
 #include <sqlpp26/core/indices.h>
 #include <sqlpp26/ranges/type_traits.h>
-#include <cstddef>
-#include <cstdlib>
-#include <ranges>
-
 
 namespace sqlpp::ranges {
 template <typename...>

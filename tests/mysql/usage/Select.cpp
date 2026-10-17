@@ -24,6 +24,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include <meta>
 #include <utility>
 
 #include <sqlpp26/tests/mysql/all.h>

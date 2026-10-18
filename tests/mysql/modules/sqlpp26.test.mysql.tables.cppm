@@ -29,7 +29,7 @@ void create_tab_foo(Db& db) {
 ))+++");
 }
 
-struct tab_foo_ {
+export struct tab_foo_ {
   using generator = ::sqlpp::table_generator<tab_foo_, "tab_foo",
     ::sqlpp::column_spec<"id", ::std::int64_t>::with_default,
     ::sqlpp::column_spec<"text_nn_d", ::std::string_view>::with_default,
@@ -53,7 +53,7 @@ void create_tab_bar(Db& db) {
 ))+++");
 }
 
-struct tab_bar_ {
+export struct tab_bar_ {
   using generator = ::sqlpp::table_generator<tab_bar_, "tab_bar",
     ::sqlpp::column_spec<"id", ::std::int64_t>::with_default,
     ::sqlpp::column_spec<"text_n", std::optional<::std::string_view>>,
@@ -74,7 +74,7 @@ void create_tab_date_time(Db& db) {
 ))+++");
 }
 
-struct tab_date_time_ {
+export struct tab_date_time_ {
   using generator = ::sqlpp::table_generator<tab_date_time_, "tab_date_time",
     ::sqlpp::column_spec<"id", ::std::int64_t>::with_default,
     ::sqlpp::column_spec<"date_n", std::optional<::std::chrono::sys_days>>,
@@ -93,7 +93,7 @@ void create_tab_json(Db& db) {
 ))+++");
 }
 
-struct tab_json_ {
+export struct tab_json_ {
   using generator = ::sqlpp::table_generator<tab_json_, "tab_json",
     ::sqlpp::column_spec<"id", ::std::int64_t>::with_default,
     ::sqlpp::column_spec<"data", ::std::string_view>>;
@@ -110,7 +110,7 @@ void create_tab_department(Db& db) {
 ))+++");
 }
 
-struct tab_department_ {
+export struct tab_department_ {
   using generator = ::sqlpp::table_generator<tab_department_, "tab_department",
     ::sqlpp::column_spec<"id", ::std::int64_t>::with_default,
     ::sqlpp::column_spec<"name", std::optional<::std::string_view>>,

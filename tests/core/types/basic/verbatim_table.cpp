@@ -25,7 +25,6 @@
  */
 
 #include <sqlpp26/tests/core/all.h>
-#include "sqlpp26/core/type_traits.h"
 
 int main() {
   auto verb = sqlpp::verbatim_table("verb").as<"verb">();

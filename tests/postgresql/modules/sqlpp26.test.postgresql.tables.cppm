@@ -30,7 +30,7 @@ void create_tab_foo(Db& db) {
 ))+++");
 }
 
-struct tab_foo_ {
+export struct tab_foo_ {
   using generator = ::sqlpp::table_generator<tab_foo_, "tab_foo",
     ::sqlpp::column_spec<"id", ::std::int64_t>::with_default,
     ::sqlpp::column_spec<"text_nn_d", ::std::string_view>::with_default,
@@ -54,7 +54,7 @@ void create_tab_bar(Db& db) {
 ))+++");
 }
 
-struct tab_bar_ {
+export struct tab_bar_ {
   using generator = ::sqlpp::table_generator<tab_bar_, "tab_bar",
     ::sqlpp::column_spec<"id", ::std::int64_t>::with_default,
     ::sqlpp::column_spec<"text_n", std::optional<::std::string_view>>,
@@ -76,7 +76,7 @@ void create_tab_date_time(Db& db) {
 ))+++");
 }
 
-struct tab_date_time_ {
+export struct tab_date_time_ {
   using generator = ::sqlpp::table_generator<tab_date_time_, "tab_date_time",
     ::sqlpp::column_spec<"date_n", std::optional<::std::chrono::sys_days>>,
     ::sqlpp::column_spec<"timestamp_n", std::optional<::sqlpp::chrono::sys_microseconds>>,
@@ -95,7 +95,7 @@ void create_blob_sample(Db& db) {
 ))+++");
 }
 
-struct blob_sample_ {
+export struct blob_sample_ {
   using generator = ::sqlpp::table_generator<blob_sample_, "blob_sample",
     ::sqlpp::column_spec<"id", ::std::int64_t>::with_default,
     ::sqlpp::column_spec<"data", std::optional<::std::span<uint8_t>>>>;
@@ -111,7 +111,7 @@ void create_tab_except(Db& db) {
 ))+++");
 }
 
-struct tab_except_ {
+export struct tab_except_ {
   using generator = ::sqlpp::table_generator<tab_except_, "tab_except",
     ::sqlpp::column_spec<"int_small_n_u", std::optional<::std::int64_t>>,
     ::sqlpp::column_spec<"text_short_n", std::optional<::std::string_view>>>;
@@ -128,7 +128,7 @@ void create_tab_department(Db& db) {
 ))+++");
 }
 
-struct tab_department_ {
+export struct tab_department_ {
   using generator = ::sqlpp::table_generator<tab_department_, "tab_department",
     ::sqlpp::column_spec<"id", ::std::int64_t>::with_default,
     ::sqlpp::column_spec<"name", std::optional<::std::string_view>>,

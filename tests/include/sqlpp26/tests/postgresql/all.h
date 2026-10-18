@@ -29,9 +29,14 @@
 // before the import declaration. For details see
 // https://gcc.gnu.org/bugzilla/show_bug.cgi?id=114795#c3
 
+#include <numeric>
+#include <ranges>
 #include <chrono>
 #include <cmath>
+#include <expected>
+#include <format>
 #include <memory>
+#include <meta>
 #include <print>
 #include <unordered_set>
 

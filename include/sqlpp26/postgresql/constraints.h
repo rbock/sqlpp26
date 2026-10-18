@@ -27,6 +27,9 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include <expected>
+#include <string_view>
+
 #include <sqlpp26/postgresql/database/serializer_context.h>
 #include <sqlpp26/sqlpp26.h>
 

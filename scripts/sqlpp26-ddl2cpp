@@ -695,7 +695,7 @@ void {creation_helper_func}(Db& db) {{
 {commands}
 }}
 """, file=ostream)
-        print(f"""struct {table_spec} {{
+        print(f"""{export}struct {table_spec} {{
   using generator = ::sqlpp::table_generator<{table_spec}, "{table_sql_name}",
 {column_specs}>;
 }};

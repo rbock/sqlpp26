@@ -25,7 +25,6 @@
  */
 
 #include <sqlpp26/tests/core/all.h>
-#include "sqlpp26/core/type_traits/ctes_of.h"
 
 int main(int, char*[]) {
   auto compare = comparer{};

@@ -25,9 +25,6 @@
  */
 
 #include <sqlpp26/tests/core/all.h>
-#include "sqlpp26/core/detail/type_set.h"
-#include "sqlpp26/core/field_spec.h"
-#include "sqlpp26/core/type_traits/tables_of.h"
 
 namespace {
 template <typename A, typename B>

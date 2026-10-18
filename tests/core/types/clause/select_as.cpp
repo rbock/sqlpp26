@@ -25,7 +25,6 @@
  */
 
 #include <sqlpp26/tests/core/all.h>
-#include "sqlpp26/core/type_traits/data_type.h"
 
 namespace {
 template <typename T, typename V>

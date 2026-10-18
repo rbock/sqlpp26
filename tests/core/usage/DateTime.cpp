@@ -25,7 +25,6 @@
  */
 
 #include <chrono>
-#include "sqlpp26/core/chrono.h"
 
 #include <sqlpp26/tests/core/all.h>
 

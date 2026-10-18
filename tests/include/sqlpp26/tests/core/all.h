@@ -32,6 +32,7 @@
 #include <chrono>
 #include <memory>
 #include <meta>
+#include <ranges>
 
 #include <sqlpp26/tests/core/incompatible.h>
 #include <sqlpp26/tests/core/make_test_connection.h>

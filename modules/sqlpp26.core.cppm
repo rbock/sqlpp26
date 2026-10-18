@@ -179,6 +179,7 @@ using ::sqlpp::union_all;
 using ::sqlpp::union_all_t;
 using ::sqlpp::union_distinct;
 using ::sqlpp::union_order_by;
+using ::sqlpp::blank_update_t;
 using ::sqlpp::update;
 using ::sqlpp::update_set;
 using ::sqlpp::using_;
@@ -272,10 +273,15 @@ using ::sqlpp::data_type_of_t;
 using ::sqlpp::get_result_row_t;
 using ::sqlpp::has_data_type;
 using ::sqlpp::has_data_type_v;
+using ::sqlpp::has_name;
+using ::sqlpp::has_name_v;
+using ::sqlpp::has_statement_data_type;
 using ::sqlpp::is_aggregate_neutral;
 using ::sqlpp::has_result_row;
 using ::sqlpp::is_boolean;
 using ::sqlpp::is_boolean_v;
+using ::sqlpp::is_dynamic;
+using ::sqlpp::is_dynamic_v;
 using ::sqlpp::is_floating_point;
 using ::sqlpp::is_floating_point_v;
 using ::sqlpp::is_integral;
@@ -335,6 +341,8 @@ using ::sqlpp::is_column;
 using ::sqlpp::is_cte;
 using ::sqlpp::is_recursive_cte;
 using ::sqlpp::have_correct_cte_dependencies;
+using ::sqlpp::table_of;
+using ::sqlpp::table_of_t;
 
 // consistency checks
 using ::sqlpp::check_compatibility;
@@ -365,6 +373,10 @@ using ::sqlpp::chrono::sys_microseconds;
 
 export namespace sqlpp::detail {
 // detail
+using ::sqlpp::detail::are_same;
+using ::sqlpp::detail::are_same_v;
+using ::sqlpp::detail::are_unique;
+using ::sqlpp::detail::are_unique_v;
 using ::sqlpp::detail::circular_buffer;
 using ::sqlpp::detail::parse_date;
 using ::sqlpp::detail::parse_time;

@@ -14,7 +14,7 @@ export module sqlpp26.test.ranges.tables;
 import sqlpp26.core;
 
 namespace test {
-struct tab_foo_ {
+export struct tab_foo_ {
   using generator = ::sqlpp::table_generator<tab_foo_, "tab_foo",
     ::sqlpp::column_spec<"id", ::std::int64_t>::with_default,
     ::sqlpp::column_spec<"text_nn_d", ::std::string_view>::with_default,
@@ -27,7 +27,7 @@ struct tab_foo_ {
 };
 export using tab_foo = ::sqlpp::table<tab_foo_>;
 
-struct tab_bar_ {
+export struct tab_bar_ {
   using generator = ::sqlpp::table_generator<tab_bar_, "tab_bar",
     ::sqlpp::column_spec<"id", ::std::int64_t>::with_default,
     ::sqlpp::column_spec<"text_n", std::optional<::std::string_view>>,
@@ -36,7 +36,7 @@ struct tab_bar_ {
 };
 export using tab_bar = ::sqlpp::table<tab_bar_>;
 
-struct tab_date_time_ {
+export struct tab_date_time_ {
   using generator = ::sqlpp::table_generator<tab_date_time_, "tab_date_time",
     ::sqlpp::column_spec<"id", ::std::int64_t>::with_default,
     ::sqlpp::column_spec<"date_n", std::optional<::std::chrono::sys_days>>,

@@ -25,7 +25,6 @@
  */
 
 #include <sqlpp26/tests/core/all.h>
-#include "sqlpp26/core/detail/type_set.h"
 
 namespace {
 template <typename... Expressions>

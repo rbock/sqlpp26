@@ -29,13 +29,14 @@
 // before the import declaration. For details see
 // https://gcc.gnu.org/bugzilla/show_bug.cgi?id=114795#c3
 
-#include <ranges>
-#include <numeric>
-#include <meta>
 #include <chrono>
+#include <expected>
 #include <cmath>
 #include <memory>
+#include <meta>
+#include <numeric>
 #include <print>
+#include <ranges>
 #include <unordered_set>
 
 #include <sqlpp26/tests/core/assert_throw.h>

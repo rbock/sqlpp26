@@ -26,6 +26,9 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include <sqlpp26/core/to_sql_string.h>
+#include <sqlpp26/core/type_traits.h>
+
 // The actual SQL representation of our C++ enum that will be stored in a
 // nullable integer column
 enum class animal { bird, cat, dog, fish };

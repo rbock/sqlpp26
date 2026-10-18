@@ -31,12 +31,12 @@
 #include <ranges>
 #include <utility>
 
-#include <sqlpp26/tests/postgresql/all.h>
-
 // The enum definitions must be included before the database model
 #include <enum_animal.h>
 #include <enum_shape.h>
+
 #include <db_model.h>
+#include <sqlpp26/tests/postgresql/all.h>
 
 namespace sql = ::sqlpp::postgresql;
 

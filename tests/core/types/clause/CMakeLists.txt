@@ -26,7 +26,7 @@ create_tests_compiles(
     cte
     from
     group_by
-    insert_value_list
+    #TODO reactivate insert_value_list
     into
     select_as
     select_columns

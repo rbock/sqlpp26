@@ -31,6 +31,10 @@ module;
 
 export module sqlpp26.postgresql;
 
+export namespace sqlpp {
+  using ::sqlpp::check_compatibility;
+}
+
 export namespace sqlpp::postgresql {
 using ::sqlpp::postgresql::bind_parameter;
 using ::sqlpp::postgresql::read_field;

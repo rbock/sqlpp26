@@ -31,6 +31,10 @@ module;
 
 export module sqlpp26.mysql;
 
+export namespace sqlpp {
+  using ::sqlpp::check_compatibility;
+}
+
 export namespace sqlpp::mysql {
 using ::sqlpp::mysql::bind_parameter;
 using ::sqlpp::mysql::read_field;

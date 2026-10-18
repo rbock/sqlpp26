@@ -360,6 +360,7 @@ using ::sqlpp::get_provided_tables_of;
 using ::sqlpp::get_provided_static_tables_of;
 using ::sqlpp::get_provided_optional_tables_of;
 using ::sqlpp::get_required_ctes_of;
+using ::sqlpp::get_required_insert_columns_of;
 using ::sqlpp::get_required_static_ctes_of;
 using ::sqlpp::get_provided_ctes_of;
 using ::sqlpp::get_provided_static_ctes_of;

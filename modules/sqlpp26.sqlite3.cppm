@@ -31,6 +31,10 @@ module;
 
 export module sqlpp26.sqlite3;
 
+export namespace sqlpp {
+  using ::sqlpp::check_compatibility;
+}
+
 export namespace sqlpp::sqlite3 {
 using ::sqlpp::sqlite3::bind_parameter;
 using ::sqlpp::sqlite3::read_field;

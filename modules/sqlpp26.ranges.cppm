@@ -31,6 +31,10 @@ module;
 
 export module sqlpp26.ranges;
 
+export namespace sqlpp {
+  using ::sqlpp::check_compatibility;
+}
+
 export namespace sqlpp::ranges {
 using ::sqlpp::ranges::table_generator;
 using ::sqlpp::ranges::table;

@@ -50,6 +50,14 @@ Using C++ type instead of placeholders. This changes APIs a bit, e.g.
 
 cast(sqlpp::integral) -> sqlpp::cast<int64_t>()
 
+| % | sqlpp23 | sqlpp26 |
+| :------------- | :------------- | :----- |
+| [**Names**](/docs/tony_tables/names.md) | | |
+| SQLPP_CREATE_NAME_TAG | dropped | simply use string literals in place |
+| SQLPP_CREATE_QUOTED_NAME_TAG | dropped | don't use names that need quoting |
+| | | |
+| **Data types** | | |
+
 
 [**\< Index**](/docs/README.md)
 

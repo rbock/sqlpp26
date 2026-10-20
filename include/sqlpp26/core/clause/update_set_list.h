@@ -30,7 +30,7 @@
 #include <tuple>
 #include <expected>
 
-#include <sqlpp26/core/detail/type_set.h>
+#include <sqlpp26/core/detail/type_info_set.h>
 #include <sqlpp26/core/query/dynamic.h>
 #include <sqlpp26/core/query/statement.h>
 #include <sqlpp26/core/reader.h>

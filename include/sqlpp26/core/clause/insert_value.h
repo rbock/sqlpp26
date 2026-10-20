@@ -29,7 +29,7 @@
 
 #include <sqlpp26/core/basic/value.h>
 #include <sqlpp26/core/default_value.h>
-#include <sqlpp26/core/detail/type_set.h>
+#include <sqlpp26/core/detail/type_info_set.h>
 #include <sqlpp26/core/query/dynamic.h>
 #include <sqlpp26/core/type_traits.h>
 

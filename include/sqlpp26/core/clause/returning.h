@@ -34,7 +34,7 @@
 #include <sqlpp26/core/clause/select_as.h>
 #include <sqlpp26/core/clause/select_column_traits.h>
 #include <sqlpp26/core/detail/flat_tuple.h>
-#include <sqlpp26/core/detail/type_set.h>
+#include <sqlpp26/core/detail/type_info_set.h>
 #include <sqlpp26/core/field_spec.h>
 #include <sqlpp26/core/noop.h>
 #include <sqlpp26/core/query/result_row.h>

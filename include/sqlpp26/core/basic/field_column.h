@@ -40,7 +40,7 @@
 #include <sqlpp26/core/type_traits.h>
 #include <sqlpp26/core/wrong.h>
 #include <type_traits>
-#include "sqlpp11/core/detail/type_set.h"
+#include "sqlpp11/core/detail/type_info_set.h"
 */
 
 namespace sqlpp {

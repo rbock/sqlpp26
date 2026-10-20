@@ -41,7 +41,7 @@
 #include <sqlpp26/core/concepts.h>
 #include <sqlpp26/core/database/prepared_select.h>
 #include <sqlpp26/core/detail/flat_tuple.h>
-#include <sqlpp26/core/detail/type_set.h>
+#include <sqlpp26/core/detail/type_info_set.h>
 #include <sqlpp26/core/basic/column_spec.h>
 #include <sqlpp26/core/operator/as_expression.h>
 #include <sqlpp26/core/query/dynamic.h>

@@ -46,3 +46,67 @@ using type_info_set = std::flat_set<std::meta::info, type_info_less>;
 
 }  // namespace sqlpp::detail
 
+namespace sqlpp::detail {
+
+// TODO: Would prefer to use flat_set::insert_range(), but that currently fails to compile
+// See http://wg21.link/P3372
+consteval void insert_type_info_set(auto& sink, const auto& data) {
+  for (const auto& entry : data) {
+    sink.insert(entry);
+  }
+}
+
+consteval void remove_type_info_set(auto& result, const auto& data) {
+  for (const auto& entry : data) {
+    result.erase(entry);
+  }
+}
+
+template <typename... T>
+consteval type_info_set make_type_info_set() {
+  type_info_set all;
+
+  (all.insert(^^T), ...);
+
+  return all;
+}
+
+consteval type_info_set make_joined_type_info_set(const auto&... Sets) {
+  type_info_set all;
+
+  (insert_type_info_set(all, Sets), ...);
+
+  return all;
+}
+
+consteval type_info_set make_type_info_set_difference(const auto& lhs, const auto& rhs) {
+  type_info_set difference;
+
+  insert_type_info_set(difference, lhs);
+  remove_type_info_set(difference, rhs);
+
+  return difference;
+}
+
+template <typename... T>
+struct are_unique {
+  static constexpr bool value = (make_type_info_set<T...>().size() == sizeof...(T));
+};
+
+template <typename... T>
+inline constexpr bool are_unique_v = are_unique<T...>::value;
+
+template <typename... T>
+struct are_same {
+  static constexpr bool value = (make_type_info_set<T...>().size() == 1);
+};
+
+template <>
+struct are_same<> {
+  static constexpr bool value = true;
+};
+
+template <typename... T>
+inline constexpr bool are_same_v = are_same<T...>::value;
+
+}  // namespace sqlpp::detail

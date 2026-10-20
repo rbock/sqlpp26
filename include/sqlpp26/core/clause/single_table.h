@@ -32,7 +32,7 @@
 #include <sqlpp26/core/basic/table.h>
 #include <sqlpp26/core/concepts.h>
 //#include <sqlpp26/core/database/prepared_insert.h>
-#include <sqlpp26/core/detail/type_set.h>
+#include <sqlpp26/core/detail/type_info_set.h>
 #include <sqlpp26/core/no_data.h>
 #include <sqlpp26/core/query/statement.h>
 #include <sqlpp26/core/reader.h>

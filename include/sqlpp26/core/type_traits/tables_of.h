@@ -27,7 +27,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <sqlpp26/core/detail/type_set.h>
+#include <sqlpp26/core/detail/type_info_set.h>
 #include <sqlpp26/core/detail/type_vector.h>
 #include <sqlpp26/core/query/dynamic_fwd.h>
 #include <sqlpp26/core/type_traits/nodes_of.h>

@@ -34,7 +34,7 @@
 #include <sqlpp26/core/type_traits/optional.h>
 
 #include <sqlpp26/core/concepts.h>
-#include <sqlpp26/core/detail/type_set.h>
+#include <sqlpp26/core/detail/type_info_set.h>
 #include <sqlpp26/core/detail/type_vector.h>
 #include <sqlpp26/core/logic.h>
 #include <sqlpp26/core/operator/enable_as.h>

@@ -31,7 +31,7 @@
 
 #include <sqlpp26/core/basic/enable_join.h>
 #include <sqlpp26/core/basic/field_column.h>
-#include <sqlpp26/core/detail/type_set.h>
+#include <sqlpp26/core/detail/type_info_set.h>
 #include <sqlpp26/core/query/result_row_fwd.h>
 #include <sqlpp26/core/query/statement.h>
 #include <sqlpp26/core/reader.h>

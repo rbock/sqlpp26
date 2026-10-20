@@ -32,7 +32,7 @@
 
 #include <sqlpp26/core/clause/where.h>
 #include <sqlpp26/core/concepts.h>
-#include <sqlpp26/core/detail/type_set.h>
+#include <sqlpp26/core/detail/type_info_set.h>
 #include <sqlpp26/core/reader.h>
 #include <sqlpp26/core/tuple_to_sql_string.h>
 #include <sqlpp26/core/type_traits.h>

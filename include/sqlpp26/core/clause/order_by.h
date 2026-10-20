@@ -31,7 +31,7 @@
 #include <expected>
 
 #include <sqlpp26/core/concepts.h>
-#include <sqlpp26/core/detail/type_set.h>
+#include <sqlpp26/core/detail/type_info_set.h>
 #include <sqlpp26/core/logic.h>
 #include <sqlpp26/core/query/statement.h>
 #include <sqlpp26/core/reader.h>

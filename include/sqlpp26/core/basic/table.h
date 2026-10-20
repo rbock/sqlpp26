@@ -31,7 +31,7 @@
 #include <vector>
 #include <ranges>
 #include <algorithm>
-#include "sqlpp26/core/detail/type_set.h"
+#include "sqlpp26/core/detail/type_info_set.h"
 
 #include <sqlpp26/core/basic/column.h>
 #include <sqlpp26/core/basic/column_spec.h>

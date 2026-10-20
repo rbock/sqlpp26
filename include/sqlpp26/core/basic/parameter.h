@@ -27,7 +27,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <sqlpp26/core/detail/type_set.h>
+#include <sqlpp26/core/detail/type_info_set.h>
 #include <sqlpp26/core/operator/enable_as.h>
 #include <sqlpp26/core/operator/enable_comparison.h>
 #include <sqlpp26/core/type_traits.h>

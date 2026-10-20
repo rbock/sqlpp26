@@ -32,7 +32,7 @@
 #include <sqlpp26/core/query/dynamic.h>
 #include <sqlpp26/core/type_traits.h>
 #include <sqlpp26/core/unconditional.h>
-#include <sqlpp26/core/detail/type_set.h>
+#include <sqlpp26/core/detail/type_info_set.h>
 
 namespace sqlpp {
 // Join types.

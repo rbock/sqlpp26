@@ -35,7 +35,7 @@ struct connection {
   struct context_t {};
 
   public:
-  connection(Table& table) : _table{table} {}
+  constexpr connection(Table& table) : _table{table} {}
 
   // Directly executed statements start here
   template <typename T>

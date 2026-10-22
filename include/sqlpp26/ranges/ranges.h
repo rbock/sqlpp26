@@ -27,5 +27,35 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <sqlpp26/ranges/basic/table.h>
+#include <sqlpp26/ranges/aggregate_function/count.h>
+#include <sqlpp26/ranges/aggregate_function/sum.h>
 #include <sqlpp26/ranges/basic/column.h>
+#include <sqlpp26/ranges/basic/table.h>
+#include <sqlpp26/ranges/clause/for_update.h>
+#include <sqlpp26/ranges/clause/from.h>
+#include <sqlpp26/ranges/clause/group_by.h>
+#include <sqlpp26/ranges/clause/having.h>
+#include <sqlpp26/ranges/clause/insert.h>
+#include <sqlpp26/ranges/clause/insert_value_list.h>
+#include <sqlpp26/ranges/clause/into.h>
+// TODO limit and offset should be disabled
+#include <sqlpp26/ranges/clause/limit.h>
+#include <sqlpp26/ranges/clause/offset.h>
+#include <sqlpp26/ranges/clause/order_by.h>
+#include <sqlpp26/ranges/clause/select.h>
+#include <sqlpp26/ranges/clause/select_column_list.h>
+#include <sqlpp26/ranges/clause/single_table.h>
+#include <sqlpp26/ranges/clause/union.h>
+#include <sqlpp26/ranges/clause/update.h>
+#include <sqlpp26/ranges/clause/update_set_list.h>
+#include <sqlpp26/ranges/clause/where.h>
+#include <sqlpp26/ranges/database/connection.h>
+#include <sqlpp26/ranges/operator/as_expression.h>
+#include <sqlpp26/ranges/operator/assign_expression.h>
+#include <sqlpp26/ranges/operator/comparison_expression.h>
+#include <sqlpp26/ranges/operator/logical_expression.h>
+#include <sqlpp26/ranges/operator/sort_order_expression.h>
+#include <sqlpp26/ranges/query/statement.h>
+#include <sqlpp26/ranges/ranges.h>
+#include <sqlpp26/ranges/to_filter_expression.h>
+

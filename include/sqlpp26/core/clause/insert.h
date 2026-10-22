@@ -55,13 +55,13 @@ struct insert_result_methods_t {
 
   // Execute
   template <typename Statement, typename Db>
-  auto _run(this Statement&& self, Db& db) {
+  constexpr auto _run(this Statement&& self, Db& db) {
     return statement_handler_t{}.insert(std::forward<Statement>(self), db);
   }
 
   // Prepare
   template <typename Statement, typename Db>
-  auto _prepare(this Statement&& self, Db& db)
+  constexpr auto _prepare(this Statement&& self, Db& db)
       -> prepared_insert_t<Db, std::decay_t<Statement>> {
     return prepared_insert_t<Db, std::decay_t<Statement>>{
         statement_handler_t{}.prepare_insert(std::forward<Statement>(self),

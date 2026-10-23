@@ -38,25 +38,32 @@ struct connection {
   constexpr connection(Table& table) : _table{table} {}
 
   // Directly executed statements start here
-  template <typename T>
-    requires(sqlpp::is_statement_v<T>)
-  constexpr auto operator()(const T& t) {
-    constexpr auto run_check = check_run_consistency(type_v<T>{});
+  template <typename _Statement>
+    requires(sqlpp::is_statement_v<_Statement>)
+  constexpr auto operator()(const _Statement& _statement) {
+    constexpr auto run_check = check_run_consistency(type_v<_Statement>{});
     static_assert(run_check, run_check.error());
-    constexpr auto compatibility_check = check_compatibility(type_v<context_t>{}, type_v<T>{});
+    constexpr auto compatibility_check = check_compatibility(type_v<context_t>{}, type_v<_Statement>{});
     static_assert(compatibility_check, compatibility_check.error());
 
-    return sqlpp::statement_handler_t{}.run(t, *this);
+    return sqlpp::statement_handler_t{}.run(_statement, *this);
   }
 
   private:
    friend sqlpp::statement_handler_t;
 
-   template <typename T>
-     requires(sqlpp::is_statement_v<T>)
-   constexpr auto _insert(const T& t) {
-     auto filter = to_filter_expression(t);
+   template <typename _Statement>
+     requires(sqlpp::is_statement_v<_Statement>)
+   constexpr auto _insert(const _Statement& _statement) {
+     auto filter = to_filter_expression(_statement);
      return filter.insert(_table);
+   }
+
+   template <typename /*ignored ResultRowType */, typename _Statement>
+     requires(sqlpp::is_statement_v<_Statement>)
+   constexpr auto _select(const _Statement& _statement) {
+     auto filter = to_filter_expression(_statement);
+     return filter.select(_table);
    }
 
     Table& _table;

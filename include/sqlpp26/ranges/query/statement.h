@@ -116,16 +116,22 @@ struct statement {
   template <typename Struct>
     requires(not get_clause_index<^^group_by>().has_value())
   constexpr auto select(const std::vector<Struct>& t) const {
-    const auto where_filter = std::views::filter([this](const auto& row) {
+    const auto where_filter = [this]() {
       if constexpr (get_clause_index<^^where>()) {
-        return get_clause<^^where>()(row);
+        return std::views::filter(
+            [where_clause = get_clause<^^where>()](const auto& row) {
+              return where_clause(row);
+            });
+      } else {
+        return std::views::filter([](const auto& row) { return true; });
       }
-      return true;
-    });
+    }();
 
-    const auto select = std::views::transform([this](const auto& row) -> auto {
-      return get_clause<^^select_column_list>().select_from_row(row);
-    });
+    const auto select = std::views::transform(
+        [select_columns =
+             get_clause<^^select_column_list>()](const auto& row) -> auto {
+          return select_columns.select_from_row(row);
+        });
 
     if constexpr (not get_clause_index<^^order_by>().has_value()) {
       return t | where_filter | select;

@@ -47,11 +47,11 @@ inline constexpr auto to_filter_expression(const T&) {
 template <typename T>
 struct filter_value {
   template <typename Struct>
-  constexpr const auto& operator()(const Struct&) const {
+  constexpr const T& operator()(const Struct&) const {
     return value;
   }
   template <typename Range>
-  constexpr const auto& aggregate(const Range&) const {
+  constexpr const T& aggregate(const Range&) const {
     return value;
   }
   T value;

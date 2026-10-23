@@ -58,9 +58,9 @@ class statement_handler_t {
     return db._insert(std::forward<Statement>(statement));
   }
 
-  template <typename Statement, typename Db>
+  template <typename ResultRow, typename Statement, typename Db>
   constexpr auto select(Statement&& statement, Db& db) {
-    return db._select(std::forward<Statement>(statement));
+    return db.template _select<ResultRow>(std::forward<Statement>(statement));
   }
 
   template <typename Statement, typename Db>

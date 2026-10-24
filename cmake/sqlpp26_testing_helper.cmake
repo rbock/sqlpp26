@@ -26,10 +26,7 @@ function(add_testing_base)
     add_library(sqlpp26_testing INTERFACE)
     target_include_directories(sqlpp26_testing INTERFACE ${CMAKE_CURRENT_SOURCE_DIR}/include)
     if(BUILD_WITH_MODULES)
-        target_link_libraries(sqlpp26_testing INTERFACE sqlpp26::core_module)
         target_compile_definitions(sqlpp26_testing INTERFACE BUILD_WITH_MODULES)
-    else()
-        target_link_libraries(sqlpp26_testing INTERFACE sqlpp26::core)
     endif()
     if (NOT MSVC)
         target_compile_options(sqlpp26_testing INTERFACE -Wall -Wextra -pedantic -Wshadow -Wconversion -freflection)
@@ -61,11 +58,23 @@ function(add_testing_target)
     if(ARG_DEFINES)
         target_compile_definitions(${target} ${lib_prop_scope} ${ARG_DEFINES})
     endif()
-    target_link_libraries(${target} ${lib_prop_scope} sqlpp26_testing)
+    target_link_libraries(${target} ${lib_prop_scope} sqlpp26_testing sqlpp26::${ARG_NAME})
     if(BUILD_WITH_MODULES)
-        set(mod_file "${PROJECT_SOURCE_DIR}/tests/${ARG_NAME}/modules/sqlpp26.test.${ARG_NAME}.tables.cppm")
-        target_sources(${target} PUBLIC FILE_SET CXX_MODULES FILES "${mod_file}")
-        target_link_libraries(${target} PUBLIC sqlpp26::core_module ${ARG_MOD_DEPS})
+        set(mod_files)
+        foreach(dep ${ARG_MOD_DEPS})
+            list(APPEND mod_files "${PROJECT_SOURCE_DIR}/modules/sqlpp26.${dep}.cppm")
+        endforeach()
+        target_sources(
+            ${target}
+            PUBLIC
+                FILE_SET CXX_MODULES
+                BASE_DIRS
+                    "${PROJECT_SOURCE_DIR}/modules"
+                    "${PROJECT_SOURCE_DIR}/tests/${ARG_NAME}/modules"
+                FILES
+                    ${mod_files}
+                    "${PROJECT_SOURCE_DIR}/tests/${ARG_NAME}/modules/sqlpp26.test.${ARG_NAME}.tables.cppm"
+        )
     endif()
 endfunction()
 

@@ -22,7 +22,7 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-add_testing_target(NAME ranges MOD_DEPS sqlpp26::ranges_module)
+add_testing_target(NAME ranges MOD_DEPS core)
 
 add_subdirectory(filter_expression)
 add_subdirectory(usage)

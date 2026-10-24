@@ -68,6 +68,6 @@ if(NOT TARGET sqlpp26::ddl2cpp)
     unset(sqlpp26_ddl2cpp_location)
 endif()
 
-# Resture module path
+# Restore module path
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH_save})
 unset(CMAKE_MODULE_PATH_save)

@@ -35,6 +35,7 @@
 #include <sqlpp26/core/query/statement.h>
 #include <sqlpp26/core/indices.h>
 #include <sqlpp26/ranges/type_traits.h>
+#include <sys/select.h>
 
 namespace sqlpp::ranges {
 template <typename...>
@@ -46,7 +47,7 @@ struct group_by;
 template <typename...>
 struct insert_assignments;
 
-template <typename...>
+template <bool, typename...>
 struct select_column_list;
 
 template <typename...>
@@ -119,13 +120,22 @@ struct statement {
     const auto where_filter = [this]() {
       if constexpr (get_clause_index<^^where>()) {
         return std::views::filter(
-            [where_clause = get_clause<^^where>()](const auto& row) {
+            [&where_clause = get_clause<^^where>()](const auto& row) {
               return where_clause(row);
             });
       } else {
         return std::views::filter([](const auto& row) { return true; });
       }
     }();
+
+    using column_list_type =
+        std::decay_t<decltype(get_clause<^^select_column_list>())>;
+
+    if constexpr (column_list_type::contains_aggregate_function) {
+      // TODO: Avoid storing in vector
+      auto filtered = t | where_filter | std::ranges::to<std::vector>();
+      return std::vector{get_clause<^^select_column_list>().select_from_chunk(filtered)};
+    } else {
 
     const auto select = std::views::transform(
         [select_columns =
@@ -144,6 +154,7 @@ struct statement {
       });
 
       return sorted | select | std::ranges::to<std::vector>();
+    }
     }
   }
 

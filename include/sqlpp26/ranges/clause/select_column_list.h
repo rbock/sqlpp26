@@ -66,7 +66,7 @@ struct result_row {
 template <typename Struct, typename... Accessors>
 using result_row_t = typename result_row<Struct, Accessors...>::type;
 
-template <typename... Accessors>
+template <bool ContainsAggregateFunction, typename... Accessors>
 struct select_column_list {
   template <typename Struct>
   constexpr auto select_from_row(const Struct& s) const {
@@ -77,10 +77,12 @@ struct select_column_list {
   template <typename Range>
   constexpr auto select_from_chunk(const Range& r) const {
     static constexpr auto [... Idx] = indices<sizeof...(Accessors)>;
-    using Struct = std::decay_t<decltype(r.front())>;
+    using Struct = std::decay_t<decltype(*begin(r))>;
     return result_row_t<Struct, Accessors...>{
         std::get<Idx>(_accessors).aggregate(r)...};
   }
+
+  static constexpr bool contains_aggregate_function = ContainsAggregateFunction;
 
   std::tuple<Accessors...> _accessors;
 };
@@ -92,6 +94,10 @@ template <typename... Flags, typename... Columns>
 constexpr auto to_filter_expression(
     const select_column_list_t<std::tuple<Flags...>, std::tuple<Columns...>>& t) {
   static constexpr auto [...Idx] = indices<sizeof...(Columns)>;
-  return ranges::select_column_list{std::make_tuple(to_filter_expression(std::get<Idx>(read.columns(t)))...)};
+  return ranges::select_column_list<sqlpp::contains_aggregate_function_v<
+                                        sqlpp::detail::type_vector<Columns...>>,
+                                    decltype(to_filter_expression(
+                                        std::get<Idx>(read.columns(t))))...>{
+      std::make_tuple(to_filter_expression(std::get<Idx>(read.columns(t)))...)};
 }
 }  // namespace sqlpp::ranges

@@ -36,21 +36,21 @@ struct Foo {
 };
 }
 
-template <typename Statement>
-constexpr void run(const Statement&) {
-  constexpr auto check = check_basic_consistency(sqlpp::type_v<Statement>{});
-  static_assert(check, check.error());
-}
-
 int main() {
   constexpr auto tab_foo = sqlpp::ranges::make_table<test::Foo>();
 
   auto foo_data = std::vector<test::Foo>{{1, "one"}, {2, "two"}, {3, "three"}};
   auto db = sqlpp::ranges::connection(foo_data);
 
-  auto s = select(all_of(tab_foo)).from(tab_foo).where(tab_foo.id > 1);
-  for (const auto& row : db(s)) {
+  for (const auto& row :
+       db(select(all_of(tab_foo)).from(tab_foo).where(tab_foo.id > 1))) {
     // TODO: Turn this into a test
     std::println("id: {}, something: {}", row.id, row.something);
+  }
+
+  for (const auto& row :
+       db(select(sum(tab_foo.id).as<"sum_id">()).from(tab_foo).where(tab_foo.id > 1))) {
+    // TODO: Turn this into a test
+    std::println("sum_id: {}", row.sum_id);
   }
 }

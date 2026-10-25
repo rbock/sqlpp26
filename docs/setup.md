@@ -1,4 +1,4 @@
-[**< Index**](/docs/README.md)
+fv[**< Index**](/docs/README.md)
 
 # Setup
 
@@ -23,30 +23,28 @@ You can find examples for both methods in the examples folder.
 
 Both methods will provide the following CMake targets
 
-| Target | How to include | Description |
-| ------ | -------------- | ----------- |
-| sqlpp26::core | #include <sqlpp26/sqlpp26.h> | The core functionality, which is not connector-specific, as headers |
-| sqlpp26::core_module | import sqlpp26::core; | The core functionality, which is not connector-specific, as a module |
-| sqlpp26::sqlpp26 | #include <sqlpp26/sqlpp26.h> | A backwards-compatible alias of sqlpp26::core |
-| sqlpp26::mariadb | #include <sqlpp26/mysql/mysql.h>[^1] | The MariaDB connector as headers |
-| sqlpp26::mariadb_module | import sqlpp26::mariadb; | The MariaDB connector as a module |
-| sqlpp26::mysql | #include <sqlpp26/mysql/mysql.h> | The MySQL connector as headers |
-| sqlpp26::mysql_module | import sqlpp26::mysql; | The MySQL connector as a module |
-| sqlpp26::postgresql | #include <sqlpp26/postgresql/postgresql.h> | The PostgreSQL connector as headers |
-| sqlpp26::postgresql_module | import sqlpp26::postgresql; | The PostgreSQL connector as a module |
-| sqlpp26::sqlcipher | #include <sqlpp26/sqlite3/sqlite3.h>[^2] | The SQLCipher connector as headers |
-| sqlpp26::sqlcipher_module | import sqlpp26::sqlcipher; | The SQLCipher connector as a module |
-| sqlpp26::sqlite3 | #include <sqlpp26/sqlite3/sqlite3.h> | The SQLite3 connector as headers |
-| sqlpp26::sqlite3_module | import sqlpp26::sqlite3; | The SQLite3 connector as a module |
+| Target | How to include | How to import[^1] | Description |
+| ------ | -------------- | ------------- | ----------- |
+| sqlpp26::core | #include <sqlpp26/sqlpp26.h> | import sqlpp26::core; | The core functionality, which is not connector-specific |
+| sqlpp26::sqlpp26 | #include <sqlpp26/sqlpp26.h> | import sqlpp26::core; | A backwards-compatible alias of sqlpp26::core |
+| sqlpp26::mariadb | #include <sqlpp26/mysql/mysql.h>[^2] | import sqlpp26::mariadb; | The MariaDB connector |
+| sqlpp26::mysql | #include <sqlpp26/mysql/mysql.h> | import sqlpp26::mysql; | The MySQL connector |
+| sqlpp26::postgresql | #include <sqlpp26/postgresql/postgresql.h> | import sqlpp26::postgresql; | The PostgreSQL connector |
+| sqlpp26::sqlcipher | #include <sqlpp26/sqlite3/sqlite3.h>[^3] | import sqlpp26::sqlcipher; | The SQLCipher connector |
+| sqlpp26::sqlite3 | #include <sqlpp26/sqlite3/sqlite3.h> | import sqlpp26::sqlite3; | The SQLite3 connector |
 
-[^1]: The MariaDB connector re-uses the codebase of the MySQL connector. That's
+These targets will automatically configure the include directories, linked
+libraries, compiler options and defines that are needed to compile and use the
+sqlpp26 core and its connectors. To use the module interface you also need to
+add the relevant module interface files to your project sources[^1].
+
+[^1]: When using the library as C++ modules you need to manually add the
+relevant module interface files to you project sources. See
+[modules](/docs/modules.md) for more information.
+[^2]: The MariaDB connector re-uses the codebase of the MySQL connector. That's
 why you use the MariaDB connector by including the MySQL headers.
-[^2]: The SQLCipher connector re-uses the codebase of the SQLite3 connector.
+[^3]: The SQLCipher connector re-uses the codebase of the SQLite3 connector.
 That's why you use the SQLCipher connector by including the SQLite3 headers.
-
-These targets will make sure all required dependencies are available, correctly
-linked, include directories are set correctly and module interface files (if
-using the module targets) are added to your project sources.
 
 ## Build and install
 

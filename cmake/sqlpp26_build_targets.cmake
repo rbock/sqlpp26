@@ -79,7 +79,7 @@ function(_add_build_common)
     add_library(${ARG_TARGET_NAME} INTERFACE)
     add_library(${ARG_TARGET_ALIAS} ALIAS ${ARG_TARGET_NAME})
     set_target_properties(${ARG_TARGET_NAME} PROPERTIES EXPORT_NAME ${ARG_TARGET_EXPORTED})
-    target_compile_features(${ARG_TARGET_NAME} INTERFACE cxx_std_23)
+    target_compile_features(${ARG_TARGET_NAME} INTERFACE cxx_std_26)
     if(ARG_DEFINES)
         target_compile_definitions(${ARG_TARGET_NAME} INTERFACE ${ARG_DEFINES})
     endif()
@@ -98,7 +98,7 @@ function(_add_build_common)
         # Install the config script
         install(
             FILES ${PROJECT_SOURCE_DIR}/cmake/configs/${ARG_CONFIG_SCRIPT}
-            DESTINATION ${SQLPP23_INSTALL_CMAKEDIR}
+            DESTINATION ${SQLPP26_INSTALL_CMAKEDIR}
         )
         # Install the component output artifacts
         install(
@@ -110,14 +110,14 @@ function(_add_build_common)
 	# Install the config targets file
         install(
             EXPORT ${ARG_TARGET_FILE}
-            DESTINATION ${SQLPP23_INSTALL_CMAKEDIR}
-            NAMESPACE sqlpp23::
+            DESTINATION ${SQLPP26_INSTALL_CMAKEDIR}
+            NAMESPACE sqlpp26::
         )
         if(BUILD_WITH_MODULES AND ARG_MODULE_INTERFACE)
             # Install the component's module interface file
             install(
                 FILES ${PROJECT_SOURCE_DIR}/modules/${ARG_MODULE_INTERFACE}
-                DESTINATION ${CMAKE_INSTALL_PREFIX}/modules/sqlpp23
+                DESTINATION ${CMAKE_INSTALL_PREFIX}/modules/sqlpp26
             )
         endif()
         if(ARG_PACKAGE)

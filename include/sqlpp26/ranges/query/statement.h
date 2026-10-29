@@ -136,25 +136,25 @@ struct statement {
       auto filtered = t | where_filter | std::ranges::to<std::vector>();
       return std::vector{get_clause<^^select_column_list>().select_from_chunk(filtered)};
     } else {
+      const auto select = std::views::transform(
+          [select_columns =
+               get_clause<^^select_column_list>()](const auto& row) -> auto {
+            return select_columns.select_from_row(row);
+          });
 
-    const auto select = std::views::transform(
-        [select_columns =
-             get_clause<^^select_column_list>()](const auto& row) -> auto {
-          return select_columns.select_from_row(row);
+      if constexpr (not get_clause_index<^^order_by>().has_value()) {
+        // TODO: Avoid storing in vector, to allow select on a stream
+        return t | where_filter | select | std::ranges::to<std::vector>();
+      } else {
+        std::vector sorted = t | where_filter | std::ranges::to<std::vector>();
+
+        std::ranges::sort(sorted, [this](const auto& a, const auto& b) {
+          const auto clause = get_clause<^^order_by>();
+          return clause.left(a, b) < clause.right(a, b);
         });
 
-    if constexpr (not get_clause_index<^^order_by>().has_value()) {
-      return t | where_filter | select;
-    } else {
-      std::vector sorted = t | where_filter | std::ranges::to<std::vector>();
-
-      std::ranges::sort(sorted, [this](const auto& a, const auto& b) {
-        const auto clause = get_clause<^^order_by>();
-        return clause.left(a, b) < clause.right(a, b);
-      });
-
-      return sorted | select | std::ranges::to<std::vector>();
-    }
+        return sorted | select | std::ranges::to<std::vector>();
+      }
     }
   }
 

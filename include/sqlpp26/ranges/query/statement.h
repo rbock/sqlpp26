@@ -120,7 +120,7 @@ struct statement {
     const auto where_filter = [this]() {
       if constexpr (get_clause_index<^^where>()) {
         return std::views::filter(
-            [&where_clause = get_clause<^^where>()](const auto& row) {
+            [where_clause = get_clause<^^where>()](const auto& row) {
               return where_clause(row);
             });
       } else {
@@ -143,8 +143,7 @@ struct statement {
           });
 
       if constexpr (not get_clause_index<^^order_by>().has_value()) {
-        // TODO: Avoid storing in vector, to allow select on a stream
-        return t | where_filter | select | std::ranges::to<std::vector>();
+        return t | where_filter | select;
       } else {
         std::vector sorted = t | where_filter | std::ranges::to<std::vector>();
 

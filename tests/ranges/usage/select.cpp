@@ -54,9 +54,15 @@ int main() {
     std::println("id: {}, seven: {}", row.id, row.seven);
   }
 
-  for (const auto& row :
-       db(select(sum(tab_foo.id).as<"sum_id">()).from(tab_foo).where(tab_foo.id > 1))) {
+  for (const auto& row : db(select(count(tab_foo.id).as<"total_count">(),
+                                   max(tab_foo.id).as<"max_id">(),
+                                   min(tab_foo.something).as<"min_something">(),
+                                   sum(tab_foo.id).as<"sum_id">())
+                                .from(tab_foo)
+                                .where(tab_foo.id > 1))) {
     // TODO: Turn this into a test
-    std::println("sum_id: {}", row.sum_id);
+    std::println("total_count: {}, max_id: {}, min_something: {}, sum_id: {}",
+                 row.total_count, row.max_id.value_or(-1),
+                 row.min_something.value_or("NULL"), row.sum_id);
   }
 }

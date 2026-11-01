@@ -124,7 +124,7 @@ struct statement {
               return where_clause(row);
             });
       } else {
-        return std::views::filter([](const auto& row) { return true; });
+        return std::views::filter([](const auto& /*row*/) { return true; });
       }
     }();
 

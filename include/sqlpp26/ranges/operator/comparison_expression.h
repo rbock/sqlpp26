@@ -1,3 +1,5 @@
+#pragma once
+
 /*
  * Copyright (c) 2026, Roland Bock
  * All rights reserved.

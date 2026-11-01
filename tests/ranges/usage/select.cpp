@@ -49,6 +49,12 @@ int main() {
   }
 
   for (const auto& row :
+       db(select(tab_foo.id, sqlpp::value(7).as<"seven">()).from(tab_foo).where(tab_foo.id != 2))) {
+    // TODO: Turn this into a test
+    std::println("id: {}, seven: {}", row.id, row.seven);
+  }
+
+  for (const auto& row :
        db(select(sum(tab_foo.id).as<"sum_id">()).from(tab_foo).where(tab_foo.id > 1))) {
     // TODO: Turn this into a test
     std::println("sum_id: {}", row.sum_id);

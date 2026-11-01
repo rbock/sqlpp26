@@ -37,14 +37,14 @@ namespace sqlpp::ranges {
 template <typename Expression, fixed_string Name>
 struct as_expression {
   constexpr auto operator()(const auto& row) const {
-      return _filter(row);
+      return _expr(row);
   }
 
   constexpr auto aggregate(const auto& range) const {
-      return _filter.aggregate(range);
+      return _expr.aggregate(range);
   }
 
-  Expression _filter;
+  Expression _expr;
 };
 
 template <typename Expression, fixed_string Name>

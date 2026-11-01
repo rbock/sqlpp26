@@ -29,24 +29,27 @@
 
 #include <sqlpp26/core/operator/enable_as.h>
 #include <sqlpp26/core/operator/enable_comparison.h>
+#include <sqlpp26/core/reader.h>
 #include <sqlpp26/core/type_traits.h>
 
 namespace sqlpp {
-template <typename T>
+template <typename Expr>
 struct value_t : public enable_as, public enable_comparison {
-  constexpr value_t(T t) : _value(std::move(t)) {}
+  constexpr value_t(Expr t) : _expression(std::move(t)) {}
   value_t(const value_t&) = default;
   value_t(value_t&&) = default;
   value_t& operator=(const value_t&) = default;
   value_t& operator=(value_t&&) = default;
   ~value_t() = default;
 
-  T _value;
+ private:
+  friend reader_t;
+  Expr _expression;
 };
 
-template <typename T>
-struct data_type_of<value_t<T>> {
-  using type = data_type_of_t<T>;
+template <typename Expr>
+struct data_type_of<value_t<Expr>> {
+  using type = data_type_of_t<Expr>;
 };
 
 template <typename Select>
@@ -55,23 +58,23 @@ struct data_type_of<value_t<Select>> {
   using type = statement_data_type_of_t<Select>;
 };
 
-template <typename T>
-struct nodes_of<value_t<T>> {
+template <typename Expr>
+struct nodes_of<value_t<Expr>> {
   // Required in case of value(select(...)).
-  using type = detail::type_vector<T>;
+  using type = detail::type_vector<Expr>;
 };
 
-template <typename T>
-struct requires_parentheses<value_t<T>> : public requires_parentheses<T> {};
+template <typename Expr>
+struct requires_parentheses<value_t<Expr>> : public requires_parentheses<Expr> {};
 
-template <typename Context, typename T>
-auto to_sql_string(Context& context, const value_t<T>& t) -> std::string {
-  return to_sql_string(context, t._value);
+template <typename Context, typename Expr>
+auto to_sql_string(Context& context, const value_t<Expr>& t) -> std::string {
+  return to_sql_string(context, read.expression(t));
 }
 
-template <typename T>
-  requires(is_data_type_v<T>)
-constexpr auto value(T t) -> value_t<T> {
+template <typename Expr>
+  requires(is_data_type_v<Expr>)
+constexpr auto value(Expr t) -> value_t<Expr> {
   return {std::move(t)};
 }
 

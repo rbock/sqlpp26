@@ -31,6 +31,7 @@
 #include <sqlpp26/ranges/aggregate_function/sum.h>
 #include <sqlpp26/ranges/basic/column.h>
 #include <sqlpp26/ranges/basic/table.h>
+#include <sqlpp26/ranges/basic/value.h>
 #include <sqlpp26/ranges/clause/for_update.h>
 #include <sqlpp26/ranges/clause/from.h>
 #include <sqlpp26/ranges/clause/group_by.h>

@@ -31,7 +31,7 @@
 
 namespace test {
 struct Foo {
-  int id;
+  int8_t id;
   std::string_view something;
 };
 }
@@ -39,7 +39,7 @@ struct Foo {
 int main() {
   constexpr auto tab_foo = sqlpp::ranges::make_table<test::Foo>();
 
-  auto foo_data = std::vector<test::Foo>{{1, "one"}, {2, "two"}, {3, "three"}};
+  auto foo_data = std::vector<test::Foo>{{1, "one"}, {100, "two"}, {120, "three"}};
   auto db = sqlpp::ranges::connection(foo_data);
 
   for (const auto& row :
@@ -55,14 +55,15 @@ int main() {
   }
 
   for (const auto& row : db(select(count(tab_foo.id).as<"total_count">(),
+                                   avg(tab_foo.id).as<"avg_id">(),
                                    max(tab_foo.id).as<"max_id">(),
                                    min(tab_foo.something).as<"min_something">(),
                                    sum(tab_foo.id).as<"sum_id">())
                                 .from(tab_foo)
                                 .where(tab_foo.id > 1))) {
     // TODO: Turn this into a test
-    std::println("total_count: {}, max_id: {}, min_something: {}, sum_id: {}",
-                 row.total_count, row.max_id.value_or(-1),
+    std::println("total_count: {}, avg_id: {}, max_id: {}, min_something: {}, sum_id: {}",
+                 row.total_count, row.avg_id.value_or(-10000.), row.max_id.value_or(-1),
                  row.min_something.value_or("NULL"), row.sum_id);
   }
 }

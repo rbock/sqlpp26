@@ -27,10 +27,11 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include <sqlpp26/ranges/aggregate_function/avg.h>
 #include <sqlpp26/ranges/aggregate_function/count.h>
-#include <sqlpp26/ranges/aggregate_function/sum.h>
 #include <sqlpp26/ranges/aggregate_function/max.h>
 #include <sqlpp26/ranges/aggregate_function/min.h>
+#include <sqlpp26/ranges/aggregate_function/sum.h>
 #include <sqlpp26/ranges/basic/column.h>
 #include <sqlpp26/ranges/basic/table.h>
 #include <sqlpp26/ranges/basic/value.h>

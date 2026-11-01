@@ -163,10 +163,10 @@ class connection_base : public sqlpp::connection {
   }
 
   // Select stmt (returns a result)
-  template <typename Select>
-  text_result_t _select(const Select& s) {
+  template <typename ResultRow, typename Select>
+  ::sqlpp::result_t<text_result_t, ResultRow> _select(const Select& s) {
     context_t context(this);
-    return select_impl(to_sql_string(context, s));
+    return {select_impl(to_sql_string(context, s))};
   }
 
   // Prepared select

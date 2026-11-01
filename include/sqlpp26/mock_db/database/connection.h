@@ -123,12 +123,12 @@ class connection_base : public sqlpp::connection {
     return {};
   }
 
-  template <typename Select>
-  text_result_t _select(const Select& x) {
+  template <typename ResultRow, typename Select>
+  ::sqlpp::result_t<text_result_t, ResultRow> _select(const Select& x) {
     context_t context;
     const auto query = to_sql_string(context, x);
     execute_statement(_handle, query);
-    return {&_mock_result_data, _handle.config.get()};
+    return {text_result_t{&_mock_result_data, _handle.config.get()}};
   }
 
   prepared_statement_t prepare_impl(const std::string& statement,

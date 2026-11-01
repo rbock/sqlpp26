@@ -186,11 +186,11 @@ class connection_base : public sqlpp::connection {
   }
 
   //! select returns a result (which can be iterated row by row)
-  template <typename Select>
-  bind_result_t _select(const Select& s) {
+  template <typename ResultRow, typename Select>
+  ::sqlpp::result_t<bind_result_t, ResultRow> _select(const Select& s) {
     context_t context{this};
     auto query = to_sql_string(context, s);
-    return select_impl(query);
+    return {select_impl(query)};
   }
 
   template <typename Select>

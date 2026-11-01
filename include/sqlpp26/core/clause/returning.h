@@ -90,14 +90,15 @@ struct returning_column_list_result_methods_t {
 
   // Execute
   template <typename Statement, typename Db>
-  auto _run(this Statement&& self, Db& db) -> result_t<
-      decltype(sqlpp::statement_handler_t{}
-                   .select(std::declval<std::decay_t<Statement>>(), db)),
-      result_row_t<make_field_spec_t<std::decay_t<Statement>, Columns>...>> {
-    return {statement_handler_t{}.select(std::forward<Statement>(self), db)};
+  auto _run(this Statement&& self, Db& db) {
+    return statement_handler_t{}
+        .select<result_row_t<
+            make_field_spec_t<std::decay_t<Statement>, Columns>...>>(
+            std::forward<Statement>(self), db);
   }
 
   /*
+  // TODO
   // Prepare
   template <typename Statement, typename Db>
   auto _prepare(this Statement&& self, Db& db)

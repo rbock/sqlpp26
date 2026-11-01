@@ -249,11 +249,11 @@ class connection_base : public sqlpp::connection {
         sqlpp::statement_handler_t{}.get_prepared_statement(u));
   }
 
-  template <typename Select>
-  text_result_t _select(const Select& s) {
+  template <typename ResultRow, typename Select>
+  ::sqlpp::result_t<text_result_t, ResultRow> _select(const Select& s) {
     context_t context(this);
     const auto query = to_sql_string(context, s);
-    return select_impl(query);
+    return {select_impl(query)};
   }
 
   template <typename Select>

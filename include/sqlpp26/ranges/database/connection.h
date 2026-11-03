@@ -63,9 +63,16 @@ struct connection {
 
    template <typename /*ignored ResultRowType */, typename _Statement>
      requires(sqlpp::is_statement_v<_Statement>)
-   constexpr auto _select(const _Statement& _statement) {
+   constexpr auto _select(const _Statement& _statement) const {
      auto filter = to_filter_expression(_statement);
      return filter.select(_table);
+   }
+
+   template <typename _Statement>
+     requires(sqlpp::is_statement_v<_Statement>)
+   constexpr auto _update(const _Statement& _statement) {
+     auto filter = to_filter_expression(_statement);
+     return filter.update(_table);
    }
 
     Table& _table;

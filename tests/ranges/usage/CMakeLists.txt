@@ -25,4 +25,5 @@
 create_tests_group(
     insert
     select
+    update
 )

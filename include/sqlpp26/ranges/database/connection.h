@@ -56,6 +56,13 @@ struct connection {
 
    template <typename _Statement>
      requires(sqlpp::is_statement_v<_Statement>)
+   constexpr auto _delete_from(const _Statement& _statement) {
+     auto filter = to_filter_expression(_statement);
+     return filter.delete_from(_table);
+   }
+
+   template <typename _Statement>
+     requires(sqlpp::is_statement_v<_Statement>)
    constexpr auto _insert(const _Statement& _statement) {
      auto filter = to_filter_expression(_statement);
      return filter.insert(_table);

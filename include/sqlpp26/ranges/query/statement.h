@@ -92,6 +92,17 @@ struct statement {
   }
 
   template <typename Struct>
+  constexpr auto delete_from(std::vector<Struct>& v) const {
+    auto where_filter = [this](const auto& row) {
+      if constexpr (get_clause_index<^^where>()) {
+        return get_clause<^^where>()(row);
+      }
+      return true;
+    };
+    std::erase_if(v, where_filter);
+  }
+
+  template <typename Struct>
   constexpr auto insert(std::vector<Struct>& v) const {
     get_clause<^^insert_assignments>()(v);
 

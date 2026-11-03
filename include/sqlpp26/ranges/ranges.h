@@ -39,6 +39,7 @@
 #include <sqlpp26/ranges/clause/from.h>
 #include <sqlpp26/ranges/clause/group_by.h>
 #include <sqlpp26/ranges/clause/having.h>
+#include <sqlpp26/ranges/clause/delete_from.h>
 #include <sqlpp26/ranges/clause/insert.h>
 #include <sqlpp26/ranges/clause/insert_value_list.h>
 #include <sqlpp26/ranges/clause/into.h>

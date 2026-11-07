@@ -91,8 +91,8 @@ struct statement {
     return std::get<required_clause_index_of<Template, Clauses...>()>(_filter_clauses);
   }
 
-  template <typename Struct>
-  constexpr auto delete_from(std::vector<Struct>& v) const {
+  template <std::ranges::range Range>
+  constexpr auto delete_from(Range& v) const {
     auto where_filter = [this](const auto& row) {
       if constexpr (get_clause_index<^^where>()) {
         return get_clause<^^where>()(row);
@@ -102,15 +102,15 @@ struct statement {
     std::erase_if(v, where_filter);
   }
 
-  template <typename Struct>
-  constexpr auto insert(std::vector<Struct>& v) const {
+  template <std::ranges::range Range>
+  constexpr auto insert(Range& v) const {
     get_clause<^^insert_assignments>()(v);
 
     return v.back();
   }
 
-  template <typename Struct>
-  constexpr auto update(std::vector<Struct>& t) const {
+  template <std::ranges::range Range>
+  constexpr auto update(Range& t) const {
     auto where_filter = std::views::filter([this](const auto& row) {
       if constexpr (get_clause_index<^^where>()) {
         return get_clause<^^where>()(row);
@@ -125,9 +125,9 @@ struct statement {
     }
   }
 
-  template <typename Struct>
+  template <std::ranges::range Range>
     requires(not get_clause_index<^^group_by>().has_value())
-  constexpr auto select(const std::vector<Struct>& t) const {
+  constexpr auto select(const Range& t) const {
     const auto where_filter = [this]() {
       if constexpr (get_clause_index<^^where>()) {
         return std::views::filter(
@@ -168,9 +168,9 @@ struct statement {
     }
   }
 
-  template <typename Struct>
+  template <std::ranges::range Range>
     requires(get_clause_index<^^group_by>().has_value())
-  constexpr auto select(const std::vector<Struct>& t) const {
+  constexpr auto select(const Range& t) const {
     // Apply WHERE
     const auto where_filter = std::views::filter([this](const auto& row) {
       if constexpr (get_clause_index<^^where>()) {

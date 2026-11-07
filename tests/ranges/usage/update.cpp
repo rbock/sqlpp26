@@ -31,7 +31,7 @@
 
 namespace test {
 struct Foo {
-  int8_t id;
+  int id;
   std::string_view something;
 };
 }
@@ -43,6 +43,7 @@ int main() {
   auto db = sqlpp::ranges::connection(foo_data);
 
   db(update(tab_foo).set(tab_foo.something = "four").where(tab_foo.id == 120));
+  db(update(tab_foo).set(tab_foo.id = tab_foo.id + 1).where(tab_foo.id == 120));
 
   for (const auto& row: db(select(all_of(tab_foo)).from(tab_foo))) {
     println("id: {}, something: {}", row.id, row.something);

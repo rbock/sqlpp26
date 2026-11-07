@@ -57,6 +57,7 @@
 #include <sqlpp26/ranges/database/connection.h>
 #include <sqlpp26/ranges/operator/as_expression.h>
 #include <sqlpp26/ranges/operator/assign_expression.h>
+#include <sqlpp26/ranges/operator/arithmetic_expression.h>
 #include <sqlpp26/ranges/operator/comparison_expression.h>
 #include <sqlpp26/ranges/operator/logical_expression.h>
 #include <sqlpp26/ranges/operator/sort_order_expression.h>

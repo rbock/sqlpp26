@@ -41,7 +41,9 @@ struct group_by {
   template <typename Struct>
   constexpr auto operator()(const Struct& s) const {
     static constexpr auto [... Idx] = indices<sizeof...(Accessors)>;
-    return std::tie(std::get<Idx>(_accessors)(s)...);
+    // TODO: If all accessors returned L-value references, then we could use std::tie.
+    //       But group_by(col % 2) returns an R-value, for instance.
+    return std::make_tuple(std::get<Idx>(_accessors)(s)...);
   }
 
   std::tuple<Accessors...> _accessors;

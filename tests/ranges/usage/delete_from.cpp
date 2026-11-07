@@ -26,6 +26,7 @@
  */
 
 #include <print>
+#include <list>
 
 #include <sqlpp26/ranges/ranges.h>
 
@@ -39,7 +40,7 @@ struct Foo {
 int main() {
   constexpr auto tab_foo = sqlpp::ranges::make_table<test::Foo>();
 
-  auto foo_data = std::vector<test::Foo>{{1, "one"}, {100, "two"}, {120, "three"}};
+  auto foo_data = std::list<test::Foo>{{1, "one"}, {100, "two"}, {120, "three"}};
   auto db = sqlpp::ranges::connection(foo_data);
 
   db(delete_from(tab_foo).where(tab_foo.id == 100));

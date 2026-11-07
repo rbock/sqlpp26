@@ -189,7 +189,7 @@ constexpr auto operator-(Rhs rhs) -> arithmetic_expression<noop, negate, Rhs> {
 
 template <typename Lhs, typename Rhs>
   requires(std::is_integral_v<raw_data_type_of_t<Lhs>> and
-           std::is_integral_v<raw_data_type_of_t<Lhs>>)
+           std::is_integral_v<raw_data_type_of_t<Rhs>>)
 constexpr auto operator%(Lhs lhs, Rhs rhs)
     -> arithmetic_expression<Lhs, modulus, Rhs> {
   return {std::move(lhs), std::move(rhs)};

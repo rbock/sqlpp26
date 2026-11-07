@@ -31,39 +31,55 @@
 
 namespace test {
 struct Foo {
-  int8_t id;
-  std::string_view something;
+  int8_t number;
+  std::string_view text;
 };
 }
 
 int main() {
   constexpr auto tab_foo = sqlpp::ranges::make_table<test::Foo>();
 
-  auto foo_data = std::vector<test::Foo>{{1, "one"}, {100, "two"}, {120, "three"}};
+  auto foo_data = std::vector<test::Foo>{{1, "one"}, {2, "two"}, {3, "three"}, {4, "four"}, {5, "five"}, {6, "six"}};
   auto db = sqlpp::ranges::connection(foo_data);
 
   for (const auto& row :
-       db(select(all_of(tab_foo)).from(tab_foo).where(tab_foo.id > 1))) {
+       db(select(all_of(tab_foo)).from(tab_foo).where(tab_foo.number > 1))) {
     // TODO: Turn this into a test
-    std::println("id: {}, something: {}", row.id, row.something);
+    std::println("number: {}, text: {}", row.number, row.text);
   }
 
   for (const auto& row :
-       db(select(tab_foo.id, sqlpp::value(7).as<"seven">()).from(tab_foo).where(tab_foo.id != 2))) {
+       db(select(tab_foo.number, sqlpp::value(7).as<"seven">()).from(tab_foo).where(tab_foo.number != 2))) {
     // TODO: Turn this into a test
-    std::println("id: {}, seven: {}", row.id, row.seven);
+    std::println("number: {}, seven: {}", row.number, row.seven);
   }
 
-  for (const auto& row : db(select(count(tab_foo.id).as<"total_count">(),
-                                   avg(tab_foo.id).as<"avg_id">(),
-                                   max(tab_foo.id).as<"max_id">(),
-                                   min(tab_foo.something).as<"min_something">(),
-                                   sum(tab_foo.id).as<"sum_id">())
+  for (const auto& row : db(select(count(tab_foo.number).as<"total_count">(),
+                                   avg(tab_foo.number).as<"avg_id">(),
+                                   max(tab_foo.number).as<"max_id">(),
+                                   min(tab_foo.text).as<"min_something">(),
+                                   sum(tab_foo.number).as<"sum_id">())
                                 .from(tab_foo)
-                                .where(tab_foo.id > 1))) {
+                                .where(tab_foo.number > 1))) {
     // TODO: Turn this into a test
     std::println("total_count: {}, avg_id: {}, max_id: {}, min_something: {}, sum_id: {}",
                  row.total_count, row.avg_id.value_or(-10000.), row.max_id.value_or(-1),
                  row.min_something.value_or("NULL"), row.sum_id);
+  }
+
+  for (const auto& row :
+       db(select(all_of(tab_foo)).from(tab_foo).where(tab_foo.number > 1).order_by(tab_foo.text.desc()))) {
+    // TODO: Turn this into a test
+    std::println("number: {}, text: {}", row.number, row.text);
+  }
+
+  std::println("-----------------------------");
+  for (const auto& row : db(select(count(tab_foo.number).as<"count">(),
+                                   max(tab_foo.number).as<"max">())
+                                .from(tab_foo)
+                                .where(tab_foo.number > 1)
+                                .group_by(tab_foo.number % 2))) {
+    // TODO: Turn this into a test
+    std::println("count: {}, max: {}", row.count, row.max.value_or(-1));
   }
 }

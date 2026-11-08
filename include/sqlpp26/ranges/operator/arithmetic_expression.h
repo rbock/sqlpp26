@@ -28,6 +28,7 @@
  */
 
 #include <sqlpp26/core/operator/arithmetic_expression.h>
+#include <functional>
 
 namespace sqlpp::filter {
 
@@ -48,6 +49,22 @@ template <typename Range>
   Rhs _rhs;
 };
 
+template <typename Operator, typename Rhs>
+struct unary_arithmetic_expression{
+template <typename Struct>
+  constexpr auto operator()(const Struct& t) const {
+    return _operator(_rhs(t));
+  }
+
+template <typename Range>
+  constexpr auto aggregate(const Range& t) const {
+    return _operator(_rhs.aggregate(t));
+  }
+
+  Operator _operator;
+  Rhs _rhs;
+};
+
 template<typename Operator>
 struct filter_operator_of;
 
@@ -59,6 +76,7 @@ template<> struct filter_operator_of<::sqlpp::minus> { using type = std::minus<v
 template<> struct filter_operator_of<::sqlpp::multiplies> { using type = std::multiplies<void>; };
 template<> struct filter_operator_of<::sqlpp::divides> { using type = std::divides<void>; };
 template<> struct filter_operator_of<::sqlpp::modulus> { using type = std::modulus<void>; };
+template<> struct filter_operator_of<::sqlpp::negate> { using type = std::negate<void>; };
 
 }
 
@@ -67,6 +85,12 @@ namespace sqlpp {
 template <typename Lhs, typename Operator, typename Rhs>
 constexpr auto to_filter_expression(const arithmetic_expression<Lhs, Operator, Rhs>& expr) {
   return filter::arithmetic_expression{to_filter_expression(read.lhs(expr)), filter::filter_operator_of_t<Operator>{},
+                               to_filter_expression(read.rhs(expr))};
+}
+
+template <typename Operator, typename Rhs>
+constexpr auto to_filter_expression(const arithmetic_expression<noop, Operator, Rhs>& expr) {
+  return filter::unary_arithmetic_expression{filter::filter_operator_of_t<Operator>{},
                                to_filter_expression(read.rhs(expr))};
 }
 

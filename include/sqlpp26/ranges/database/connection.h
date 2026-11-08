@@ -30,11 +30,12 @@
 #include <sqlpp26/core/query/statement_handler.h>
 #include <sqlpp26/core/type_traits.h>
 #include <sqlpp26/ranges/to_filter_expression.h>
+#include <sqlpp26/ranges/database/context.h>
 
 namespace sqlpp::ranges {
+
 template <typename Table>
 struct connection {
-  struct context_t {};
 
   public:
   constexpr connection(Table& table) : _table{table} {}

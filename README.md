@@ -13,19 +13,26 @@ It allows you to write SQL in the form of C++ expressions:
     * missing a non-default column in `insert_into()`
     * selecting a mix of aggregates and non-aggregates
     * differences in SQL dialects from one database backend to the next, see below
-
-sqlpp26’s core is vendor-neutral.
-
-Specific traits of databases (e.g. unsupported or non-standard features) are handled by connector libraries.
-Connector libraries can inform you and your IDE of missing features at compile time.
-They also interpret expressions specifically where needed.
-For example, the connector could use the `operator||` or the `concat` method for string concatenation without your being required to change the statement.
-
-Connectors for MariaDB, MySQL, PostgreSQL, sqlite3, sqlcipher are included in this repository.
+  * Connector libraries
+    * handle backend specialities, e.g. whether it uses `||` or `concat` for string concatenation
+    * produce human-readable error messages if your query is not supported by the backend
 
 Documentation is found in [docs](/docs/README.md).
 
 If you are coming from [sqlpp11](https://github.com/rbock/sqlpp11), you might be interested in [differences](docs/differences_to_sqlpp11.md).
+
+## Database connectors
+
+sqlpp26’s core is vendor-neutral. It creates expression trees that can be interpreted by the connector libraries.
+
+The following backends are supported by the connector libraries in this repository:
+
+  * MariaDB, MySQL
+  * PostgreSQL
+  * sqlite3, sqlcipher
+  * C++ ranges ***<-- Yes, C++ reflection makes this possible!***
+
+If your favorite RDB backend is not part of the list above, consider writing a connector library.
 
 ## Examples:
 

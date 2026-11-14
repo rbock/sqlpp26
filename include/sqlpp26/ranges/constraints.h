@@ -33,6 +33,31 @@
 
 namespace sqlpp {
 
+// TODO Need to add tests
+template <typename DataType, fixed_string Name>
+[[nodiscard]] constexpr auto check_compatibility(type_v<ranges::context_t>, type_v<parameter_t<DataType, Name>>) -> std::expected<void, std::string_view> {
+  return std::unexpected("ranges: No support for parameter");
+};
+
+template <fixed_string Name>
+[[nodiscard]] constexpr auto check_compatibility(type_v<ranges::context_t>, type_v<verbatim_table_as_t<Name>>) -> std::expected<void, std::string_view> {
+  return std::unexpected("ranges: No support for verbatim_table");
+};
+
+[[nodiscard]] inline constexpr auto check_compatibility(type_v<ranges::context_t>, type_v<for_update_t>) -> std::expected<void, std::string_view> {
+  return std::unexpected("ranges: No support for FOR UPDATE");
+};
+
+template <typename TableSpec, fixed_string Alias>
+[[nodiscard]] constexpr auto check_compatibility(type_v<ranges::context_t>, type_v<table_as<TableSpec, Alias>>) -> std::expected<void, std::string_view> {
+  return std::unexpected("ranges: No support for <table> AS");
+};
+
+template <typename DataType>
+[[nodiscard]] constexpr auto check_compatibility(type_v<ranges::context_t>, type_v<verbatim_t<DataType>>) -> std::expected<void, std::string_view> {
+  return std::unexpected("ranges: No support for verbatim");
+};
+
 template <typename Select>
 [[nodiscard]] constexpr auto check_compatibility(type_v<ranges::context_t>, type_v<any_t<Select>>) -> std::expected<void, std::string_view> {
   return std::unexpected("ranges: No support for any()");
@@ -58,9 +83,19 @@ template <typename Expression>
   return std::unexpected("ranges: No support for OFFSET");
 };
 
+template <typename Expression>
+[[nodiscard]] constexpr auto check_compatibility(type_v<ranges::context_t>, type_v<over_t<Expression>>) -> std::expected<void, std::string_view> {
+  return std::unexpected("ranges: No support for OVER");
+};
+
 template <typename... Columns>
 [[nodiscard]] constexpr auto check_compatibility(type_v<ranges::context_t>, type_v<returning_t<Columns...>>) -> std::expected<void, std::string_view> {
   return std::unexpected("ranges: No support for RETURNING");
+};
+
+template <typename Select, fixed_string Name>
+[[nodiscard]] constexpr auto check_compatibility(type_v<ranges::context_t>, type_v<select_as<Select, Name>>) -> std::expected<void, std::string_view> {
+  return std::unexpected("ranges: No support for SELECT ... AS");
 };
 
 template <typename... Columns>
